@@ -33,18 +33,18 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 - [x] Repo created and first commit pushed (GitHub `Rohit9252/sip-ai-mvp`, private), 2 Nov
 - [x] Grilling done; decisions written to `GLOSSARY.md` and `docs/adr/`, 2 Nov
 - [x] UI tools installed at user level: Impeccable, Watermelon UI, Mobbin (Mobbin needs a paid plan and sign-in), 2 Nov
-- [ ] **T0.1 Scaffold.** Next.js 16.4.2, React 19.3.0, TypeScript, Tailwind v4, App Router, `src/` folder (same versions as `../discovery-engine`). Add zod, openai, @vercel/analytics, Vitest, Playwright. Keep the existing `README.md`, `GLOSSARY.md`, `docs/`, `TODO.md`.
+- [x] **T0.1 Scaffold.** Next.js 16.4.2, React 19.3.0, TypeScript, Tailwind v4, App Router, `src/` folder (same versions as `../discovery-engine`). Add zod, openai, @vercel/analytics, Vitest, Playwright. Keep the existing `README.md`, `GLOSSARY.md`, `docs/`, `TODO.md`.
   Done when: `npm run build` and `npm test` pass on the empty app.
-- [ ] **T0.2 Rules file.** `AGENTS.md` with the rules above plus how to run, test and build. `.env.example` with `OPENAI_API_KEY=`. `.gitignore` ignores `.env*` except `.env.example`.
-- [ ] **T0.3 Key.** Copy the `OPENAI_API_KEY` line from `../discovery-engine/.env.local` into `.env.local` without printing it.
+- [x] **T0.2 Rules file.** `AGENTS.md` with the rules above plus how to run, test and build. `.env.example` with `OPENAI_API_KEY=`. `.gitignore` ignores `.env*` except `.env.example`.
+- [x] **T0.3 Key.** Copy the `OPENAI_API_KEY` line from `../discovery-engine/.env.local` into `.env.local` without printing it.
 
 ## Phase 1: data and maths (tests first)
 
-- [ ] **T1.1 NAV client.** Fund search and NAV history from the public AMFI data at `https://api.mfapi.in/mf/search?q=` and `https://api.mfapi.in/mf/{code}`. Search shows Direct, Growth plans only. Cache on the server for 12 hours. "The market" is scheme 120716, UTI Nifty 50 Index Fund Direct Growth (ADR-0003).
-- [ ] **T1.2 SIP maths.** One instalment a month on the SIP day, or the next date with a NAV. Units = amount ÷ NAV. Invested = sum of instalments. Value = units × NAV on the day. Month-end snapshots: invested, value, gain. Fund move and market move over the same dates.
-- [ ] **T1.3 Setback finder.** The first month-end in months 4 to 12 when value is below invested (GLOSSARY, ADR-0005). If there is none, it says so.
-- [ ] **T1.4 Facts object.** One typed object holding every number the AI may use (invested, value, gain, fund move, market move, the dates, the months kept). Formatted the Indian way (₹1,23,456).
-- [ ] **T1.5 Sample SIP.** Find, from real NAVs, a direct growth equity fund and a start month (between 4 and 24 months ago) whose SIP hits a setback, for the "Try a sample SIP" button. Record the fund, the dates and a hand calculation.
+- [x] **T1.1 NAV client.** Fund search and NAV history from the public AMFI data at `https://api.mfapi.in/mf/search?q=` and `https://api.mfapi.in/mf/{code}`. Search shows Direct, Growth plans only. Cache on the server for 12 hours. "The market" is scheme 120716, UTI Nifty 50 Index Fund Direct Growth (ADR-0003).
+- [x] **T1.2 SIP maths.** One instalment a month on the SIP day, or the next date with a NAV. Units = amount ÷ NAV. Invested = sum of instalments. Value = units × NAV on the day. Month-end snapshots: invested, value, gain. Fund move and market move over the same dates.
+- [x] **T1.3 Setback finder.** The first month-end in months 4 to 12 when value is below invested (GLOSSARY, ADR-0005). If there is none, it says so.
+- [x] **T1.4 Facts object.** One typed object holding every number the AI may use (invested, value, gain, fund move, market move, the dates, the months kept). Formatted the Indian way (₹1,23,456).
+- [x] **T1.5 Sample SIP.** Find, from real NAVs, a direct growth equity fund and a start month (between 4 and 24 months ago) whose SIP hits a setback, for the "Try a sample SIP" button. Record the fund, the dates and a hand calculation.
   Done when: unit tests pass, including 3 SIPs whose numbers are checked by hand.
 
 ## Phase 2: screens (phone first, Groww-style, no logo)
