@@ -121,7 +121,8 @@ export function simulateSip(input: SipInput): SipResult {
   const focus = found ?? snapshots[snapshots.length - 1] ?? null;
   let monthMove: Move | null = null;
   let sinceStartMove: Move | null = null;
-  if (focus && instalments.length > 0) {
+  // A month-end before the first instalment has nothing bought yet, so it has no facts.
+  if (focus && focus.instalments > 0) {
     // Month 1 has no earlier month-end, so its month move starts at the first instalment.
     const monthStart = focus.monthNumber > 1 ? snapshots[focus.monthNumber - 2].date : instalments[0].date;
     monthMove = moveBetween(monthStart, focus.date);

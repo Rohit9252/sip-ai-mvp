@@ -456,3 +456,23 @@ describe("an instalment that rolls over a month-end", () => {
     expect(result.setback).toBeNull();
   });
 });
+
+describe("a finished month before the first instalment", () => {
+  test("gives no facts: nothing has been bought by that month-end", () => {
+    // Same roll-over SIP, as of 15 Mar 2026: February is finished with 0 instalments,
+    // and the first instalment (2 Mar) is already in. March is still running.
+    const fund = series(900007, "Made-up Roll Fund - Direct Plan - Growth", [
+      ["2026-02-27", 10],
+      ["2026-03-02", 10],
+      ["2026-03-13", 10],
+    ]);
+    const market = series(900002, "Made-up Market", [["2026-02-27", 100], ["2026-03-13", 100]]);
+
+    const result = simulateSip({ fund, market, monthlyAmount: 1000, sipDay: 28, startMonth: "2026-02", asOf: "2026-03-15" });
+
+    expect(result.snapshots).toHaveLength(1);
+    expect(result.snapshots[0]).toMatchObject({ instalments: 0, invested: 0, value: 0 });
+    expect(result.latest).toMatchObject({ date: "2026-03-13", instalments: 1, invested: 1000, value: 1000 });
+    expect(result.facts).toBeNull();
+  });
+});
