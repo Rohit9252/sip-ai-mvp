@@ -1,0 +1,389 @@
+<title>Kyun? Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Public+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a phone prototype on the left, a "what is happening" guide on the right that follows each tap. */
+:root {
+  --ground: #EEF0EC;
+  --phone: #FFFFFF;
+  --card: #F6F7F4;
+  --ink: #14171F;
+  --muted: #5D6472;
+  --line: #DADDD5;
+  --accent: #2F5BEA;
+  --accent-soft: #E7ECFD;
+  --loss: #D2541C;
+  --loss-soft: #FCE9DF;
+  --ok: #1F7A4D;
+  --ok-soft: #E2F3EA;
+  --safe: #8A5A00;
+  --safe-soft: #FBF0D5;
+  --display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body: "Public Sans", "Noto Sans Devanagari", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #101216; --phone: #171A20; --card: #1F232B; --ink: #ECEEF2; --muted: #A2A9B6; --line: #2D323C;
+    --accent: #8AA6FF; --accent-soft: #1F2846; --loss: #FF9363; --loss-soft: #3A2318; --ok: #6FD3A0; --ok-soft: #183327;
+    --safe: #E9C25E; --safe-soft: #392F17; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #101216; --phone: #171A20; --card: #1F232B; --ink: #ECEEF2; --muted: #A2A9B6; --line: #2D323C;
+  --accent: #8AA6FF; --accent-soft: #1F2846; --loss: #FF9363; --loss-soft: #3A2318; --ok: #6FD3A0; --ok-soft: #183327;
+  --safe: #E9C25E; --safe-soft: #392F17; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1060px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: grid; gap: 8px; }
+h1 { font-family: var(--display); font-size: clamp(1.6rem, 3.4vw, 2.2rem); margin: 0; line-height: 1.1; }
+.sub { color: var(--muted); max-width: 64ch; margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--phone); }
+.seg button { border: 0; background: transparent; color: var(--ink); padding: 7px 14px; font: inherit; font-size: 0.88rem; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--phone); font-weight: 600; }
+.ghost { border: 1px solid var(--line); background: var(--phone); color: var(--ink); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 0.88rem; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.stage { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 820px) { .stage { grid-template-columns: 1fr; } }
+
+/* phone */
+.phone { width: 100%; max-width: 380px; margin: 0 auto; background: var(--phone); border: 1px solid var(--line); border-radius: 34px; padding: 14px; box-shadow: 0 18px 40px -24px rgba(20, 23, 31, 0.45); }
+.notch { width: 120px; height: 6px; border-radius: 6px; background: var(--line); margin: 2px auto 12px; }
+.screen { display: grid; gap: 12px; min-height: 600px; align-content: start; }
+.appbar { display: flex; justify-content: space-between; align-items: center; }
+.appbar b { font-size: 1.05rem; }
+.appbar span { font-size: 0.78rem; color: var(--muted); }
+.sip { background: var(--card); border-radius: 18px; padding: 14px; display: grid; gap: 8px; }
+.fund { font-size: 0.82rem; color: var(--muted); }
+.vals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.vals small { color: var(--muted); font-size: 0.74rem; display: block; }
+.vals strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.change { color: var(--loss); font-weight: 700; font-variant-numeric: tabular-nums; }
+.meta { font-size: 0.78rem; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.reasonline { background: var(--accent-soft); color: var(--ink); border-radius: 10px; padding: 8px 10px; font-size: 0.84rem; display: flex; gap: 8px; align-items: flex-start; }
+.reasonline b { color: var(--accent); white-space: nowrap; }
+.kyun { border: 2px solid var(--accent); border-radius: 18px; padding: 14px; display: grid; gap: 10px; background: var(--phone); }
+.tag { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
+.q { font-weight: 600; font-size: 1rem; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opt { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 12px; padding: 10px; font: inherit; font-size: 0.86rem; text-align: left; cursor: pointer; min-height: 48px; }
+.opt:hover { border-color: var(--accent); }
+.or { font-size: 0.78rem; color: var(--muted); }
+.typer { display: flex; gap: 6px; }
+.typer input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; font: inherit; font-size: 0.86rem; background: var(--phone); color: var(--ink); }
+.btn { border: 0; border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--phone); }
+.btn.sec { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+.link { background: none; border: 0; color: var(--accent); font: inherit; font-size: 0.8rem; cursor: pointer; padding: 0; text-decoration: underline; justify-self: start; }
+.airead { font-size: 0.8rem; background: var(--accent-soft); border-radius: 8px; padding: 6px 8px; }
+.head { font-weight: 700; font-size: 1.02rem; }
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 1fr auto; gap: 8px; font-size: 0.8rem; align-items: center; }
+.track { grid-column: 1 / -1; height: 10px; background: var(--card); border-radius: 6px; overflow: hidden; }
+.fill { height: 100%; background: var(--loss); border-radius: 6px; }
+.fill.you { background: var(--accent); }
+.yard { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 0.76rem; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.goal { display: grid; gap: 4px; font-size: 0.78rem; }
+.goal .track { height: 8px; }
+.goal .fill { background: var(--ok); }
+.qc { font-size: 0.74rem; color: var(--ok); background: var(--ok-soft); border-radius: 6px; padding: 4px 8px; justify-self: start; }
+.notice { font-size: 0.74rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.stop { justify-self: center; font-size: 0.82rem; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: default; }
+.chat { display: grid; gap: 10px; }
+.bubble { border-radius: 14px; padding: 10px 12px; font-size: 0.86rem; max-width: 92%; }
+.me { background: var(--accent); color: var(--phone); justify-self: end; border-bottom-right-radius: 4px; }
+.bot { background: var(--card); justify-self: start; border-bottom-left-radius: 4px; display: grid; gap: 6px; }
+.btag { font-size: 0.72rem; border-radius: 6px; padding: 2px 7px; justify-self: start; font-weight: 600; }
+.btag.ok { color: var(--ok); background: var(--ok-soft); }
+.btag.safe { color: var(--safe); background: var(--safe-soft); }
+.sugg { display: grid; gap: 6px; }
+.sugg button { text-align: left; }
+
+/* guide */
+.guide { display: grid; gap: 16px; min-width: 0; }
+.steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.step { font-size: 0.78rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--phone); }
+.step.on { border-color: var(--accent); color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+.now { background: var(--phone); border: 1px solid var(--line); border-left: 4px solid var(--accent); padding: 14px 16px; display: grid; gap: 6px; }
+.now h2 { font-family: var(--display); font-size: 1.15rem; margin: 0; }
+.now p { margin: 0; max-width: 62ch; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.panel { background: var(--phone); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.panel h3 { margin: 0; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.panel ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 0.9rem; }
+.foot { font-size: 0.8rem; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .kyun, .chat { animation: rise 0.25s ease-out; } }
+@keyframes rise { from { transform: translateY(6px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Kyun?</h1>
+    <p class="sub">When a first-timer's SIP value drops, Kyun? asks what they think happened, then shows the real reason for their own money, in their language. Tap through Rahul's example: 24, a ₹1,000 SIP started on a friend's word, six months in.</p>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" id="lang-hi" data-lang="hi">हिंदी</button>
+        <button type="button" id="lang-hn" data-lang="hn">Hinglish</button>
+        <button type="button" id="lang-en" data-lang="en">English</button>
+      </div>
+      <button type="button" class="ghost" id="restart">Start again</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <div class="phone" aria-label="Phone prototype">
+      <div class="notch"></div>
+      <div class="screen" id="screen"></div>
+    </div>
+
+    <div class="guide">
+      <div class="steps" id="steps"></div>
+      <div class="now" id="now"></div>
+      <div class="cols">
+        <div class="panel">
+          <h3>What the AI does</h3>
+          <ul>
+            <li>Reads the guess, even in the person's own Hinglish words.</li>
+            <li>Writes the reason for their exact situation, in Hindi, Hinglish or English.</li>
+            <li>Answers follow-up questions about their own SIP.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Rules it never breaks</h3>
+          <ul>
+            <li>Ask before you tell: one question per fall.</li>
+            <li>Numbers come from code; the AI never makes up a number.</li>
+            <li>Only what happened, never what will happen.</li>
+            <li>Never tells you what to do, never names a fund.</li>
+            <li>The Stop button stays where it always was.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Quality check (eval gate)</h3>
+          <ul>
+            <li>Every number matches the person's data: 100%.</li>
+            <li>Advice and prediction questions declined: 100%.</li>
+            <li>If a check fails, a plain fallback shows instead.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot">Prototype with example numbers (fund name and figures are illustrative). In the MVP, the numbers come from the person's own fund and public NAV data.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const T = {
+  hi: {
+    app: "मेरी SIP", time: "6 महीने से", fund: "Example Flexi Cap Fund · Direct",
+    invested: "लगाया", current: "अभी की value", inst: "6 किस्तें · हर महीने ₹1,000", next: "अगली किस्त: 5 Dec", stop: "SIP रोकें",
+    tag: "KYUN? · आपकी भाषा में",
+    q: "आपके ₹6,000 अब ₹5,800 हैं। आपको क्या लगता है, क्यों?",
+    opts: { fund: "मेरा fund खराब है", market: "पूरा market गिरा", dunno: "पता नहीं", worth: "ये worth it नहीं लग रहा" },
+    or: "या अपने शब्दों में लिखें", ph: "जैसे: मुझे लगा मैंने गलत fund ले लिया", send: "भेजें", ex: "Example भरें",
+    exText: "मुझे लगा मैंने गलत fund ले लिया, दोस्त ने बोला था",
+    read: { fund: "AI ने समझा: आपको लगता है fund की गलती है", market: "AI ने समझा: आपको लगता है market गिरा", dunno: "AI ने समझा: आपको पक्का नहीं पता", worth: "AI ने समझा: आपको ये worth it नहीं लग रहा" },
+    rev: {
+      fund: ["ये गिरावट सिर्फ़ आपके fund की नहीं है।", "इस महीने पूरा market (Nifty 50) 3.6% गिरा। आपका fund 3.4% गिरा, यानी market जितना ही।"],
+      market: ["आपने सही समझा।", "इस महीने पूरा market (Nifty 50) 3.6% गिरा, और आपका fund 3.4%। गिरावट पूरे market की है।"],
+      dunno: ["कोई बात नहीं, ये सवाल बहुत लोगों का होता है।", "आपका पैसा share market से जुड़ा है। इस महीने पूरा market (Nifty 50) 3.6% गिरा, इसलिए आपका fund भी 3.4% गिरा।"],
+      worth: ["आपके 6 महीने का हिसाब", "आपने ₹6,000 जमा किए हैं। इस महीने value ₹200 कम दिख रही है, क्योंकि पूरा market (Nifty 50) 3.6% गिरा और आपका fund 3.4%।"]
+    },
+    barM: "पूरा market (Nifty 50)", barF: "आपका fund",
+    y1: "6 महीने", y2: "₹6,000 जमा", goal: "आपका लक्ष्य ₹50,000 · 12% पूरा",
+    qc: "✓ हर number आपके data से check किया गया",
+    notice: "ये सिर्फ़ बताता है कि आपके पैसे के साथ क्या हुआ। ये निवेश सलाह (investment advice) नहीं है।",
+    more: "और पूछो", got: "समझ गया",
+    line: "इस महीने पूरा market 3.6% गिरा, आपका fund 3.4%।", lineTag: "Kyun?",
+    chatT: "और पूछो", back: "← वापस", hint: "अपनी SIP के बारे में कुछ भी पूछें",
+    qs: [
+      { q: "अगर मैं अभी रोक दूँ तो क्या होगा?", a: "SIP रोकने पर आगे की किस्तें बंद हो जाएँगी। अब तक के ₹5,800 fund में ही रहेंगे, जब तक आप खुद न निकालें। अभी निकालने पर exit load लग सकता है, इस example में करीब ₹58। रोकना या न रोकना आपका फ़ैसला है।", t: "✓ Numbers आपके data से", k: "ok" },
+      { q: "क्या मुझे दूसरा fund ले लेना चाहिए?", a: "मैं किसी fund को चुनने या बदलने की सलाह नहीं दे सकता। Fund कैसे काम करते हैं, ये AMFI ने आसान भाषा में समझाया है: mutualfundssahihai.com", t: "Safe fallback: advice नहीं दी", k: "safe" },
+      { q: "ये गिरावट कब तक रहेगी?", a: "आगे market क्या करेगा, ये मैं नहीं बता सकता, और कोई भी पक्का नहीं बता सकता। मैं बस ये बता सकता हूँ कि अब तक आपके पैसे के साथ क्या हुआ।", t: "Safe fallback: prediction नहीं", k: "safe" }
+    ]
+  },
+  hn: {
+    app: "Meri SIP", time: "6 mahine se", fund: "Example Flexi Cap Fund · Direct",
+    invested: "Lagaya", current: "Abhi ki value", inst: "6 kishtein · har mahine ₹1,000", next: "Agli kisht: 5 Dec", stop: "SIP roko",
+    tag: "KYUN? · aapki bhasha mein",
+    q: "Aapke ₹6,000 ab ₹5,800 hain. Aapko kya lagta hai, kyun?",
+    opts: { fund: "Mera fund kharab hai", market: "Poora market gira", dunno: "Pata nahi", worth: "Ye worth it nahi lag raha" },
+    or: "Ya apne shabdon mein likhein", ph: "Jaise: mujhe laga maine galat fund le liya", send: "Bhejo", ex: "Example bharo",
+    exText: "Mujhe laga maine galat fund le liya, dost ne bola tha",
+    read: { fund: "AI ne samjha: aapko lagta hai fund ki galti hai", market: "AI ne samjha: aapko lagta hai market gira", dunno: "AI ne samjha: aapko pakka nahi pata", worth: "AI ne samjha: aapko ye worth it nahi lag raha" },
+    rev: {
+      fund: ["Ye girawat sirf aapke fund ki nahi hai.", "Is mahine poora market (Nifty 50) 3.6% gira. Aapka fund 3.4% gira, yaani market jitna hi."],
+      market: ["Aapne sahi samjha.", "Is mahine poora market (Nifty 50) 3.6% gira, aur aapka fund 3.4%. Girawat poore market ki hai."],
+      dunno: ["Koi baat nahi, ye sawaal bahut logon ka hota hai.", "Aapka paisa share market se juda hai. Is mahine poora market (Nifty 50) 3.6% gira, isliye aapka fund bhi 3.4% gira."],
+      worth: ["Aapke 6 mahine ka hisaab", "Aapne ₹6,000 jama kiye hain. Is mahine value ₹200 kam dikh rahi hai, kyunki poora market (Nifty 50) 3.6% gira aur aapka fund 3.4%."]
+    },
+    barM: "Poora market (Nifty 50)", barF: "Aapka fund",
+    y1: "6 mahine", y2: "₹6,000 jama", goal: "Aapka lakshya ₹50,000 · 12% poora",
+    qc: "✓ Har number aapke data se check kiya gaya",
+    notice: "Ye sirf batata hai ki aapke paise ke saath kya hua. Ye investment advice nahi hai.",
+    more: "Aur poochho", got: "Samajh gaya",
+    line: "Is mahine poora market 3.6% gira, aapka fund 3.4%.", lineTag: "Kyun?",
+    chatT: "Aur poochho", back: "← Wapas", hint: "Apni SIP ke baare mein kuch bhi poochiye",
+    qs: [
+      { q: "Agar main abhi rok doon to kya hoga?", a: "SIP rokne par aage ki kishtein band ho jaayengi. Ab tak ke ₹5,800 fund mein hi rahenge, jab tak aap khud na nikaalein. Abhi nikaalne par exit load lag sakta hai, is example mein kareeb ₹58. Rokna ya na rokna aapka faisla hai.", t: "✓ Numbers aapke data se", k: "ok" },
+      { q: "Kya mujhe doosra fund le lena chahiye?", a: "Main kisi fund ko chunne ya badalne ki salaah nahi de sakta. Fund kaise kaam karte hain, ye AMFI ne aasaan bhasha mein samjhaya hai: mutualfundssahihai.com", t: "Safe fallback: advice nahi di", k: "safe" },
+      { q: "Ye girawat kab tak rahegi?", a: "Aage market kya karega, ye main nahi bata sakta, aur koi bhi pakka nahi bata sakta. Main bas ye bata sakta hoon ki ab tak aapke paise ke saath kya hua.", t: "Safe fallback: prediction nahi", k: "safe" }
+    ]
+  },
+  en: {
+    app: "My SIP", time: "6 months in", fund: "Example Flexi Cap Fund · Direct",
+    invested: "Invested", current: "Current value", inst: "6 instalments · ₹1,000 a month", next: "Next instalment: 5 Dec", stop: "Stop SIP",
+    tag: "KYUN? · in your language",
+    q: "Your ₹6,000 is now ₹5,800. What do you think happened?",
+    opts: { fund: "My fund is bad", market: "The whole market fell", dunno: "I don't know", worth: "It doesn't feel worth it" },
+    or: "Or say it in your own words", ph: "e.g. I think I picked the wrong fund", send: "Send", ex: "Fill an example",
+    exText: "I think I picked the wrong fund, my friend told me to",
+    read: { fund: "AI read it as: you think your fund is to blame", market: "AI read it as: you think the market fell", dunno: "AI read it as: you're not sure", worth: "AI read it as: it doesn't feel worth it" },
+    rev: {
+      fund: ["This fall isn't just your fund.", "This month the whole market (Nifty 50) fell 3.6%. Your fund fell 3.4%, about the same as the market."],
+      market: ["You read it right.", "This month the whole market (Nifty 50) fell 3.6%, and your fund 3.4%. The fall is the whole market's."],
+      dunno: ["That's a common question.", "Your money moves with the share market. This month the whole market (Nifty 50) fell 3.6%, so your fund fell 3.4% too."],
+      worth: ["Your 6 months so far", "You've put in ₹6,000. This month the value shows ₹200 less, because the whole market (Nifty 50) fell 3.6% and your fund 3.4%."]
+    },
+    barM: "Whole market (Nifty 50)", barF: "Your fund",
+    y1: "6 months", y2: "₹6,000 saved", goal: "Your goal ₹50,000 · 12% done",
+    qc: "✓ Every number checked against your data",
+    notice: "This only explains what happened to your money. It is not investment advice.",
+    more: "Ask more", got: "Got it",
+    line: "This month the whole market fell 3.6%; your fund fell 3.4%.", lineTag: "Kyun?",
+    chatT: "Ask more", back: "← Back", hint: "Ask anything about your SIP",
+    qs: [
+      { q: "What happens if I stop now?", a: "Stopping ends future instalments. The ₹5,800 you have stays in the fund until you choose to withdraw it. Withdrawing now may carry an exit load, about ₹58 in this example. Whether to stop is your decision.", t: "✓ Numbers from your data", k: "ok" },
+      { q: "Should I switch to another fund?", a: "I can't advise you on choosing or switching funds. AMFI explains how funds work in plain language: mutualfundssahihai.com", t: "Safe fallback: no advice given", k: "safe" },
+      { q: "How long will this fall last?", a: "I can't tell what the market will do next, and nobody can say for sure. I can only tell you what has happened to your money so far.", t: "Safe fallback: no prediction", k: "safe" }
+    ]
+  }
+};
+
+const GUIDE = {
+  ask: ["Step 1 · It notices, then asks once", "Six months in, Rahul's value is below what he put in. Today's apps show only the red number, with no reason. Kyun? asks one question before explaining anything, so the answer can fit what he is actually thinking."],
+  revealWhy: ["Step 2 · The reason, in his language", "The answer fits his guess. The numbers come from code (his SIP, his fund's NAV, Nifty 50); the AI only writes the sentence in Hindi, Hinglish or English. It never says what to do."],
+  revealWorth: ["Step 2 · His own yardstick first", "He tapped \"not worth it\" (the people in our research who judged it not worth keeping), so his own progress leads, then the reason. Nothing is hidden, nothing is pushed."],
+  chat: ["Step 3 · Aur poochho (ask more)", "The AI answers questions about his own SIP. Advice and predictions get a safe fallback he can see. Before launch, every answer type is checked against golden sets."],
+  done: ["Step 4 · The reason stays next to the number", "Each time he opens the app, the reason line sits beside his value. The Stop button never moved: leaving stays one tap away."]
+};
+const STEP_NAMES = ["1 Asks", "2 Explains", "3 Ask more", "4 Reason stays"];
+
+let state = { lang: "hn", view: "ask", guess: null, aiRead: false, asked: [] };
+try { const saved = localStorage.getItem("kyun-lang"); if (saved && T[saved]) state.lang = saved; } catch (e) {}
+
+function classify(text) {
+  const s = text.toLowerCase();
+  if (/market|बाज़ार|बाजार/.test(s)) return "market";
+  if (/worth|fayda|faayda|फायदा|kuch nahi ho|कुछ नहीं हो|bekaar|बेकार/.test(s)) return "worth";
+  if (/pata nahi|पता नहीं|samajh nahi|समझ नहीं|don't know|not sure/.test(s)) return "dunno";
+  return "fund";
+}
+
+function sipCard(t, withLine) {
+  return `<div class="sip">
+    <div class="fund">${t.fund}</div>
+    <div class="vals">
+      <div><small>${t.invested}</small><strong>₹6,000</strong></div>
+      <div><small>${t.current}</small><strong>₹5,800</strong> <span class="change">−₹200 (−3.3%)</span></div>
+    </div>
+    ${withLine ? `<div class="reasonline"><b>${t.lineTag}</b><span>${t.line}</span></div>` : ""}
+    <div class="meta"><span>${t.inst}</span><span>${t.next}</span></div>
+  </div>`;
+}
+
+function render() {
+  const t = T[state.lang];
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang)));
+  document.documentElement.lang = state.lang === "hi" ? "hi" : "en";
+  let html = `<div class="appbar"><b>${t.app}</b><span>${t.time}</span></div>`;
+
+  if (state.view === "ask") {
+    html += sipCard(t, false);
+    html += `<div class="kyun">
+      <span class="tag">${t.tag}</span>
+      <div class="q">${t.q}</div>
+      <div class="opts">
+        ${["fund", "market", "dunno", "worth"].map(k => `<button type="button" class="opt" data-guess="${k}">${t.opts[k]}</button>`).join("")}
+      </div>
+      <div class="or">${t.or}</div>
+      <form class="typer" id="typer"><input id="free-text" type="text" placeholder="${t.ph}" aria-label="${t.or}"><button class="btn" type="submit">${t.send}</button></form>
+      <button type="button" class="link" id="fill-example">${t.ex}</button>
+    </div>`;
+  }
+
+  if (state.view === "reveal") {
+    const r = t.rev[state.guess];
+    const yard = `<div class="yard"><span class="chip">${t.y1}</span><span class="chip">${t.y2}</span></div>
+      <div class="goal"><span>${t.goal}</span><div class="track"><div class="fill" style="width:12%"></div></div></div>`;
+    const bars = `<div class="bars">
+        <div class="bar"><span>${t.barM}</span><span class="change">−3.6%</span><div class="track"><div class="fill" style="width:72%"></div></div></div>
+        <div class="bar"><span>${t.barF}</span><span class="change">−3.4%</span><div class="track"><div class="fill you" style="width:68%"></div></div></div>
+      </div>`;
+    html += sipCard(t, false);
+    html += `<div class="kyun">
+      <span class="tag">${t.tag}</span>
+      ${state.aiRead ? `<div class="airead">${t.read[state.guess]}</div>` : ""}
+      <div class="head">${r[0]}</div>
+      ${state.guess === "worth" ? yard + `<div>${r[1]}</div>` + bars : `<div>${r[1]}</div>` + bars + yard}
+      <span class="qc">${t.qc}</span>
+      <div class="row"><button type="button" class="btn" id="ask-more">${t.more}</button><button type="button" class="btn sec" id="got-it">${t.got}</button></div>
+      <div class="notice">${t.notice}</div>
+    </div>`;
+  }
+
+  if (state.view === "chat") {
+    html += `<div class="chat">
+      <div class="row" style="justify-content:space-between;align-items:center"><b>${t.chatT}</b><button type="button" class="link" id="chat-back">${t.back}</button></div>
+      <div class="or">${t.hint}</div>
+      ${state.asked.map(i => `<div class="bubble me">${t.qs[i].q}</div><div class="bubble bot"><span>${t.qs[i].a}</span><span class="btag ${t.qs[i].k}">${t.qs[i].t}</span></div>`).join("")}
+      <div class="sugg">${t.qs.map((x, i) => state.asked.includes(i) ? "" : `<button type="button" class="opt" data-q="${i}">${x.q}</button>`).join("")}</div>
+      <div class="notice">${t.notice}</div>
+    </div>`;
+  }
+
+  if (state.view === "done") {
+    html += sipCard(t, true);
+    html += `<div class="notice">${t.notice}</div>`;
+  }
+
+  html += `<button type="button" class="stop" tabindex="-1">${t.stop}</button>`;
+  document.getElementById("screen").innerHTML = html;
+
+  const key = state.view === "reveal" ? (state.guess === "worth" ? "revealWorth" : "revealWhy") : state.view;
+  const g = GUIDE[key];
+  const extra = state.view === "reveal" && state.aiRead ? "<p><b>AI at work:</b> it read his own words and matched them to a guess type. Each guess becomes a labelled example, which is how the product learns how beginners misread a fall.</p>" : "";
+  document.getElementById("now").innerHTML = `<h2>${g[0]}</h2><p>${g[1]}</p>${extra}`;
+  const idx = { ask: 0, reveal: 1, chat: 2, done: 3 }[state.view];
+  document.getElementById("steps").innerHTML = STEP_NAMES.map((n, i) => `<span class="step${i === idx ? " on" : ""}">${n}</span>`).join("");
+}
+
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("button");
+  if (!el) return;
+  if (el.dataset.lang) { state.lang = el.dataset.lang; try { localStorage.setItem("kyun-lang", state.lang); } catch (err) {} render(); return; }
+  if (el.id === "restart") { state = { ...state, view: "ask", guess: null, aiRead: false, asked: [] }; render(); return; }
+  if (el.dataset.guess) { state.guess = el.dataset.guess; state.aiRead = false; state.view = "reveal"; render(); return; }
+  if (el.id === "fill-example") { const inp = document.getElementById("free-text"); if (inp) { inp.value = T[state.lang].exText; inp.focus(); } return; }
+  if (el.id === "ask-more") { state.view = "chat"; render(); return; }
+  if (el.id === "got-it") { state.view = "done"; render(); return; }
+  if (el.id === "chat-back") { state.view = "done"; render(); return; }
+  if (el.dataset.q !== undefined) { state.asked.push(Number(el.dataset.q)); render(); return; }
+});
+document.addEventListener("submit", (e) => {
+  if (e.target.id !== "typer") return;
+  e.preventDefault();
+  const v = (document.getElementById("free-text").value || "").trim();
+  if (!v) return;
+  state.guess = classify(v); state.aiRead = true; state.view = "reveal"; render();
+});
+render();
+</script>
