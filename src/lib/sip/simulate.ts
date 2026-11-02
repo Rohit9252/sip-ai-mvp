@@ -9,7 +9,7 @@ export type { Move, Setback, SipInput, SipResult, Snapshot } from "./types";
 export const SETBACK_FIRST_MONTH = 4;
 export const SETBACK_LAST_MONTH = 12;
 
-type Instalment = { date: IsoDate; nav: number; units: number };
+export type Instalment = { date: IsoDate; nav: number; units: number };
 
 /** The first NAV on or after a date, or undefined. */
 function firstNavOnOrAfter(navs: NavPoint[], date: IsoDate): NavPoint | undefined {
@@ -27,7 +27,7 @@ function lastNavOnOrBefore(navs: NavPoint[], date: IsoDate): NavPoint | undefine
 }
 
 /** One instalment a month on the SIP day, or the next date that has a NAV. Units = amount / NAV. */
-function buildInstalments(input: SipInput): Instalment[] {
+export function buildInstalments(input: SipInput): Instalment[] {
   const out: Instalment[] = [];
   for (let k = 0; ; k++) {
     const scheduled = `${addMonths(input.startMonth, k)}-${pad2(input.sipDay)}`;
@@ -46,7 +46,7 @@ function isRealDate(isoDate: string): boolean {
 }
 
 /** Refuses input the maths cannot make sense of. The UI checks these first, so this is the last guard. */
-function checkInput(input: SipInput): void {
+export function checkInput(input: SipInput): void {
   if (!Number.isInteger(input.monthlyAmount) || input.monthlyAmount < 1) {
     throw new RangeError("The monthly amount must be a whole number of rupees, 1 or more.");
   }
