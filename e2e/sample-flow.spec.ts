@@ -161,3 +161,23 @@ test("consent: the first visit asks first, in any language, and the About popup 
   await page.reload();
   await expect(page.getByTestId("consent")).toBeHidden();
 });
+
+test("helper: on a phone it can be closed and reopened from the helper button, and keeps the chat", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "the floating helper button is the phone layout");
+  await page.goto("/");
+  await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
+  // Before the setback the button opens what the helper will do, with the basics.
+  await page.getByTestId("helper-fab").click();
+  await expect(page.getByTestId("helper-waiting")).toBeVisible();
+  await page.getByTestId("helper-waiting").getByRole("button", { name: "Close" }).first().click();
+  await page.getByTestId("skip").click();
+  await page.getByTestId("guess-market").click();
+  await expect(page.getByTestId("answer")).toContainText("You read it right.");
+  await page.getByTestId("helper-close").click();
+  await expect(page.getByTestId("helper")).toBeHidden();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: "docs/screens/phone-11-helper-button.png" });
+  await page.getByTestId("helper-fab").click();
+  await expect(page.getByTestId("answer")).toContainText("You read it right.");
+});

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AMFI_LINK, copy } from "@/lib/copy/dictionary";
 import { cheerCopy, deskCopy } from "@/lib/copy/tour";
+import { consentCopy } from "@/lib/copy/consent";
 import { learnCards, learnCopy, learnLink } from "@/lib/copy/learn";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
 import { askQuestion, explain, GUESSES } from "@/lib/helper";
@@ -30,6 +31,7 @@ export function HelperSheet({
   onClose,
   onUnderstood,
   variant = "sheet",
+  hidden = false,
 }: {
   facts: Facts;
   request: SipRequest;
@@ -37,6 +39,8 @@ export function HelperSheet({
   onUnderstood: () => void;
   /** "sheet": slides up over the phone screen. "panel": fills the desktop side column, with no overlay. */
   variant?: "sheet" | "panel";
+  /** Phone: the sheet stays mounted while closed, so the conversation is still there when it opens again. */
+  hidden?: boolean;
 }) {
   const t = useT();
   const { lang } = useLang();
@@ -255,8 +259,8 @@ export function HelperSheet({
 
   return (
     <OverlayLayer>
-      <div className="absolute inset-0 flex flex-col justify-end">
-        <button type="button" aria-label={t(copy.followup.back)} className="anim-scrim absolute inset-0 bg-ink/40" onClick={onClose} />
+      <div className={`absolute inset-0 flex flex-col justify-end ${hidden ? "hidden" : ""}`}>
+        <button type="button" aria-label={t(consentCopy.close)} className="anim-scrim absolute inset-0 bg-ink/40" onClick={onClose} />
         <section
           role="dialog"
           aria-modal="true"
@@ -270,8 +274,8 @@ export function HelperSheet({
               <HelperIcon width={16} height={16} />
             </span>
             <p className="mt-3 text-[15px] font-semibold">{t(deskCopy.helperTitle)}</p>
-            <button type="button" onClick={onClose} className="ml-auto mt-3 rounded-full px-3 py-1.5 text-sm font-medium text-muted hover:bg-surface hover:text-ink">
-              {t(copy.followup.back)}
+            <button type="button" onClick={onClose} className="ml-auto mt-3 rounded-full px-3 py-1.5 text-sm font-medium text-muted hover:bg-surface hover:text-ink" data-testid="helper-close">
+              {t(consentCopy.close)}
             </button>
           </div>
           {thread}

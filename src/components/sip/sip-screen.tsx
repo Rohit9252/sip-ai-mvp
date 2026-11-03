@@ -14,6 +14,8 @@ import { Segmented } from "@/components/ui/segmented";
 import { ArrowLeftIcon, CheckIcon, HelperIcon, TriangleIcon } from "@/components/icons";
 import { HelperSheet, Learn } from "@/components/helper/helper-sheet";
 import { learnCopy } from "@/lib/copy/learn";
+import { consentCopy } from "@/lib/copy/consent";
+import { OverlayLayer } from "@/components/device-shell/overlay-layer";
 import { manageCopy } from "@/lib/copy/manage";
 import { ManageSheet } from "./manage-sheet";
 import { RANGES, ValueChart } from "./value-chart";
@@ -38,6 +40,9 @@ export function SipScreen({ data, onBack, onSample }: Props) {
   const [seenSetback, setSeenSetback] = useState(false);
   const [understood, setUnderstood] = useState(false);
   const [manage, setManage] = useState<"menu" | "withdraw" | null>(null);
+  // A dot on the helper button until the person opens what the helper has to say.
+  const [unread, setUnread] = useState(false);
+  const [waitingOpen, setWaitingOpen] = useState(false);
 
   const snap = snapshots[index];
   const atEnd = index === snapshots.length - 1;
@@ -55,6 +60,17 @@ export function SipScreen({ data, onBack, onSample }: Props) {
       setSheetOpen(true);
       track("setback_shown", { month: snapshots[target].monthNumber });
     }
+  }
+
+  function openHelper() {
+    setUnread(false);
+    if (seenSetback && facts) setSheetOpen(true);
+    else setWaitingOpen(true);
+  }
+
+  function closeHelper() {
+    setSheetOpen(false);
+    if (!understood) setUnread(true);
   }
 
   function understoodNow() {
@@ -140,7 +156,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
 
   const sipCard = (
     <div className="rounded-2xl border border-line bg-paper p-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3">
         <div>
           <p className="text-sm font-semibold">SIP</p>
           <p className="num mt-0.5 text-sm text-muted">
@@ -150,14 +166,14 @@ export function SipScreen({ data, onBack, onSample }: Props) {
           </p>
         </div>
         {/* The stop button never moves and never hides: leaving stays one tap away. */}
-        <div className="flex shrink-0 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => {
               setManage("withdraw");
               track("manage_opened", { from: "withdraw" });
             }}
-            className="rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
+            className="min-h-10 rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
             data-testid="withdraw"
           >
             {t(manageCopy.withdrawButton)}
@@ -168,7 +184,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
               setManage("menu");
               track("manage_opened", { from: "stop" });
             }}
-            className="rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
+            className="min-h-10 rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
             data-tour="stop"
             data-testid="stop"
           >
@@ -341,9 +357,53 @@ export function SipScreen({ data, onBack, onSample }: Props) {
         {endBox && <div className="mx-5 mt-4">{endBox}</div>}
       </main>
 
-      <div className="screen-bottom shrink-0 border-t border-line bg-paper px-5 pb-4 pt-3">{replayControls}</div>
+      <div className="screen-bottom shrink-0 border-t border-line bg-paper px-5 pb-4 pt-3" data-tour="replay">
+        {/* The helper sits in the bar, never over the page, so nothing (least of all Stop SIP) is ever covered. */}
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={openHelper}
+            className="relative inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-primary-soft px-3.5 text-sm font-semibold text-primary ring-1 ring-primary/25"
+            data-testid="helper-fab"
+          >
+            <span className="relative">
+              <HelperIcon width={20} height={20} />
+              {unread && <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-loss ring-2 ring-primary-soft" aria-hidden />}
+            </span>
+            {t(deskCopy.helperTitle)}
+          </button>
+          <button type="button" onClick={() => goTo(index + 1)} disabled={atEnd} className="btn-primary flex-1" data-testid="next-month">
+            {t(copy.replay.next)}
+          </button>
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-3 text-sm font-medium">
+          <button type="button" onClick={() => goTo(0)} disabled={index === 0} className="text-muted disabled:opacity-40">
+            {t(copy.replay.restart)}
+          </button>
+          {setbackIndex > index && (
+            <button type="button" onClick={() => goTo(setbackIndex)} className="text-primary" data-testid="skip">
+              {t(copy.replay.skip)}
+            </button>
+          )}
+        </div>
+      </div>
 
-      {sheetOpen && facts && <HelperSheet facts={facts} request={request} onClose={() => setSheetOpen(false)} onUnderstood={understoodNow} />}
+      {seenSetback && facts && (
+        <HelperSheet hidden={!sheetOpen} facts={facts} request={request} onClose={closeHelper} onUnderstood={understoodNow} />
+      )}
+      {waitingOpen && (
+        <WaitingSheet
+          onClose={() => setWaitingOpen(false)}
+          onSkip={
+            setbackIndex > index
+              ? () => {
+                  setWaitingOpen(false);
+                  goTo(setbackIndex);
+                }
+              : undefined
+          }
+        />
+      )}
       {manageSheet}
     </div>
   );
@@ -412,5 +472,44 @@ function FirstYear({
         </tbody>
       </table>
     </div>
+  );
+}
+
+/** Phone, before the setback: what the helper will do, and the basics to read meanwhile. */
+function WaitingSheet({ onClose, onSkip }: { onClose: () => void; onSkip?: () => void }) {
+  const t = useT();
+  return (
+    <OverlayLayer>
+      <div className="absolute inset-0 flex flex-col justify-end">
+        <button type="button" aria-label={t(consentCopy.close)} className="anim-scrim absolute inset-0 bg-ink/40" onClick={onClose} />
+        <section
+          role="dialog"
+          aria-modal="true"
+          aria-label={t(deskCopy.helperTitle)}
+          className="anim-sheet relative flex max-h-[85%] flex-col rounded-t-3xl bg-paper shadow-(--shadow-sheet)"
+          data-testid="helper-waiting"
+        >
+          <div className="flex shrink-0 items-center gap-2.5 border-b border-line px-4 pb-3 pt-4">
+            <span className="grid size-8 place-items-center rounded-full bg-primary text-paper" aria-hidden>
+              <HelperIcon width={16} height={16} />
+            </span>
+            <p className="text-[15px] font-semibold">{t(deskCopy.helperTitle)}</p>
+            <button type="button" onClick={onClose} className="ml-auto rounded-full px-3 py-1.5 text-sm font-medium text-muted hover:bg-surface hover:text-ink">
+              {t(consentCopy.close)}
+            </button>
+          </div>
+          <div className="scroll-soft min-h-0 overflow-y-auto px-5 pb-6 pt-4">
+            <p className="text-sm leading-relaxed text-muted">{t(deskCopy.helperWaiting)}</p>
+            {onSkip && (
+              <button type="button" onClick={onSkip} className="mt-3 text-sm font-semibold text-primary">
+                {t(copy.replay.skip)}
+              </button>
+            )}
+            <h3 className="mt-6 text-[13px] font-semibold">{t(learnCopy.heading)}</h3>
+            <Learn />
+          </div>
+        </section>
+      </div>
+    </OverlayLayer>
   );
 }
