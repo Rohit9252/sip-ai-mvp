@@ -1,5 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+/** The flow tests start with both tours already seen; the tour has its own test below. */
+test.beforeEach(async ({ page }, info) => {
+  if (info.title.startsWith("tour")) return;
+  await page.addInitScript(() => {
+    localStorage.setItem("sip-ai-tour-setup", "seen");
+    localStorage.setItem("sip-ai-tour-sip", "seen");
+  });
+});
+
 /** The sample SIP from set-up to the reason line, with screenshots at each step (docs/screens/). */
 test("sample SIP: replay to the setback, tap a guess, read the reason, ask a follow-up", async ({ page }, info) => {
   const shot = (name: string) => page.screenshot({ path: `docs/screens/${info.project.name}-${name}.png` });
@@ -44,4 +53,32 @@ test("Hindi: the helper card speaks Hindi", async ({ page }, info) => {
   await page.getByTestId("guess-market").click();
   await expect(page.getByTestId("answer")).toContainText("आपने सही समझा।");
   await page.screenshot({ path: `docs/screens/${info.project.name}-7-hindi.png` });
+});
+
+test("tour: first visit spotlights each part, and it does not come back", async ({ page }, info) => {
+  await page.goto("/");
+  const tour = page.getByTestId("tour");
+  await expect(tour).toBeVisible();
+  await expect(tour).toContainText("A concept, not advice");
+  await page.screenshot({ path: `docs/screens/${info.project.name}-0-tour-1.png` });
+  await page.getByTestId("tour-next").click();
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toContainText("Start with a real sample");
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-0-tour-3.png` });
+  await page.getByTestId("tour-next").click();
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toBeHidden();
+
+  await page.getByTestId("sample").click();
+  await expect(tour).toBeVisible();
+  await expect(tour).toContainText("Your money at a glance");
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-0-tour-sip.png` });
+  await page.getByTestId("tour-skip").click();
+  await expect(tour).toBeHidden();
+
+  await page.reload();
+  await expect(page.getByTestId("sample")).toBeVisible();
+  await expect(tour).toBeHidden();
 });

@@ -9,6 +9,8 @@ import type { SetupField, SipRequest } from "@/lib/setup/rules";
 import { useLang, useT } from "@/components/lang/lang-provider";
 import { useToday } from "@/hooks/use-today";
 import { SearchIcon } from "@/components/icons";
+import { deskCopy } from "@/lib/copy/tour";
+import { useLayoutMode } from "@/components/device-shell/layout-mode";
 
 /** Fund, start month, monthly amount and SIP date, or the sample SIP. No name, phone or PAN (ADR-0004). */
 export function SetupScreen({
@@ -23,6 +25,7 @@ export function SetupScreen({
   const t = useT();
   const { lang } = useLang();
   const today = useToday();
+  const desktop = useLayoutMode() === "desktop";
 
   const [query, setQuery] = useState("");
   const [found, setFound] = useState<{ query: string; funds: FundSearchResult[] } | null>(null);
@@ -68,11 +71,14 @@ export function SetupScreen({
     if (check.request) onSubmit(check.request);
   }
 
-  return (
-    <main className="scroll-soft flex-1 overflow-y-auto">
-      <form onSubmit={submit} noValidate className="mx-auto flex max-w-md flex-col gap-5 px-5 pb-8 pt-6">
+  const form = (
+      <form
+        onSubmit={submit}
+        noValidate
+        className={desktop ? "flex flex-col gap-5 rounded-2xl bg-paper p-7 ring-1 ring-line" : "mx-auto flex max-w-md flex-col gap-5 px-5 pb-8 pt-6"}
+      >
         <div>
-          <h1 className="text-2xl font-semibold leading-tight">{t(copy.setup.title)}</h1>
+          <h1 className={`font-semibold leading-tight ${desktop ? "text-xl" : "text-2xl"}`}>{t(copy.setup.title)}</h1>
           <p className="mt-1.5 text-[15px] text-muted">{t(copy.setup.sub)}</p>
         </div>
 
@@ -87,6 +93,7 @@ export function SetupScreen({
           onClick={onSample}
           className="flex min-h-12 items-center justify-center rounded-xl bg-primary-soft px-4 text-[15px] font-semibold text-primary ring-1 ring-primary/20 transition-colors hover:bg-primary/10"
           data-testid="sample"
+          data-tour="sample"
         >
           {t(copy.setup.sample)}
         </button>
@@ -97,6 +104,7 @@ export function SetupScreen({
           <span className="h-px flex-1 bg-line" />
         </div>
 
+        <div className="flex flex-col gap-5" data-tour="form">
         <Field label={t(copy.setup.fund)} error={errors.fund ? t(copy.setup.errFund) : undefined} htmlFor="fund">
           {fund ? (
             <div className="flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5">
@@ -197,7 +205,29 @@ export function SetupScreen({
         <button type="submit" className="btn-primary mt-1">
           {t(copy.setup.show)}
         </button>
+        </div>
       </form>
+  );
+
+  if (!desktop) return <main className="scroll-soft flex-1 overflow-y-auto">{form}</main>;
+
+  return (
+    <main className="scroll-soft flex-1 overflow-y-auto">
+      <div className="mx-auto grid max-w-[1100px] grid-cols-[minmax(0,1fr)_440px] items-start gap-14 px-8 py-14">
+        <section className="pt-6">
+          <h2 className="max-w-[16ch] text-balance text-[40px] font-semibold leading-[1.1] tracking-tight">{t(deskCopy.introTitle)}</h2>
+          <ol className="mt-10 flex flex-col gap-6">
+            {deskCopy.introSteps.map((step, i) => (
+              <li key={step.en} className="flex items-start gap-4">
+                <span className="num grid size-8 shrink-0 place-items-center rounded-full bg-primary-soft text-sm font-semibold text-primary">{i + 1}</span>
+                <p className="max-w-[46ch] pt-1 text-[17px] leading-relaxed text-ink">{t(step)}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-10 max-w-[52ch] text-sm leading-relaxed text-muted">{t(copy.common.notice)}</p>
+        </section>
+        {form}
+      </div>
     </main>
   );
 }

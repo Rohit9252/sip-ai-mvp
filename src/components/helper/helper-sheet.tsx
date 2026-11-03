@@ -10,7 +10,7 @@ import type { Facts } from "@/lib/sip";
 import { track } from "@/lib/events";
 import { OverlayLayer } from "@/components/device-shell/overlay-layer";
 import { useLang, useT } from "@/components/lang/lang-provider";
-import { ArrowLeftIcon } from "@/components/icons";
+import { ArrowLeftIcon, CheckIcon, HelperIcon, ShieldIcon, TriangleIcon } from "@/components/icons";
 
 const OPTION = { fund: copy.helper.optFund, market: copy.helper.optMarket, dunno: copy.helper.optDunno, worth: copy.helper.optWorth };
 type Turn = { question: string; reply?: FollowupResponse; failed?: boolean };
@@ -25,11 +25,14 @@ export function HelperSheet({
   request,
   onClose,
   onUnderstood,
+  variant = "sheet",
 }: {
   facts: Facts;
   request: SipRequest;
   onClose: () => void;
   onUnderstood: () => void;
+  /** "sheet": slides up over the phone screen. "panel": sits in the desktop side column, with no overlay. */
+  variant?: "sheet" | "panel";
 }) {
   const t = useT();
   const { lang } = useLang();
@@ -67,23 +70,13 @@ export function HelperSheet({
     track("guess_chosen", { guess: g, misread: e.misread, case: e.case });
   }
 
-  return (
-    <OverlayLayer>
-      <div className="absolute inset-0 flex flex-col justify-end">
-        <button type="button" aria-label={t(copy.followup.back)} className="anim-scrim absolute inset-0 bg-ink/40" onClick={onClose} />
-        <section
-          role="dialog"
-          aria-modal="true"
-          aria-label={t(copy.helper.hello)}
-          className="anim-sheet relative flex max-h-[90%] flex-col rounded-t-3xl bg-paper shadow-(--shadow-sheet)"
-          data-testid="helper"
-        >
-          <span className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-line" aria-hidden />
+  const inner = (
+    <>
           {step === "card" ? (
             <div className="scroll-soft overflow-y-auto px-5 pb-6 pt-3">
               <div className="flex items-start gap-3">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-paper" aria-hidden>
-                  ?
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-paper" aria-hidden>
+                  <HelperIcon width={18} height={18} />
                 </span>
                 <div className="rounded-2xl rounded-tl-sm bg-surface px-3.5 py-2.5">
                   <p className="text-[15px] leading-snug">{t(copy.helper.hello)}</p>
@@ -137,7 +130,7 @@ export function HelperSheet({
                         <div className="flex items-baseline justify-between text-sm">
                           <span>{bar.label}</span>
                           <span className={`num font-semibold ${bar.direction === "down" ? "text-loss" : bar.direction === "up" ? "text-gain" : ""}`}>
-                            {bar.direction === "down" ? "▼ " : bar.direction === "up" ? "▲ " : ""}
+                            {bar.direction !== "flat" && <TriangleIcon direction={bar.direction} width={10} height={10} className="mr-1 inline align-baseline" />}
                             {bar.text}
                           </span>
                         </div>
@@ -156,7 +149,8 @@ export function HelperSheet({
 
                   {reason && (
                     <p className="mt-3 text-xs font-medium text-gain" data-testid="quality-tag">
-                      {reason.source === "ai" ? t(copy.helper.checked) : `✓ ${t(copy.common.tagNumbers)}`}
+                      <CheckIcon width={14} height={14} className="mr-1 inline align-[-2px]" />
+                      {reason.source === "ai" ? t(copy.helper.checked) : t(copy.common.tagNumbers)}
                     </p>
                   )}
                   <p className="mt-1 text-xs text-muted">{t(copy.common.notice)}</p>
@@ -175,6 +169,30 @@ export function HelperSheet({
           ) : (
             <FollowupChat facts={facts} request={request} onBack={() => setStep("card")} onDone={onUnderstood} />
           )}
+    </>
+  );
+
+  if (variant === "panel") {
+    return (
+      <section aria-label={t(copy.helper.hello)} className="anim-settle flex min-h-0 flex-col" data-testid="helper">
+        {inner}
+      </section>
+    );
+  }
+
+  return (
+    <OverlayLayer>
+      <div className="absolute inset-0 flex flex-col justify-end">
+        <button type="button" aria-label={t(copy.followup.back)} className="anim-scrim absolute inset-0 bg-ink/40" onClick={onClose} />
+        <section
+          role="dialog"
+          aria-modal="true"
+          aria-label={t(copy.helper.hello)}
+          className="anim-sheet relative flex max-h-[90%] flex-col rounded-t-3xl bg-paper shadow-(--shadow-sheet)"
+          data-testid="helper"
+        >
+          <span className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-line" aria-hidden />
+          {inner}
         </section>
       </div>
     </OverlayLayer>
@@ -242,7 +260,8 @@ function FollowupChat({ request, onBack, onDone }: { facts: Facts; request: SipR
                   </a>
                 )}
                 <p className={`mt-1.5 text-[11px] font-semibold ${turn.reply.source === "ai" ? "text-gain" : "text-primary"}`} data-testid="reply-tag">
-                  {turn.reply.source === "ai" ? `✓ ${t(copy.common.tagNumbers)}` : `🛡 ${t(copy.common.tagSafe)}`}
+                  {turn.reply.source === "ai" ? <CheckIcon width={13} height={13} className="mr-1 inline align-[-2px]" /> : <ShieldIcon width={13} height={13} className="mr-1 inline align-[-2px]" />}
+                  {turn.reply.source === "ai" ? t(copy.common.tagNumbers) : t(copy.common.tagSafe)}
                 </p>
               </div>
             ) : turn.failed ? (

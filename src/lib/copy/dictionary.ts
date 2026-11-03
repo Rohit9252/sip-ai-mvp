@@ -187,9 +187,9 @@ export const copy = {
     barMarket: e("Whole market (Nifty 50)", "पूरा market (Nifty 50)", "Poora market (Nifty 50)"),
     barFund: e("Your fund", "आपका fund", "Aapka fund"),
     checked: e(
-      "✓ Every number checked against your data",
-      "✓ हर number आपके data से check किया गया",
-      "✓ Har number aapke data se check kiya gaya",
+      "Every number checked against your data",
+      "हर number आपके data से check किया गया",
+      "Har number aapke data se check kiya gaya",
     ),
     /** NEW. The dates under the two bars. */
     between: e("{from} to {to}", "{from} से {to} तक", "{from} se {to} tak"),

@@ -117,19 +117,25 @@ button {
     background: var(--color-ground);
   }
   .shell-switch {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 60;
     display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1.25rem 1rem 0.25rem;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: var(--color-paper);
+    box-shadow: 0 1px 2px rgba(31, 36, 50, 0.08), 0 10px 30px -10px rgba(31, 36, 50, 0.35);
   }
   .shell-stage {
     display: flex;
     justify-content: center;
-    padding: 0.75rem 1rem 1.5rem;
+    padding: 1.5rem 1rem;
   }
   .shell[data-view="phone"] .device {
     width: 412px;
-    height: min(866px, calc(100dvh - 6.5rem));
+    height: min(866px, calc(100dvh - 3rem));
     min-height: 560px;
     padding: 11px;
     border-radius: 2.75rem;
@@ -171,14 +177,19 @@ button {
   .shell[data-view="phone"] .screen-bottom {
     padding-bottom: 1.25rem;
   }
+  /* Desktop: a real page that fills the window, with its own two-column layout. */
+  .shell[data-view="desktop"] {
+    background: var(--color-surface);
+  }
+  .shell[data-view="desktop"] .shell-stage {
+    padding: 0;
+  }
   .shell[data-view="desktop"] .device {
-    width: 560px;
-    height: calc(100dvh - 6.5rem);
-    min-height: 560px;
-    border-radius: 1.25rem;
-    background: var(--color-paper);
-    box-shadow: var(--shadow-lift);
-    overflow: hidden;
+    width: 100%;
+    height: 100dvh;
+  }
+  .shell[data-view="desktop"] .screen {
+    background: var(--color-surface);
   }
 }
 
@@ -242,7 +253,9 @@ button {
   }
 }
 
-/* ---------- Controls ---------- */
+/* ---------- Controls (in the components layer, so Tailwind utilities like pl-10 can still adjust them) ---------- */
+
+@layer components {
 
 .input {
   display: block;
@@ -316,5 +329,27 @@ button {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+}
+
+/* ---------- First-visit tour: a spotlight that glides from part to part ---------- */
+
+.tour-spot {
+  box-shadow: 0 0 0 9999px rgba(20, 24, 36, 0.58);
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  transition: top 320ms cubic-bezier(0.16, 1, 0.3, 1), left 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 320ms cubic-bezier(0.16, 1, 0.3, 1), height 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tour-card {
+  box-shadow: 0 2px 6px rgba(20, 24, 36, 0.12), 0 24px 48px -16px rgba(20, 24, 36, 0.45);
+  transition: top 320ms cubic-bezier(0.16, 1, 0.3, 1), left 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: settle 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-spot,
+  .tour-card {
+    transition: none;
+    animation: none;
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { copy } from "@/lib/copy/dictionary";
+import { setupTour, sipTour } from "@/lib/copy/tour";
 import type { ApiError, SipResponse } from "@/lib/api/types";
 import type { SipRequest } from "@/lib/setup/rules";
 import { SAMPLE_SIP } from "@/lib/sip/sample";
@@ -9,6 +10,7 @@ import { useT } from "@/components/lang/lang-provider";
 import { Strip } from "@/components/strip";
 import { SetupScreen } from "@/components/setup/setup-screen";
 import { SipScreen } from "@/components/sip/sip-screen";
+import { Tour, useTour } from "@/components/tour/tour";
 import { track } from "@/lib/events";
 
 type View =
@@ -23,10 +25,15 @@ export const SAMPLE_REQUEST: SipRequest = {
   sipDay: SAMPLE_SIP.sipDay,
 };
 
-/** The two screens: set up a SIP (or pick the sample), then the SIP page with its replay and helper card. */
+/**
+ * The two screens: set up a SIP (or pick the sample), then the SIP page with its replay and helper. Each screen has a
+ * short first-visit tour that spotlights its parts; it shows once, can be skipped, and can be replayed from the top.
+ */
 export function App() {
   const [view, setView] = useState<View>({ kind: "setup" });
   const t = useT();
+  const setupGuide = useTour("sip-ai-tour-setup");
+  const sipGuide = useTour("sip-ai-tour-sip");
 
   async function open(request: SipRequest, isSample: boolean) {
     setView({ kind: "loading" });
@@ -48,9 +55,11 @@ export function App() {
     }
   }
 
+  const guide = view.kind === "setup" ? setupGuide : view.kind === "sip" ? sipGuide : null;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <Strip />
+      <Strip onHelp={guide?.start} page={view.kind === "sip" ? "sip" : "setup"} />
       {view.kind === "setup" && (
         <SetupScreen problem={view.problem} onSubmit={(r) => open(r, false)} onSample={() => open(SAMPLE_REQUEST, true)} />
       )}
@@ -68,6 +77,8 @@ export function App() {
           onSample={() => open(SAMPLE_REQUEST, true)}
         />
       )}
+      {view.kind === "setup" && setupGuide.open && <Tour key="setup" steps={setupTour} onClose={setupGuide.close} />}
+      {view.kind === "sip" && sipGuide.open && <Tour key="sip" steps={sipTour} onClose={sipGuide.close} />}
     </div>
   );
 }

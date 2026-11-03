@@ -28,12 +28,15 @@ export function ValueChart({
   range,
   tone,
   label,
+  className = "h-37.5",
 }: {
   series: DailyPoint[];
   endDate: string;
   range: Range;
   tone: "gain" | "loss" | "flat";
   label: string;
+  /** The rendered height. The drawing stretches to fill it. */
+  className?: string;
 }) {
   const paths = useMemo(() => {
     const upTo = series.filter((p) => p.date <= endDate);
@@ -61,16 +64,25 @@ export function ValueChart({
 
   const colour = tone === "loss" ? "var(--color-loss)" : tone === "gain" ? "var(--color-gain)" : "var(--color-muted)";
 
+  // The drawing stretches to the box, so the end dot is drawn in HTML to stay round.
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="block h-37.5 w-full overflow-visible" role="img" aria-label={label} data-testid="chart">
+    <div className={`relative ${className}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="block h-full w-full overflow-visible" preserveAspectRatio="none" role="img" aria-label={label} data-testid="chart">
+        {paths && (
+          <>
+            <path d={paths.area} fill={colour} opacity="0.1" />
+            <path d={paths.zeroLine} fill="none" stroke="var(--color-muted)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.8" vectorEffect="non-scaling-stroke" />
+            <path d={paths.line} fill="none" stroke={colour} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+          </>
+        )}
+      </svg>
       {paths && (
-        <>
-          <path d={paths.area} fill={colour} opacity="0.1" />
-          <path d={paths.zeroLine} fill="none" stroke="var(--color-muted)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.8" vectorEffect="non-scaling-stroke" />
-          <path d={paths.line} fill="none" stroke={colour} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-          <circle cx={W} cy={paths.lastY} r="3.5" fill={colour} />
-        </>
+        <span
+          className="absolute size-2 -translate-y-1/2 translate-x-1/2 rounded-full"
+          style={{ right: 0, top: `${(paths.lastY / H) * 100}%`, background: colour }}
+          aria-hidden
+        />
       )}
-    </svg>
+    </div>
   );
 }

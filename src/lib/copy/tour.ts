@@ -1,0 +1,125 @@
+import type { Entry } from "./dictionary";
+
+/**
+ * Words for the first-visit tour and the desktop layout, in the same three languages and plain style as
+ * dictionary.ts. Kept apart so the tour can change without touching the reviewed copy deck. No em dashes.
+ */
+const e = (en: string, hi: string, hn: string): Entry => ({ en, hi, hn });
+
+export type TourStep = { target: string; title: Entry; body: Entry };
+
+export const tourCopy = {
+  next: e("Next", "आगे", "Aage"),
+  back: e("Back", "पीछे", "Peeche"),
+  skip: e("Skip tour", "Tour छोड़ें", "Tour chhodo"),
+  done: e("Start", "शुरू करें", "Shuru karein"),
+  stepOf: e("{n} of {total}", "{total} में से {n}", "{total} mein se {n}"),
+  replay: e("Show me around", "मुझे घुमाकर दिखाएँ", "Mujhe ghuma ke dikhao"),
+};
+
+/** The set-up screen: what this is, the language, the sample, and your own SIP. */
+export const setupTour: TourStep[] = [
+  {
+    target: "strip",
+    title: e("A concept, not advice", "एक concept, सलाह नहीं", "Ek concept, salaah nahi"),
+    body: e(
+      "This shows how a Groww SIP page could explain a fall. It is a course project, not made by Groww, and never tells you what to do.",
+      "ये दिखाता है कि Groww का SIP page एक गिरावट को कैसे समझा सकता है। ये एक course project है, Groww ने नहीं बनाया, और ये कभी नहीं बताता कि आप क्या करें।",
+      "Ye dikhata hai ki Groww ka SIP page ek girawat ko kaise samjha sakta hai. Ye ek course project hai, Groww ne nahi banaya, aur ye kabhi nahi batata ki aap kya karein.",
+    ),
+  },
+  {
+    target: "lang",
+    title: e("Your language", "आपकी भाषा", "Aapki bhasha"),
+    body: e(
+      "Read everything in English, Hindi or Hinglish. Switch any time.",
+      "सब कुछ English, हिंदी या Hinglish में पढ़ें। कभी भी बदलें।",
+      "Sab kuch English, Hindi ya Hinglish mein padhein. Kabhi bhi badlein.",
+    ),
+  },
+  {
+    target: "sample",
+    title: e("Start with a real sample", "एक असली sample से शुरू करें", "Ek asli sample se shuru karein"),
+    body: e(
+      "A ₹5,000 monthly SIP in a real fund, on real prices. It reaches its first fall in month 8.",
+      "एक असली fund में हर महीने ₹5,000 की SIP, असली कीमतों पर। महीना 8 में इसकी पहली गिरावट आती है।",
+      "Ek asli fund mein har mahine ₹5,000 ki SIP, asli keematon par. Mahina 8 mein iski pehli girawat aati hai.",
+    ),
+  },
+  {
+    target: "form",
+    title: e("Or try your own SIP", "या अपनी SIP देखें", "Ya apni SIP dekho"),
+    body: e(
+      "Pick your fund, start month and amount. We never ask for your name, phone or PAN.",
+      "अपना fund, शुरू का महीना और रकम चुनें। हम कभी आपका नाम, phone या PAN नहीं माँगते।",
+      "Apna fund, shuru ka mahina aur rakam chuniye. Hum kabhi aapka naam, phone ya PAN nahi maangte.",
+    ),
+  },
+];
+
+/** The SIP page: the numbers, the chart, the replay, and the stop button that never moves. */
+export const sipTour: TourStep[] = [
+  {
+    target: "stats",
+    title: e("Your money at a glance", "एक नज़र में आपका पैसा", "Ek nazar mein aapka paisa"),
+    body: e(
+      "What your SIP is worth, what you put in, and the difference, with an arrow and a sign so colour is never the only clue.",
+      "आपकी SIP की value, आपने कितना लगाया, और दोनों का फ़र्क, तीर और निशान के साथ, ताकि सिर्फ़ रंग पर न टिकना पड़े।",
+      "Aapki SIP ki value, aapne kitna lagaya, aur dono ka farq, teer aur nishaan ke saath, taaki sirf rang par na tikna pade.",
+    ),
+  },
+  {
+    target: "chart",
+    title: e("Returns over time", "समय के साथ returns", "Samay ke saath returns"),
+    body: e(
+      "The dashed line is what you put in. When the line goes under it, your SIP is worth less than you put in.",
+      "Dashed line आपका लगाया हुआ पैसा है। जब line उसके नीचे जाती है, तो आपकी SIP की value लगाए हुए पैसे से कम होती है।",
+      "Dashed line aapka lagaya hua paisa hai. Jab line uske neeche jaati hai, to aapki SIP ki value lagaye hue paise se kam hoti hai.",
+    ),
+  },
+  {
+    target: "replay",
+    title: e("Walk your first year", "अपना पहला साल देखें", "Apna pehla saal dekho"),
+    body: e(
+      "Move one month at a time. At the first month your value falls below what you put in, the helper steps in.",
+      "एक-एक महीना आगे बढ़ें। जिस महीने पहली बार value लगाए हुए पैसे से नीचे जाएगी, helper आपसे बात करेगा।",
+      "Ek-ek mahina aage badho. Jis mahine pehli baar value lagaye hue paise se neeche jaayegi, helper aapse baat karega.",
+    ),
+  },
+  {
+    target: "stop",
+    title: e("The way out stays put", "बाहर का रास्ता अपनी जगह रहता है", "Bahar ka raasta apni jagah rehta hai"),
+    body: e(
+      "Stop SIP never moves or hides. In this concept it changes nothing.",
+      "SIP रोकें का बटन कभी नहीं हिलता या छिपता। इस concept में ये कुछ नहीं बदलता।",
+      "SIP roko ka button kabhi nahi hilta ya chhupta. Is concept mein ye kuch nahi badalta.",
+    ),
+  },
+];
+
+/** The desktop layout: the side panel before the setback, and the month-by-month list. */
+export const deskCopy = {
+  crumb: e("Mutual funds", "Mutual funds", "Mutual funds"),
+  page: e("Your SIP", "आपकी SIP", "Aapki SIP"),
+  conceptPill: e("Concept · not investment advice", "Concept · निवेश सलाह नहीं", "Concept · investment advice nahi"),
+  monthOfSip: e("Month of SIP", "SIP का महीना", "SIP ka mahina"),
+  helperTitle: e("Your helper", "आपका helper", "Aapka helper"),
+  helperWaiting: e(
+    "When your value first falls below what you put in, I'll ask what you think happened, then show what moved your money.",
+    "जब आपकी value पहली बार लगाए हुए पैसे से नीचे जाएगी, मैं पूछूँगा कि आपको क्या लगता है, फिर दिखाऊँगा कि आपके पैसे को किसने हिलाया।",
+    "Jab aapki value pehli baar lagaye hue paise se neeche jaayegi, main poochhunga ki aapko kya lagta hai, phir dikhaunga ki aapke paise ko kisne hilaya.",
+  ),
+  firstYear: e("Your first year, month by month", "आपका पहला साल, महीने-दर-महीने", "Aapka pehla saal, mahine-dar-mahine"),
+  setbackTag: e("First setback", "पहला setback", "Pehla setback"),
+  month: e("Month", "महीना", "Mahina"),
+  introTitle: e(
+    "See what moved your SIP, in your language",
+    "अपनी भाषा में देखें कि आपकी SIP को किसने हिलाया",
+    "Apni bhasha mein dekhein ki aapki SIP ko kisne hilaya",
+  ),
+  introSteps: [
+    e("Replay your SIP month by month, on real fund prices.", "अपनी SIP को असली कीमतों पर महीने-दर-महीने चलाकर देखें।", "Apni SIP ko asli keematon par mahine-dar-mahine chala ke dekhein."),
+    e("At the first fall, say what you think happened.", "पहली गिरावट पर बताएँ कि आपको क्या लगता है।", "Pehli girawat par bataiye ki aapko kya lagta hai."),
+    e("See your fund against the whole market, and ask more.", "अपने fund को पूरे market के सामने देखें, और सवाल पूछें।", "Apne fund ko poore market ke saamne dekhein, aur sawaal poochiye."),
+  ],
+};
