@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AMFI_LINK, copy } from "@/lib/copy/dictionary";
-import { cheerCopy, deskCopy } from "@/lib/copy/tour";
+import { cheerCopy, deskCopy, helperTourAnswer, helperTourAsk } from "@/lib/copy/tour";
+import { Tour, useTour } from "@/components/tour/tour";
 import { consentCopy } from "@/lib/copy/consent";
 import { learnCards, learnCopy, learnLink } from "@/lib/copy/learn";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
@@ -113,11 +114,22 @@ export function HelperSheet({
     setTurns((all) => all.map((turn, i) => (i === all.length - 1 ? (reply ? { ...turn, reply } : { ...turn, failed: true }) : turn)));
   }
 
+  // The helper's own tour: once when it opens, once when its first answer arrives (a phone sheet only while open).
+  const askGuide = useTour("sip-ai-tour-helper-ask");
+  const answerGuide = useTour("sip-ai-tour-helper-answer");
+  const guideSteps = hidden ? null : !guess && askGuide.open ? "ask" : reason && answerGuide.open ? "answer" : null;
+  const guide =
+    guideSteps === "ask" ? (
+      <Tour key="helper-ask" steps={helperTourAsk} onClose={askGuide.close} />
+    ) : guideSteps === "answer" ? (
+      <Tour key="helper-answer" steps={helperTourAnswer} onClose={answerGuide.close} />
+    ) : null;
+
   const cheer = guess === "dunno" ? cheerCopy.asked : guess === "worth" ? cheerCopy.worth : plain?.misread ? cheerCopy.misread : cheerCopy.right;
 
   const thread = (
     <div className="scroll-soft min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-3" aria-live="polite">
-      <HelperSays>
+      <HelperSays tour="helper-ask">
         <p>{t(copy.helper.hello)}</p>
         <p className="mt-1 font-semibold" data-testid="ask">
           {askQuestion(facts, lang)}
@@ -125,7 +137,7 @@ export function HelperSheet({
       </HelperSays>
 
       {!guess ? (
-        <div className="ml-11 mt-2 grid grid-cols-2 gap-2" role="group" aria-label={askQuestion(facts, lang)}>
+        <div className="ml-11 mt-2 grid grid-cols-2 gap-2" role="group" aria-label={askQuestion(facts, lang)} data-tour="helper-choices">
           {GUESSES.map((g) => (
             <button
               key={g}
@@ -146,7 +158,7 @@ export function HelperSheet({
 
       {guess && plain && reason && (
         <>
-          <HelperSays testId="answer" anchorRef={answerRef}>
+          <HelperSays testId="answer" anchorRef={answerRef} tour="helper-answer">
             {reason.opening.map((line) => (
               <p key={line} className="text-[16px] font-semibold">
                 {line}
@@ -204,6 +216,7 @@ export function HelperSheet({
 
   const footer = reason ? (
     <div className="screen-bottom shrink-0 border-t border-line bg-paper px-4 pb-4 pt-3" data-testid="chat">
+      <div data-tour="helper-chat">
       <div className="-mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
         {SUGGESTED.map((q) => (
           <button
@@ -237,9 +250,10 @@ export function HelperSheet({
           {t(copy.followup.send)}
         </button>
       </form>
+      </div>
       <div className="mt-2.5 flex items-center justify-between gap-3">
         <p className="text-[11px] leading-snug text-muted">{t(copy.common.notice)}</p>
-        <button type="button" onClick={onUnderstood} className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper" data-testid="got-it">
+        <button type="button" onClick={onUnderstood} className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper" data-testid="got-it" data-tour="helper-gotit">
           {t(copy.helper.got)}
         </button>
       </div>
@@ -253,6 +267,7 @@ export function HelperSheet({
       <section aria-label={t(copy.helper.hello)} className="flex min-h-0 flex-1 flex-col bg-surface/60" data-testid="helper">
         {thread}
         {footer}
+        {guide}
       </section>
     );
   }
@@ -281,6 +296,7 @@ export function HelperSheet({
           {thread}
           {footer}
         </section>
+        {guide}
       </div>
     </OverlayLayer>
   );
@@ -292,14 +308,17 @@ function HelperSays({
   tone = "plain",
   testId,
   anchorRef,
+  tour,
 }: {
   children: React.ReactNode;
   tone?: "plain" | "cheer";
   testId?: string;
   anchorRef?: React.Ref<HTMLDivElement>;
+  /** A target for the helper's tour. */
+  tour?: string;
 }) {
   return (
-    <div ref={anchorRef} className="anim-settle mt-3 flex scroll-mt-3 items-start gap-2.5" data-testid={testId}>
+    <div ref={anchorRef} className="anim-settle mt-3 flex scroll-mt-3 items-start gap-2.5" data-testid={testId} data-tour={tour}>
       <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-paper" aria-hidden>
         <HelperIcon width={15} height={15} />
       </span>

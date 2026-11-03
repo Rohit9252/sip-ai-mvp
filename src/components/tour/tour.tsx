@@ -65,6 +65,8 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
   const [box, setBox] = useState<Box | null>(null);
   const [hostSize, setHostSize] = useState({ width: 0, height: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
+  // The card's real height, so it sits fully above or below the spotlight and never covers it.
+  const [cardH, setCardH] = useState(200);
   const step = steps[index];
   const last = index === steps.length - 1;
 
@@ -104,6 +106,14 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
   }, [index]);
 
   useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    const observer = new ResizeObserver(() => setCardH(card.offsetHeight));
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [host]);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") setIndex((i) => Math.min(i + 1, steps.length - 1));
@@ -121,7 +131,7 @@ export function Tour({ steps, onClose }: { steps: TourStep[]; onClose: () => voi
   let cardLeft = (hostSize.width - cardWidth) / 2;
   if (box) {
     const below = box.top + box.height + GAP;
-    cardTop = below + 190 < hostSize.height ? below : Math.max(16, box.top - GAP - 190);
+    cardTop = below + cardH + 16 < hostSize.height ? below : Math.max(16, box.top - GAP - cardH);
     cardLeft = Math.min(Math.max(16, box.left + box.width / 2 - cardWidth / 2), hostSize.width - cardWidth - 16);
   }
 

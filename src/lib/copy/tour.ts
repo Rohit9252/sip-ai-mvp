@@ -201,3 +201,55 @@ export const cheerCopy = {
   learnHint: e("Want the basics behind this?", "इसके पीछे की बुनियादी बातें जानना चाहेंगे?", "Iske peeche ki basic baatein jaanna chahenge?"),
   typing: e("Helper is checking your numbers", "Helper आपके numbers check कर रहा है", "Helper aapke numbers check kar raha hai"),
 };
+
+/** The helper's own tour, in two parts: when it first opens, and when its first answer arrives. */
+export const helperTourAsk: TourStep[] = [
+  {
+    target: "helper-ask",
+    title: e("Your helper steps in at the first fall", "पहली गिरावट पर आपका helper आता है", "Pehli girawat par aapka helper aata hai"),
+    body: e(
+      "When your value first goes below what you put in, the helper asks one question. It never tells you what to do: it explains what happened.",
+      "जब आपकी value पहली बार लगाए हुए पैसे से नीचे जाती है, helper एक सवाल पूछता है। ये कभी नहीं बताता कि आप क्या करें: ये समझाता है कि क्या हुआ।",
+      "Jab aapki value pehli baar lagaye hue paise se neeche jaati hai, helper ek sawaal poochta hai. Ye kabhi nahi batata ki aap kya karein: ye samjhaata hai ki kya hua.",
+    ),
+  },
+  {
+    target: "helper-choices",
+    title: e("Tap what you think happened", "जो लगता है, वो tap करें", "Jo lagta hai, wo tap karein"),
+    body: e(
+      "There is no wrong answer. Your guess lets the helper start from what you were thinking.",
+      "कोई जवाब गलत नहीं है। आपके अंदाज़े से helper वहीं से शुरू करता है जो आप सोच रहे थे।",
+      "Koi jawab galat nahi hai. Aapke andaaze se helper wahin se shuru karta hai jo aap soch rahe the.",
+    ),
+  },
+];
+
+export const helperTourAnswer: TourStep[] = [
+  {
+    target: "helper-answer",
+    title: e("What really moved your money", "आपके पैसे को असल में किसने हिलाया", "Aapke paise ko asal mein kisne hilaya"),
+    body: e(
+      "Your fund against the whole market (Nifty 50) in the same month. Every number comes from real fund prices and is checked before you see it.",
+      "उसी महीने में आपका fund बनाम पूरा market (Nifty 50)। हर number असली fund कीमतों से आता है और दिखाने से पहले जाँचा जाता है।",
+      "Usi mahine mein aapka fund banaam poora market (Nifty 50). Har number asli fund keematon se aata hai aur dikhane se pehle jaancha jaata hai.",
+    ),
+  },
+  {
+    target: "helper-chat",
+    title: e("Ask your own questions", "अपने सवाल पूछें", "Apne sawaal poochiye"),
+    body: e(
+      "Ask in English, Hindi or Hinglish, or tap a suggestion. Questions about what to buy, sell or expect always get a safe answer, never advice.",
+      "English, हिंदी या Hinglish में पूछें, या कोई सुझाव tap करें। क्या खरीदें, बेचें या आगे क्या होगा, ऐसे सवालों पर हमेशा safe जवाब मिलता है, सलाह कभी नहीं।",
+      "English, Hindi ya Hinglish mein poochiye, ya koi suggestion tap kijiye. Kya khareedein, bechein ya aage kya hoga, aise sawaalon par hamesha safe jawab milta hai, salaah kabhi nahi.",
+    ),
+  },
+  {
+    target: "helper-gotit",
+    title: e("Keep the reason with you", "वजह अपने साथ रखें", "Wajah apne saath rakhein"),
+    body: e(
+      "Tap Got it and the reason stays next to your value. You can open the helper again any time.",
+      "Got it दबाएँ और वजह आपकी value के पास रहेगी। Helper को आप कभी भी फिर खोल सकते हैं।",
+      "Got it dabaiye aur wajah aapki value ke paas rahegi. Helper ko aap kabhi bhi phir khol sakte hain.",
+    ),
+  },
+];

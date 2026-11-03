@@ -10,6 +10,8 @@ test.beforeEach(async ({ page }, info) => {
   await page.addInitScript(() => {
     localStorage.setItem("sip-ai-tour-setup", "seen");
     localStorage.setItem("sip-ai-tour-sip", "seen");
+    localStorage.setItem("sip-ai-tour-helper-ask", "seen");
+    localStorage.setItem("sip-ai-tour-helper-answer", "seen");
   });
 });
 
@@ -180,4 +182,33 @@ test("helper: on a phone it can be closed and reopened from the helper button, a
   await page.screenshot({ path: "docs/screens/phone-11-helper-button.png" });
   await page.getByTestId("helper-fab").click();
   await expect(page.getByTestId("answer")).toContainText("You read it right.");
+});
+
+test("tour of the helper: it explains the question, then the answer, the questions and Got it", async ({ page }, info) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("sip-ai-tour-setup", "seen");
+    localStorage.setItem("sip-ai-tour-sip", "seen");
+  });
+  await page.goto("/");
+  await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
+  await page.getByTestId("skip").click();
+  const tour = page.getByTestId("tour");
+  await expect(tour).toContainText("Your helper steps in at the first fall");
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-12-helper-tour-ask.png` });
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toContainText("Tap what you think happened");
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toBeHidden();
+  await page.getByTestId("guess-market").click();
+  await expect(tour).toContainText("What really moved your money", { timeout: 30_000 });
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toContainText("Ask your own questions");
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-13-helper-tour-chat.png` });
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toContainText("Keep the reason with you");
+  await page.getByTestId("tour-next").click();
+  await expect(tour).toBeHidden();
 });
