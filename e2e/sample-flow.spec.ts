@@ -38,6 +38,9 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
 
   await page.getByTestId("guess-fund").click();
   await expect(page.getByTestId("answer")).toContainText("This fall isn't just your fund.");
+  // The answer's first line must be on screen, not scrolled away under the header (a phone bug we fixed).
+  await page.waitForTimeout(800);
+  await expect(page.getByTestId("answer").getByText("This fall isn't just your fund.")).toBeInViewport();
   await expect(page.getByTestId("reason")).toContainText("11.3%");
   await expect(page.getByTestId("quality-tag")).toBeVisible();
   await expect(page.getByTestId("cheer")).toContainText("You checked instead");

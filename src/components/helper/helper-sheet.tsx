@@ -70,10 +70,18 @@ export function HelperSheet({
     };
   }, [guess, lang, request, facts]);
 
-  // Keep the newest message in view.
+  // Keep the reply readable from its first line: a long answer must not scroll its own start out of view.
+  const answerRef = useRef<HTMLDivElement>(null);
+  const lastTurnRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [guess, reason, turns]);
+    if (guess && !reason) endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [guess, reason]);
+  useEffect(() => {
+    if (reason) answerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [reason]);
+  useEffect(() => {
+    if (turns.length > 0) lastTurnRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [turns]);
 
   function choose(g: Guess) {
     setGuess(g);
@@ -134,7 +142,7 @@ export function HelperSheet({
 
       {guess && plain && reason && (
         <>
-          <HelperSays testId="answer">
+          <HelperSays testId="answer" anchorRef={answerRef}>
             {reason.opening.map((line) => (
               <p key={line} className="text-[16px] font-semibold">
                 {line}
@@ -162,7 +170,7 @@ export function HelperSheet({
       )}
 
       {turns.map((turn, i) => (
-        <div key={i}>
+        <div key={i} ref={i === turns.length - 1 ? lastTurnRef : undefined} className="scroll-mt-3">
           <YouSay>{turn.question}</YouSay>
           {turn.reply ? (
             <HelperSays testId="reply">
@@ -275,9 +283,19 @@ export function HelperSheet({
 }
 
 /** A message from the helper: its mark on the left, a soft bubble. */
-function HelperSays({ children, tone = "plain", testId }: { children: React.ReactNode; tone?: "plain" | "cheer"; testId?: string }) {
+function HelperSays({
+  children,
+  tone = "plain",
+  testId,
+  anchorRef,
+}: {
+  children: React.ReactNode;
+  tone?: "plain" | "cheer";
+  testId?: string;
+  anchorRef?: React.Ref<HTMLDivElement>;
+}) {
   return (
-    <div className="anim-settle mt-3 flex items-start gap-2.5" data-testid={testId}>
+    <div ref={anchorRef} className="anim-settle mt-3 flex scroll-mt-3 items-start gap-2.5" data-testid={testId}>
       <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-paper" aria-hidden>
         <HelperIcon width={15} height={15} />
       </span>
