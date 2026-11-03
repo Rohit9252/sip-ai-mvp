@@ -21,11 +21,11 @@ export const tourCopy = {
 export const setupTour: TourStep[] = [
   {
     target: "strip",
-    title: e("A concept, not advice", "एक concept, सलाह नहीं", "Ek concept, salaah nahi"),
+    title: e("A graduation project, not advice", "एक graduation project, सलाह नहीं", "Ek graduation project, salaah nahi"),
     body: e(
-      "This shows how a Groww SIP page could explain a fall. It is a course project, not made by Groww, and never tells you what to do.",
-      "ये दिखाता है कि Groww का SIP page एक गिरावट को कैसे समझा सकता है। ये एक course project है, Groww ने नहीं बनाया, और ये कभी नहीं बताता कि आप क्या करें।",
-      "Ye dikhata hai ki Groww ka SIP page ek girawat ko kaise samjha sakta hai. Ye ek course project hai, Groww ne nahi banaya, aur ye kabhi nahi batata ki aap kya karein.",
+      "This shows how a Groww SIP page could explain a fall. It is a graduation project, not made by Groww, and never tells you what to do.",
+      "ये दिखाता है कि Groww का SIP page एक गिरावट को कैसे समझा सकता है। ये एक graduation project है, Groww ने नहीं बनाया, और ये कभी नहीं बताता कि आप क्या करें।",
+      "Ye dikhata hai ki Groww ka SIP page ek girawat ko kaise samjha sakta hai. Ye ek graduation project hai, Groww ne nahi banaya, aur ye kabhi nahi batata ki aap kya karein.",
     ),
   },
   {
@@ -90,9 +90,9 @@ export const sipTour: TourStep[] = [
     target: "stop",
     title: e("The way out stays put", "बाहर का रास्ता अपनी जगह रहता है", "Bahar ka raasta apni jagah rehta hai"),
     body: e(
-      "Stop SIP never moves or hides. In this concept it changes nothing.",
-      "SIP रोकें का बटन कभी नहीं हिलता या छिपता। इस concept में ये कुछ नहीं बदलता।",
-      "SIP roko ka button kabhi nahi hilta ya chhupta. Is concept mein ye kuch nahi badalta.",
+      "Stop SIP and Withdraw never move or hide. They show you the facts first, then do what you choose. Nothing real changes in this concept.",
+      "SIP रोकें और पैसे निकालें के बटन कभी नहीं हिलते या छिपते। पहले तथ्य दिखते हैं, फिर वही होता है जो आप चुनें। इस concept में कुछ असली नहीं बदलता।",
+      "SIP roko aur paise nikalo ke button kabhi nahi hilte ya chhupte. Pehle facts dikhte hain, phir wahi hota hai jo aap chunein. Is concept mein kuch asli nahi badalta.",
     ),
   },
 ];
@@ -101,7 +101,7 @@ export const sipTour: TourStep[] = [
 export const deskCopy = {
   crumb: e("Mutual funds", "Mutual funds", "Mutual funds"),
   page: e("Your SIP", "आपकी SIP", "Aapki SIP"),
-  conceptPill: e("Concept · not investment advice", "Concept · निवेश सलाह नहीं", "Concept · investment advice nahi"),
+  conceptPill: e("Graduation project · not investment advice", "Graduation project · निवेश सलाह नहीं", "Graduation project · investment advice nahi"),
   monthOfSip: e("Month of SIP", "SIP का महीना", "SIP ka mahina"),
   helperTitle: e("Your helper", "आपका helper", "Aapka helper"),
   helperWaiting: e(
@@ -117,6 +117,32 @@ export const deskCopy = {
     "अपनी भाषा में देखें कि आपकी SIP को किसने हिलाया",
     "Apni bhasha mein dekhein ki aapki SIP ko kisne hilaya",
   ),
+  trust: [
+    {
+      title: e("Real prices", "असली कीमतें", "Asli keematein"),
+      body: e(
+        "Every number is worked out from AMFI fund prices, never by the AI.",
+        "हर number AMFI की fund कीमतों से निकाला जाता है, AI से कभी नहीं।",
+        "Har number AMFI ki fund keematon se nikala jaata hai, AI se kabhi nahi.",
+      ),
+    },
+    {
+      title: e("Checked AI", "जाँचा हुआ AI", "Jaancha hua AI"),
+      body: e(
+        "The AI only writes words. Every reply is checked against your numbers before you see it.",
+        "AI सिर्फ़ शब्द लिखता है। हर जवाब आपको दिखने से पहले आपके numbers से जाँचा जाता है।",
+        "AI sirf shabd likhta hai. Har jawab aapko dikhne se pehle aapke numbers se jaancha jaata hai.",
+      ),
+    },
+    {
+      title: e("Never advice", "कभी सलाह नहीं", "Kabhi salaah nahi"),
+      body: e(
+        "Questions about what to buy, sell or expect get a fixed safe answer.",
+        "क्या खरीदें, बेचें या आगे क्या होगा, ऐसे सवालों पर हमेशा एक तय safe जवाब मिलता है।",
+        "Kya khareedein, bechein ya aage kya hoga, aise sawaalon par hamesha ek tay safe jawab milta hai.",
+      ),
+    },
+  ],
   introSteps: [
     e("Replay your SIP month by month, on real fund prices.", "अपनी SIP को असली कीमतों पर महीने-दर-महीने चलाकर देखें।", "Apni SIP ko asli keematon par mahine-dar-mahine chala ke dekhein."),
     e("At the first fall, say what you think happened.", "पहली गिरावट पर बताएँ कि आपको क्या लगता है।", "Pehli girawat par bataiye ki aapko kya lagta hai."),

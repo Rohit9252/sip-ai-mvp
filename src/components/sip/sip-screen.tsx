@@ -13,6 +13,8 @@ import { useLayoutMode } from "@/components/device-shell/layout-mode";
 import { Segmented } from "@/components/ui/segmented";
 import { ArrowLeftIcon, CheckIcon, HelperIcon, TriangleIcon } from "@/components/icons";
 import { HelperSheet } from "@/components/helper/helper-sheet";
+import { manageCopy } from "@/lib/copy/manage";
+import { ManageSheet } from "./manage-sheet";
 import { RANGES, ValueChart } from "./value-chart";
 import type { Range } from "./value-chart";
 
@@ -34,7 +36,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [seenSetback, setSeenSetback] = useState(false);
   const [understood, setUnderstood] = useState(false);
-  const [stopNote, setStopNote] = useState(false);
+  const [manage, setManage] = useState<"menu" | "withdraw" | null>(null);
 
   const snap = snapshots[index];
   const atEnd = index === snapshots.length - 1;
@@ -147,16 +149,32 @@ export function SipScreen({ data, onBack, onSample }: Props) {
           </p>
         </div>
         {/* The stop button never moves and never hides: leaving stays one tap away. */}
-        <button
-          type="button"
-          onClick={() => setStopNote((v) => !v)}
-          className="shrink-0 rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
-          data-tour="stop"
-        >
-          {t(copy.sip.stop)}
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setManage("withdraw");
+              track("manage_opened", { from: "withdraw" });
+            }}
+            className="rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
+            data-testid="withdraw"
+          >
+            {t(manageCopy.withdrawButton)}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setManage("menu");
+              track("manage_opened", { from: "stop" });
+            }}
+            className="rounded-full px-4 py-2 text-sm font-medium text-ink ring-1 ring-line hover:ring-ink/30"
+            data-tour="stop"
+            data-testid="stop"
+          >
+            {t(copy.sip.stop)}
+          </button>
+        </div>
       </div>
-      {stopNote && <p className="mt-3 rounded-lg bg-surface px-3 py-2 text-xs text-muted">{t(copy.sip.stopNote)}</p>}
     </div>
   );
 
@@ -188,11 +206,30 @@ export function SipScreen({ data, onBack, onSample }: Props) {
     </div>
   );
 
+  const manageSheet = manage ? (
+    <ManageSheet
+      start={manage}
+      value={snap.value}
+      monthlyAmount={request.monthlyAmount}
+      firstInstalment={series[0]?.date ?? snap.date}
+      onDate={snap.date}
+      onClose={() => setManage(null)}
+      onSeeWhy={
+        reachedSetback && facts
+          ? () => {
+              setManage(null);
+              setSheetOpen(true);
+            }
+          : undefined
+      }
+    />
+  ) : null;
+
   if (desktop) {
     return (
       <div className="flex min-h-0 flex-1 flex-col">
         <main className="scroll-soft flex-1 overflow-y-auto">
-          <div className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_400px] gap-6 px-8 py-6">
+          <div className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_400px] gap-6 px-8 pb-24 pt-6">
             <section className="flex min-w-0 flex-col gap-5">
               <div className="flex items-center justify-between gap-4">
                 {fundHeader}
@@ -211,7 +248,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
                   <p className="num text-xl font-semibold leading-none">{formatRupees(snap.invested)}</p>
                 </Stat>
                 <Stat label={t(copy.sip.returns)}>
-                  <div className="text-xl leading-none">{returnsLine}</div>
+                  <div className="text-xl leading-tight">{returnsLine}</div>
                   <p className="mt-2 text-xs text-muted">{t(words)}</p>
                 </Stat>
                 <Stat label={t(deskCopy.monthOfSip)}>
@@ -234,7 +271,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
             </section>
 
             <aside className="sticky top-6 self-start">
-              <div className="flex max-h-[calc(100dvh-3rem)] flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-line">
+              <div className="flex max-h-[calc(100dvh-8rem)] flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-line">
                 <div className="flex items-center gap-2.5 border-b border-line px-5 py-3.5">
                   <span className="grid size-8 place-items-center rounded-full bg-primary text-paper" aria-hidden>
                     <HelperIcon width={16} height={16} />
@@ -262,6 +299,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
             </aside>
           </div>
         </main>
+        {manageSheet}
       </div>
     );
   }
@@ -305,6 +343,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
       <div className="screen-bottom shrink-0 border-t border-line bg-paper px-5 pb-4 pt-3">{replayControls}</div>
 
       {sheetOpen && facts && <HelperSheet facts={facts} request={request} onClose={() => setSheetOpen(false)} onUnderstood={understoodNow} />}
+      {manageSheet}
     </div>
   );
 }

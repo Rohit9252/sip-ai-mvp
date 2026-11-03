@@ -19,7 +19,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 2. **Numbers come from code only** (ADR-0001). The AI gets a facts object and writes words; code checks every number in its reply.
 3. **No em dashes** anywhere: code comments, UI copy, docs, commit messages. Use a comma, colon, full stop or brackets.
 4. **Plain words.** Short sentences. Copy a first-timer understands.
-5. **No personal data.** No login, name, phone, PAN or portfolio (ADR-0004). No Groww logo. A fixed strip on every screen says it is a concept made for a course project, not made by or linked to Groww, and not investment advice.
+5. **No personal data.** No login, name, phone, PAN or portfolio (ADR-0004). No Groww logo. A fixed strip on every screen says it is a concept made for a graduation project, not made by or linked to Groww, and not investment advice.
 6. **Phone first.** It must look right at 390 px wide. On a wide screen, a Desktop/Phone switch shows it as a page or in a phone frame (the attempt-one device shell).
 7. **Secrets:** `OPENAI_API_KEY` lives only in `.env.local` (git-ignored) and in Vercel. Never print it, log it or commit it.
 8. **Git:** work on a branch per phase (`phase-1-data`, and so on). Commit under the repo's configured author only. **No `Co-Authored-By` or any AI attribution lines.** Do not push and do not deploy unless the task says so.

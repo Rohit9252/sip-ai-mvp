@@ -11,7 +11,9 @@ export type EventName =
   | "reason_shown"
   | "followup_asked"
   | "got_it"
-  | "tester_answer";
+  | "tester_answer"
+  | "manage_opened"
+  | "manage_action";
 
 export function track(name: EventName, props: Record<string, string | number | boolean> = {}) {
   try {

@@ -8,3 +8,5 @@ export { dailySeries } from "./series";
 export type { DailyPoint } from "./series";
 export { describeReturns } from "./returns";
 export type { Returns } from "./returns";
+export { EXIT_LOAD_RATE, withdrawal } from "./withdraw";
+export type { Withdrawal } from "./withdraw";

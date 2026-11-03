@@ -8,7 +8,7 @@ import { useLayoutMode } from "@/components/device-shell/layout-mode";
 import { ChevronRightIcon, HelpIcon } from "@/components/icons";
 
 /**
- * The top of every screen. It always says this is a concept made for a course project, not made by or linked to
+ * The top of every screen. It always says this is a concept made for a graduation project, not made by or linked to
  * Groww, and not investment advice (ADR-0004), with the language switch and a way to replay the tour.
  * Phone: a quiet band. Desktop: a top bar with the page path; the full notice sits in a line under it.
  */
@@ -42,7 +42,7 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
             <span className="font-semibold">{page === "sip" ? t(deskCopy.page) : t(copy.setup.title)}</span>
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <span className="rounded-full bg-surface px-3 py-1.5 text-xs font-medium text-muted ring-1 ring-line" data-tour="strip" title={t(copy.common.strip)}>
+            <span className="rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-ink ring-1 ring-line" data-tour="strip" title={`${t(copy.common.strip)} ${t(copy.common.stripAdvice)}`}>
               {t(deskCopy.conceptPill)}
             </span>
             <div data-tour="lang">
@@ -52,7 +52,7 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
           </div>
         </div>
         <p className="border-t border-line bg-surface px-8 py-1.5 text-center text-xs text-muted" data-testid="strip">
-          {t(copy.common.strip)}
+          {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
         </p>
       </header>
     );
@@ -61,7 +61,7 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
   return (
     <header className="screen-top shrink-0 border-b border-line bg-surface">
       <p className="px-4 pt-2 text-xs leading-normal text-muted" data-testid="strip" data-tour="strip">
-        {t(copy.common.strip)}
+        {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
       </p>
       <div className="flex items-center justify-end gap-1 px-4 pb-2 pt-1.5">
         {help}

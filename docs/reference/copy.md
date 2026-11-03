@@ -20,7 +20,7 @@ Placeholders: `{invested}` `{value}` `{gap}` (invested minus value) `{months}` `
 
 | Key | English | हिंदी | Hinglish |
 |---|---|---|---|
-| strip | Concept for a Groww feature, made for a course project. Not made by or linked to Groww. Not investment advice. | Groww के एक feature का concept, एक course project के लिए बनाया गया। Groww ने नहीं बनाया, Groww से जुड़ा नहीं। ये निवेश सलाह नहीं है। | Groww ke ek feature ka concept, ek course project ke liye banaya gaya. Groww ne nahi banaya, Groww se juda nahi. Ye investment advice nahi hai. |
+| strip | Concept for a Groww feature, made for a graduation project. Not made by or linked to Groww. Not investment advice. | Groww के एक feature का concept, एक graduation project के लिए बनाया गया। Groww ने नहीं बनाया, Groww से जुड़ा नहीं। ये निवेश सलाह नहीं है। | Groww ke ek feature ka concept, ek graduation project ke liye banaya gaya. Groww ne nahi banaya, Groww se juda nahi. Ye investment advice nahi hai. |
 | langName | English | हिंदी | Hinglish |
 | source | NAV: AMFI, via mfapi.in, as of {date} | NAV: AMFI (mfapi.in), {date} तक | NAV: AMFI (mfapi.in), {date} tak |
 | tagNumbers | Numbers from your SIP | आपकी SIP के numbers | Aapki SIP ke numbers |

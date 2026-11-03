@@ -59,7 +59,7 @@ test("tour: first visit spotlights each part, and it does not come back", async 
   await page.goto("/");
   const tour = page.getByTestId("tour");
   await expect(tour).toBeVisible();
-  await expect(tour).toContainText("A concept, not advice");
+  await expect(tour).toContainText("A graduation project, not advice");
   await page.screenshot({ path: `docs/screens/${info.project.name}-0-tour-1.png` });
   await page.getByTestId("tour-next").click();
   await page.getByTestId("tour-next").click();
@@ -81,4 +81,36 @@ test("tour: first visit spotlights each part, and it does not come back", async 
   await page.reload();
   await expect(page.getByTestId("sample")).toBeVisible();
   await expect(tour).toBeHidden();
+});
+
+test("manage: stop asks an optional reason and says nothing real changed; withdraw shows the exit load", async ({ page }, info) => {
+  await page.goto("/");
+  await page.getByTestId("sample").click();
+  await page.getByTestId("skip").click();
+  await page.getByTestId(info.project.name === "phone" ? "guess-market" : "guess-market").click();
+  await page.getByTestId("got-it").click();
+
+  await page.getByTestId("stop").click();
+  await expect(page.getByTestId("manage")).toBeVisible();
+  await page.waitForTimeout(450);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-8-manage.png` });
+  await page.getByTestId("manage-stop").click();
+  await page.getByTestId("reason-returns").click();
+  await expect(page.getByTestId("manage")).toContainText("See what happened");
+  await page.waitForTimeout(450);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-9-stop-reason.png` });
+  await page.getByTestId("manage-confirm").click();
+  await expect(page.getByTestId("manage-done")).toContainText("₹35,785");
+  await page.getByRole("button", { name: "Back to my SIP" }).click();
+
+  await page.getByTestId("withdraw").click();
+  // All of Rs 35,785 in month 8: exit load about Rs 358, about Rs 35,427 in hand.
+  await expect(page.getByTestId("manage")).toContainText("₹358");
+  await expect(page.getByTestId("manage")).toContainText("₹35,427");
+  await page.waitForTimeout(450);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-10-withdraw.png` });
+  await page.getByTestId("withdraw-continue").click();
+  await page.getByTestId("reason-money").click();
+  await page.getByTestId("manage-confirm").click();
+  await expect(page.getByTestId("manage-done")).toContainText("₹35,427");
 });

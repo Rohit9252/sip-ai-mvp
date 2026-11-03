@@ -21,10 +21,12 @@ export const copy = {
   /** 1. On every screen. */
   common: {
     strip: e(
-      "Concept for a Groww feature, made for a course project. Not made by or linked to Groww. Not investment advice.",
-      "Groww के एक feature का concept, एक course project के लिए बनाया गया। Groww ने नहीं बनाया, Groww से जुड़ा नहीं। ये निवेश सलाह नहीं है।",
-      "Groww ke ek feature ka concept, ek course project ke liye banaya gaya. Groww ne nahi banaya, Groww se juda nahi. Ye investment advice nahi hai.",
+      "Concept for a Groww feature, made for a graduation project. Not made by or linked to Groww.",
+      "Groww के एक feature का concept, एक graduation project के लिए बनाया गया। Groww ने नहीं बनाया, Groww से जुड़ा नहीं।",
+      "Groww ke ek feature ka concept, ek graduation project ke liye banaya gaya. Groww ne nahi banaya, Groww se juda nahi.",
     ),
+    /** NEW. Shown in bold right after the strip, so it is never missed. */
+    stripAdvice: e("Not investment advice.", "ये निवेश सलाह नहीं है।", "Ye investment advice nahi hai."),
     langName: { en: "English", hi: "हिंदी", hn: "Hinglish" } satisfies Entry,
     source: e("NAV: AMFI, via mfapi.in, as of {date}", "NAV: AMFI (mfapi.in), {date} तक", "NAV: AMFI (mfapi.in), {date} tak"),
     tagNumbers: e("Numbers from your SIP", "आपकी SIP के numbers", "Aapki SIP ke numbers"),

@@ -21,7 +21,7 @@ const notoDeva = Noto_Sans_Devanagari({
 export const metadata: Metadata = {
   title: "Your SIP, explained",
   description:
-    "A concept for a Groww-style SIP page. When your SIP value falls below what you put in, it shows what moved your money. Made for a course project. Not investment advice.",
+    "A concept for a Groww-style SIP page. When your SIP value falls below what you put in, it shows what moved your money. Made for a graduation project. Not investment advice.",
 };
 
 export const viewport: Viewport = {

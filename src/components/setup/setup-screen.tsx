@@ -8,7 +8,7 @@ import { DEFAULT_DAY, startMonthOptions, startMonthRange, validateSetup } from "
 import type { SetupField, SipRequest } from "@/lib/setup/rules";
 import { useLang, useT } from "@/components/lang/lang-provider";
 import { useToday } from "@/hooks/use-today";
-import { SearchIcon } from "@/components/icons";
+import { CheckIcon, HelperIcon, SearchIcon, ShieldIcon } from "@/components/icons";
 import { deskCopy } from "@/lib/copy/tour";
 import { useLayoutMode } from "@/components/device-shell/layout-mode";
 
@@ -209,7 +209,30 @@ export function SetupScreen({
       </form>
   );
 
-  if (!desktop) return <main className="scroll-soft flex-1 overflow-y-auto">{form}</main>;
+  const trust = (
+    <ul className={`grid gap-3 ${desktop ? "mt-10 grid-cols-3" : "mx-auto max-w-md px-5 pb-10"}`} data-testid="trust">
+      {deskCopy.trust.map((item, i) => {
+        const Icon = [CheckIcon, HelperIcon, ShieldIcon][i];
+        return (
+          <li key={item.title.en} className="flex gap-3 rounded-2xl bg-paper p-4 ring-1 ring-line">
+            <Icon width={18} height={18} className="mt-0.5 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-semibold">{t(item.title)}</p>
+              <p className="mt-1 text-[13px] leading-snug text-muted">{t(item.body)}</p>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  if (!desktop)
+    return (
+      <main className="scroll-soft flex-1 overflow-y-auto">
+        {form}
+        {trust}
+      </main>
+    );
 
   return (
     <main className="scroll-soft flex-1 overflow-y-auto">
@@ -224,7 +247,10 @@ export function SetupScreen({
               </li>
             ))}
           </ol>
-          <p className="mt-10 max-w-[52ch] text-sm leading-relaxed text-muted">{t(copy.common.notice)}</p>
+          {trust}
+          <p className="mt-8 max-w-[60ch] text-sm leading-relaxed text-muted">
+            {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
+          </p>
         </section>
         {form}
       </div>

@@ -30,7 +30,7 @@ Today's SIP pages show a red number and no reason. This asks first, then shows t
 ## Operating Context
 
 - The app replays the person's SIP month by month on real NAVs (AMFI, via mfapi.in), because on test day their real SIP is probably not in a setback (ADR-0005). A "Next month" control walks the replay; a small "Skip to the setback" shortcut saves testers time.
-- A fixed strip on every screen says the page is a concept made for a course project, not made by or linked to Groww, and not investment advice.
+- A fixed strip on every screen says the page is a concept made for a graduation project, not made by or linked to Groww, and not investment advice.
 - Shown to mentors and testers on a wide screen (in a phone frame, or as a page) and on real phones.
 - Tested with 3 in-segment people on Fri 6 and Sat 7 Nov 2026. Submission Mon 9 Nov, 3:59 PM IST.
 
