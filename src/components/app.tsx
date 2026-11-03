@@ -12,6 +12,8 @@ import { SetupScreen } from "@/components/setup/setup-screen";
 import { SamplePicker } from "@/components/setup/sample-picker";
 import { SipScreen } from "@/components/sip/sip-screen";
 import { Tour, useTour } from "@/components/tour/tour";
+import { AboutDialog, ConsentDialog } from "@/components/consent/consent-dialog";
+import { useConsent } from "@/hooks/use-consent";
 import { track } from "@/lib/events";
 
 type View =
@@ -41,6 +43,10 @@ export function App() {
   const t = useT();
   const setupGuide = useTour("sip-ai-tour-setup");
   const sipGuide = useTour("sip-ai-tour-sip");
+  const consent = useConsent();
+  const [aboutOpen, setAboutOpen] = useState(false);
+  // The tours wait until the person has read the notice and agreed.
+  const consented = consent.status === "given";
 
   async function open(request: SipRequest, isSample: boolean) {
     setView({ kind: "loading" });
@@ -66,7 +72,7 @@ export function App() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <Strip onHelp={guide?.start} page={view.kind === "sip" ? "sip" : "setup"} />
+      <Strip onHelp={guide?.start} onAbout={consented ? () => setAboutOpen(true) : undefined} page={view.kind === "sip" ? "sip" : "setup"} />
       {view.kind === "setup" && (
         <SetupScreen problem={view.problem} onSubmit={(r) => open(r, false)} onSample={() => setPicking(true)} />
       )}
@@ -85,8 +91,10 @@ export function App() {
         />
       )}
       {picking && <SamplePicker onStart={startSample} onClose={() => setPicking(false)} />}
-      {view.kind === "setup" && setupGuide.open && <Tour key="setup" steps={setupTour} onClose={setupGuide.close} />}
-      {view.kind === "sip" && sipGuide.open && <Tour key="sip" steps={sipTour} onClose={sipGuide.close} />}
+      {consented && view.kind === "setup" && setupGuide.open && <Tour key="setup" steps={setupTour} onClose={setupGuide.close} />}
+      {consented && view.kind === "sip" && sipGuide.open && <Tour key="sip" steps={sipTour} onClose={sipGuide.close} />}
+      {consent.status === "needed" && <ConsentDialog onAccept={consent.accept} />}
+      {consented && aboutOpen && <AboutDialog acceptedAt={consent.acceptedAt} onClose={() => setAboutOpen(false)} />}
     </div>
   );
 }

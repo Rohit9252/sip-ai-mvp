@@ -92,3 +92,11 @@ export const ChevronRightIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="m9 6 6 6-6 6" />
   </svg>
 );
+
+export const InfoIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5.5" />
+    <path d="M12 7.6h.01" />
+  </svg>
+);

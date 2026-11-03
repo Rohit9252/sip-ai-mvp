@@ -12,7 +12,8 @@ import { useLang, useT } from "@/components/lang/lang-provider";
 import { useLayoutMode } from "@/components/device-shell/layout-mode";
 import { Segmented } from "@/components/ui/segmented";
 import { ArrowLeftIcon, CheckIcon, HelperIcon, TriangleIcon } from "@/components/icons";
-import { HelperSheet } from "@/components/helper/helper-sheet";
+import { HelperSheet, Learn } from "@/components/helper/helper-sheet";
+import { learnCopy } from "@/lib/copy/learn";
 import { manageCopy } from "@/lib/copy/manage";
 import { ManageSheet } from "./manage-sheet";
 import { RANGES, ValueChart } from "./value-chart";
@@ -271,30 +272,30 @@ export function SipScreen({ data, onBack, onSample }: Props) {
             </section>
 
             <aside className="sticky top-6 self-start">
-              <div className="flex max-h-[calc(100dvh-8rem)] flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-line">
-                <div className="flex items-center gap-2.5 border-b border-line px-5 py-3.5">
+              <div className="flex h-[calc(100dvh-8rem)] min-h-[520px] flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-line">
+                <div className="flex shrink-0 items-center gap-2.5 border-b border-line px-5 py-3.5">
                   <span className="grid size-8 place-items-center rounded-full bg-primary text-paper" aria-hidden>
                     <HelperIcon width={16} height={16} />
                   </span>
                   <h2 className="text-[15px] font-semibold">{t(deskCopy.helperTitle)}</h2>
                 </div>
-                <div className="scroll-soft min-h-0 flex-1 overflow-y-auto">
-                  {seenSetback && facts ? (
-                    <>
-                      {reasonLineBox && <div className="px-5 pt-4">{reasonLineBox}</div>}
-                      <HelperSheet variant="panel" facts={facts} request={request} onClose={() => {}} onUnderstood={understoodNow} />
-                    </>
-                  ) : (
-                    <div className="px-5 py-6">
-                      <p className="text-sm leading-relaxed text-muted">{t(deskCopy.helperWaiting)}</p>
-                      {setbackIndex > index && (
-                        <button type="button" onClick={() => goTo(setbackIndex)} className="mt-4 text-sm font-semibold text-primary">
-                          {t(copy.replay.skip)}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                {seenSetback && facts ? (
+                  <>
+                    {reasonLineBox && <div className="shrink-0 border-b border-line px-4 py-3">{reasonLineBox}</div>}
+                    <HelperSheet variant="panel" facts={facts} request={request} onClose={() => {}} onUnderstood={understoodNow} />
+                  </>
+                ) : (
+                  <div className="scroll-soft min-h-0 flex-1 overflow-y-auto px-5 py-5">
+                    <p className="text-sm leading-relaxed text-muted">{t(deskCopy.helperWaiting)}</p>
+                    {setbackIndex > index && (
+                      <button type="button" onClick={() => goTo(setbackIndex)} className="mt-3 text-sm font-semibold text-primary">
+                        {t(copy.replay.skip)}
+                      </button>
+                    )}
+                    <h3 className="mt-6 text-[13px] font-semibold">{t(learnCopy.heading)}</h3>
+                    <Learn />
+                  </div>
+                )}
               </div>
             </aside>
           </div>

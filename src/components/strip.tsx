@@ -5,14 +5,15 @@ import { deskCopy, tourCopy } from "@/lib/copy/tour";
 import { LangSwitch } from "@/components/lang/lang-switch";
 import { useT } from "@/components/lang/lang-provider";
 import { useLayoutMode } from "@/components/device-shell/layout-mode";
-import { ChevronRightIcon, HelpIcon } from "@/components/icons";
+import { ChevronRightIcon, HelpIcon, InfoIcon } from "@/components/icons";
+import { consentCopy } from "@/lib/copy/consent";
 
 /**
  * The top of every screen. It always says this is a concept made for a graduation project, not made by or linked to
  * Groww, and not investment advice (ADR-0004), with the language switch and a way to replay the tour.
  * Phone: a quiet band. Desktop: a top bar with the page path; the full notice sits in a line under it.
  */
-export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | "sip" }) {
+export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?: () => void; page?: "setup" | "sip" }) {
   const t = useT();
   const desktop = useLayoutMode() === "desktop";
 
@@ -25,6 +26,19 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
     >
       <HelpIcon width={16} height={16} />
       {desktop && t(tourCopy.replay)}
+    </button>
+  ) : null;
+
+  const about = onAbout ? (
+    <button
+      type="button"
+      onClick={onAbout}
+      aria-label={t(consentCopy.infoLabel)}
+      title={t(consentCopy.infoLabel)}
+      className="grid size-9 place-items-center rounded-full text-muted hover:bg-surface-strong hover:text-ink"
+      data-testid="about"
+    >
+      <InfoIcon width={18} height={18} />
     </button>
   ) : null;
 
@@ -49,6 +63,7 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
               <LangSwitch />
             </div>
             {help}
+            {about}
           </div>
         </div>
         <p className="border-t border-line bg-surface px-8 py-1.5 text-center text-xs text-muted" data-testid="strip">
@@ -64,6 +79,7 @@ export function Strip({ onHelp, page }: { onHelp?: () => void; page?: "setup" | 
         {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
       </p>
       <div className="flex items-center justify-end gap-1 px-4 pb-2 pt-1.5">
+        {about}
         {help}
         <div data-tour="lang">
           <LangSwitch />

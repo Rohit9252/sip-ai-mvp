@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-/** The flow tests start with both tours already seen; the tour has its own test below. */
+/** Every test starts having agreed to the notice (it has its own test); flow tests also skip the tours. */
 test.beforeEach(async ({ page }, info) => {
+  if (info.title.startsWith("consent")) return;
+  await page.addInitScript(() => {
+    localStorage.setItem("sip-ai-consent", JSON.stringify({ version: 1, acceptedAt: new Date().toISOString() }));
+  });
   if (info.title.startsWith("tour")) return;
   await page.addInitScript(() => {
     localStorage.setItem("sip-ai-tour-setup", "seen");
@@ -36,17 +40,17 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await expect(page.getByTestId("answer")).toContainText("This fall isn't just your fund.");
   await expect(page.getByTestId("reason")).toContainText("11.3%");
   await expect(page.getByTestId("quality-tag")).toBeVisible();
-  await expect(page.getByTestId("cheer")).toContainText("Checking before you decide");
+  await expect(page.getByTestId("cheer")).toContainText("You checked instead");
   await shot("4-helper-reason");
 
-  await page.getByTestId("ask-more").click();
   await page.getByRole("button", { name: "Should I switch to another fund?" }).click();
   await expect(page.getByTestId("reply-tag").last()).toContainText("Safe answer");
   await page.getByRole("button", { name: "What happens if I stop now?" }).click();
   await expect(page.getByTestId("reply")).toHaveCount(2, { timeout: 30_000 });
   await shot("5-followup");
 
-  await page.getByRole("button", { name: "Got it" }).click();
+  await expect(page.getByTestId("learn")).toBeVisible();
+  await page.getByTestId("got-it").click();
   await expect(page.getByTestId("reason-line")).toContainText("March 2026");
   await shot("6-reason-line");
 });
@@ -133,4 +137,24 @@ test("sample at the default Rs 1,000: the same month-8 setback, in smaller rupee
   // Rs 1,000 a month: 8 instalments = Rs 8,000; value scales with the amount (about a fifth of Rs 35,785).
   await expect(page.getByTestId("ask")).toContainText("₹8,000");
   await expect(page.getByTestId("month-badge")).toContainText("Month 8");
+});
+
+test("consent: the first visit asks first, in any language, and the About popup reopens it", async ({ page }, info) => {
+  await page.goto("/");
+  const consent = page.getByTestId("consent");
+  await expect(consent).toBeVisible();
+  await expect(consent).toContainText("not investment advice");
+  await expect(page.getByTestId("consent-start")).toBeDisabled();
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-00-consent.png` });
+  await page.getByTestId("consent-agree").check();
+  await page.getByTestId("consent-start").click();
+  await expect(consent).toBeHidden();
+  // The setup tour starts after consent.
+  await expect(page.getByTestId("tour")).toBeVisible();
+  await page.getByTestId("tour-skip").click();
+  await page.getByTestId("about").click();
+  await expect(page.getByTestId("consent")).toContainText("You agreed on");
+  await page.reload();
+  await expect(page.getByTestId("consent")).toBeHidden();
 });

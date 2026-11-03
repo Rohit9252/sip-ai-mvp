@@ -179,18 +179,25 @@ export const SAMPLE_DEFAULT_AMOUNT = 1000;
  */
 export const cheerCopy = {
   right: e(
-    "You read your own money right. That is a real skill.",
-    "आपने अपने पैसे को सही पढ़ा। ये एक असली हुनर है।",
-    "Aapne apne paise ko sahi padha. Ye ek asli hunar hai.",
+    "Spot on. You read your own money right in a tough month. Knowing why it moved puts you in charge of what comes next.",
+    "बिल्कुल सही। एक मुश्किल महीने में भी आपने अपने पैसे को सही पढ़ा। ये जानना कि पैसा क्यों हिला, आगे के फ़ैसले आपके हाथ में रखता है।",
+    "Bilkul sahi. Ek mushkil mahine mein bhi aapne apne paise ko sahi padha. Ye jaanna ki paisa kyun hila, aage ke faisle aapke haath mein rakhta hai.",
   ),
   misread: e(
-    "Now you know what moved your money. Checking before you decide is a strong habit.",
-    "अब आप जानते हैं कि आपके पैसे को किसने हिलाया। फ़ैसले से पहले जाँचना एक मज़बूत आदत है।",
-    "Ab aap jaante hain ki aapke paise ko kisne hilaya. Faisle se pehle jaanchna ek mazboot aadat hai.",
+    "It's natural to blame your own fund in a month like this. You checked instead, and now you know the real reason. That puts you in charge of what comes next.",
+    "ऐसे महीने में अपने fund को दोष देना स्वाभाविक है। आपने अंदाज़ा लगाने की जगह जाँचा, और अब आप असली वजह जानते हैं। इससे आगे के फ़ैसले आपके हाथ में रहते हैं।",
+    "Aise mahine mein apne fund ko dosh dena natural hai. Aapne andaaza lagaane ki jagah jaancha, aur ab aap asli wajah jaante hain. Isse aage ke faisle aapke haath mein rehte hain.",
   ),
   asked: e(
-    "Asking was the right first step. You now know what moved your money, and what you do next is your call.",
-    "पूछना सही पहला कदम था। अब आप जानते हैं कि आपके पैसे को किसने हिलाया, और आगे क्या करना है, ये आपका फ़ैसला है।",
-    "Poochhna sahi pehla kadam tha. Ab aap jaante hain ki aapke paise ko kisne hilaya, aur aage kya karna hai, ye aapka faisla hai.",
+    "Good question to ask. Now you know what moved your money, in plain numbers. Whatever you decide next, you'll decide it knowing why.",
+    "पूछना बिल्कुल सही था। अब आप साफ़ numbers में जानते हैं कि आपके पैसे को किसने हिलाया। आगे जो भी तय करें, वजह जानकर तय करेंगे।",
+    "Poochhna bilkul sahi tha. Ab aap saaf numbers mein jaante hain ki aapke paise ko kisne hilaya. Aage jo bhi tay karein, wajah jaan kar tay karenge.",
   ),
+  worth: e(
+    "Feeling unsure after a fall is completely human. Now you can see where your money stands and why it moved. What you do next stays your call.",
+    "गिरावट के बाद मन में शक आना बिल्कुल इंसानी है। अब आप देख सकते हैं कि आपका पैसा कहाँ है और क्यों हिला। आगे क्या करना है, ये आपका ही फ़ैसला है।",
+    "Girawat ke baad mann mein shak aana bilkul insaani hai. Ab aap dekh sakte hain ki aapka paisa kahan hai aur kyun hila. Aage kya karna hai, ye aapka hi faisla hai.",
+  ),
+  learnHint: e("Want the basics behind this?", "इसके पीछे की बुनियादी बातें जानना चाहेंगे?", "Iske peeche ki basic baatein jaanna chahenge?"),
+  typing: e("Helper is checking your numbers", "Helper आपके numbers check कर रहा है", "Helper aapke numbers check kar raha hai"),
 };
