@@ -1,26 +1,320 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * A calm, white, roomy mutual fund screen in the style of an Indian investing app, with no logo.
+ * Colour tokens. Green and red were picked to pass 4.5:1 on white and to stay apart for red-green
+ * colour blindness (checked with a Machado simulation). Colour is never the only signal: every gain
+ * and loss also carries an arrow, a sign and words.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ground: #e9ecf2;
+  --color-paper: #ffffff;
+  --color-ink: #1f2432;
+  --color-muted: #5b6272;
+  --color-line: #e4e7ee;
+  --color-surface: #f5f6fa;
+  --color-surface-strong: #eceef5;
+  --color-primary: #3f4fd1;
+  --color-primary-soft: #eef0fd;
+  --color-gain: #00796b;
+  --color-gain-soft: #e4f4f1;
+  --color-loss: #c2410c;
+  --color-loss-soft: #fef0e8;
+  --font-sans: var(--font-public-sans), var(--font-noto-deva), system-ui, sans-serif;
+  --shadow-frame: 0 32px 64px -30px rgba(31, 36, 50, 0.5), 0 0 0 1px rgba(31, 36, 50, 0.1);
+  --shadow-sheet: 0 -12px 40px -12px rgba(31, 36, 50, 0.35);
+  --shadow-lift: 0 1px 2px rgba(31, 36, 50, 0.06), 0 8px 24px -12px rgba(31, 36, 50, 0.18);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  color-scheme: light;
+  /* Hindi vowel marks sit above and below the line, so lines need more room than Latin text does. */
+  --leading-body: 1.55;
+  --leading-tight: 1.3;
+}
+:root:lang(hi) {
+  --leading-body: 1.7;
+  --leading-tight: 1.45;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: var(--leading-body);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Browser surfaces that belong to no design system until we theme them. */
+::selection {
+  background: var(--color-primary-soft);
+  color: var(--color-ink);
+}
+input,
+select,
+button {
+  font: inherit;
+  caret-color: var(--color-primary);
+  accent-color: var(--color-primary);
+}
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.scroll-soft {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+  overscroll-behavior: contain;
+}
+.scroll-soft::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-soft::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 6px;
+}
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Device shell ---------- */
+
+.shell {
+  min-height: 100dvh;
+  background: var(--color-paper);
+}
+/* The view switch is hidden with a viewport query, not JavaScript, so a real phone never sees it flash. */
+.shell-switch {
+  display: none;
+}
+.device {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+}
+.screen {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+.notch,
+.home-bar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .shell {
+    background: var(--color-ground);
+  }
+  .shell-switch {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem 1rem 0.25rem;
+  }
+  .shell-stage {
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 1rem 1.5rem;
+  }
+  .shell[data-view="phone"] .device {
+    width: 412px;
+    height: min(866px, calc(100dvh - 6.5rem));
+    min-height: 560px;
+    padding: 11px;
+    border-radius: 2.75rem;
+    background: var(--color-ink);
+    box-shadow: var(--shadow-frame);
+  }
+  .shell[data-view="phone"] .screen {
+    border-radius: 2.15rem;
+  }
+  .shell[data-view="phone"] .notch {
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    z-index: 40;
+    width: 6rem;
+    height: 1.5rem;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: var(--color-ink);
+    pointer-events: none;
+  }
+  .shell[data-view="phone"] .home-bar {
+    display: block;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    z-index: 40;
+    width: 7rem;
+    height: 4px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: rgba(31, 36, 50, 0.25);
+    pointer-events: none;
+  }
+  .shell[data-view="phone"] .screen-top {
+    padding-top: 2.5rem;
+  }
+  .shell[data-view="phone"] .screen-bottom {
+    padding-bottom: 1.25rem;
+  }
+  .shell[data-view="desktop"] .device {
+    width: 560px;
+    height: calc(100dvh - 6.5rem);
+    min-height: 560px;
+    border-radius: 1.25rem;
+    background: var(--color-paper);
+    box-shadow: var(--shadow-lift);
+    overflow: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Popups render in one layer that covers the screen being shown: the phone, the page or the frame. */
+.overlay-host {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.overlay-host > * {
+  pointer-events: auto;
+}
+
+/* ---------- Motion: one authored moment, the helper card sliding up ---------- */
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-sheet {
+  animation: sheet-up 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.anim-scrim {
+  animation: fade-in 260ms ease-out both;
+}
+.anim-settle {
+  animation: settle 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim-sheet,
+  .anim-scrim,
+  .anim-settle {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Controls ---------- */
+
+.input {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  padding: 0.625rem 0.875rem;
+  font-size: 15px;
+  color: var(--color-ink);
+}
+.input::placeholder {
+  color: var(--color-muted);
+  opacity: 0.8;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+.input[aria-invalid="true"] {
+  border-color: var(--color-loss);
+}
+.btn-primary {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: var(--color-primary);
+  padding: 0 1.25rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-paper);
+  transition: background-color 150ms;
+}
+.btn-primary:hover {
+  background: #3341b5;
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+}
+.btn-quiet {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  padding: 0 1rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+.btn-quiet:hover {
+  background: var(--color-surface);
+}
+.btn-quiet:disabled {
+  opacity: 0.45;
+}
+.loader {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid var(--color-line);
+  border-top-color: var(--color-primary);
+  animation: spin 800ms linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

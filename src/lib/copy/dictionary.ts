@@ -87,6 +87,16 @@ export const copy = {
     ),
     /** NEW. Button that clears the chosen fund. */
     changeFund: e("Change", "बदलें", "Badlein"),
+    /** NEW. Between the sample button and the form. */
+    orYours: e("or enter yours", "या अपनी भरें", "ya apni bharein"),
+    /** NEW. */
+    dayHint: e("1 to 28", "1 से 28", "1 se 28"),
+    /** NEW. The fund did not exist yet at the chosen start month. */
+    tooNew: e(
+      "This fund has no prices for that start month. Pick a later month or another fund.",
+      "इस fund की उस महीने की कीमतें नहीं हैं। बाद का महीना या दूसरा fund चुनें।",
+      "Is fund ki us mahine ki keematein nahi hain. Baad ka mahina ya doosra fund chuniye.",
+    ),
   },
 
   /** 3. SIP page. */
@@ -110,8 +120,8 @@ export const copy = {
       "1 किस्त · हर महीने ₹{amount}",
       "1 kisht · har mahine ₹{amount}",
     ),
-    legendValue: e("Value", "Value", "Value"),
-    legendInvested: e("Invested", "लगाया", "Lagaya"),
+    legendValue: e("Returns", "Returns", "Returns"),
+    legendInvested: e("What you put in", "लगाया हुआ पैसा", "Lagaya hua paisa"),
     stop: e("Stop SIP", "SIP रोकें", "SIP roko"),
     stopNote: e(
       "In the real app this stops future instalments. This concept doesn't change anything.",
@@ -181,6 +191,8 @@ export const copy = {
       "✓ हर number आपके data से check किया गया",
       "✓ Har number aapke data se check kiya gaya",
     ),
+    /** NEW. The dates under the two bars. */
+    between: e("{from} to {to}", "{from} से {to} तक", "{from} se {to} tak"),
     got: e("Got it", "समझ गया", "Samajh gaya"),
     more: e("Ask more", "और पूछो", "Aur poochho"),
   },
@@ -255,6 +267,14 @@ export const copy = {
     hint: e("Ask anything about your SIP", "अपनी SIP के बारे में कुछ भी पूछें", "Apni SIP ke baare mein kuch bhi poochiye"),
     send: e("Send", "भेजें", "Bhejo"),
     back: e("Back", "वापस", "Wapas"),
+    /** NEW. Shown when a written answer fails a check: the safe version, with the person's own numbers. */
+    checkFailed: e(
+      "I couldn't write a checked answer to that. What I can say from your numbers: {line}",
+      "मैं इसका check किया हुआ जवाब नहीं लिख पाया। आपके numbers से इतना कह सकता हूँ: {line}",
+      "Main iska check kiya hua jawab nahi likh paaya. Aapke numbers se itna keh sakta hoon: {line}",
+    ),
+    /** NEW. The free-text box is limited to questions about this SIP. */
+    thinking: e("Checking your numbers...", "आपके numbers check हो रहे हैं...", "Aapke numbers check ho rahe hain..."),
     /** NEW. The reply to the two questions that the next version will answer from the numbers. */
     comingNext: e("Coming in the next version", "अगले version में आएगा", "Agle version mein aayega"),
     qStop: e("What happens if I stop now?", "अगर मैं अभी रोक दूँ तो क्या होगा?", "Agar main abhi rok doon to kya hoga?"),
@@ -270,9 +290,9 @@ export const copy = {
     ),
     qLast: e("How long will this fall last?", "ये गिरावट कब तक रहेगी?", "Ye girawat kab tak rahegi?"),
     safeAdvice: e(
-      "I can't tell you what to do with your money, like which fund to pick or whether to stop. That would be investment advice. AMFI explains how funds work in plain language: mutualfundssahihai.com",
-      "मैं ये नहीं बता सकता कि आप अपने पैसे का क्या करें, जैसे कौन सा fund लें या SIP रोकें या नहीं। ये निवेश सलाह होगी। Fund कैसे काम करते हैं, ये AMFI ने आसान भाषा में समझाया है: mutualfundssahihai.com",
-      "Main ye nahi bata sakta ki aap apne paise ka kya karein, jaise kaunsa fund lein ya SIP rokein ya nahi. Ye investment advice hogi. Fund kaise kaam karte hain, ye AMFI ne aasaan bhasha mein samjhaya hai: mutualfundssahihai.com",
+      "I can't tell you what to do with your money, like which fund to pick or whether to stop. That would be investment advice. AMFI explains how funds work in plain language.",
+      "मैं ये नहीं बता सकता कि आप अपने पैसे का क्या करें, जैसे कौन सा fund लें या SIP रोकें या नहीं। ये निवेश सलाह होगी। Fund कैसे काम करते हैं, ये AMFI ने आसान भाषा में समझाया है।",
+      "Main ye nahi bata sakta ki aap apne paise ka kya karein, jaise kaunsa fund lein ya SIP rokein ya nahi. Ye investment advice hogi. Fund kaise kaam karte hain, ye AMFI ne aasaan bhasha mein samjhaya hai.",
     ),
     safePredict: e(
       "I can't tell you what the market will do next, and nobody can say for sure. I can only tell you what has happened to your money so far.",

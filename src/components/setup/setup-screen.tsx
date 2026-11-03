@@ -1,0 +1,233 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { copy, monthName } from "@/lib/copy/dictionary";
+import type { FundsResponse } from "@/lib/api/types";
+import type { FundSearchResult } from "@/lib/nav/types";
+import { DEFAULT_DAY, startMonthOptions, startMonthRange, validateSetup } from "@/lib/setup/rules";
+import type { SetupField, SipRequest } from "@/lib/setup/rules";
+import { useLang, useT } from "@/components/lang/lang-provider";
+import { useToday } from "@/hooks/use-today";
+import { SearchIcon } from "@/components/icons";
+
+/** Fund, start month, monthly amount and SIP date, or the sample SIP. No name, phone or PAN (ADR-0004). */
+export function SetupScreen({
+  problem,
+  onSubmit,
+  onSample,
+}: {
+  problem?: "load" | "tooNew";
+  onSubmit: (request: SipRequest) => void;
+  onSample: () => void;
+}) {
+  const t = useT();
+  const { lang } = useLang();
+  const today = useToday();
+
+  const [query, setQuery] = useState("");
+  const [found, setFound] = useState<{ query: string; funds: FundSearchResult[] } | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchFailed, setSearchFailed] = useState(false);
+  const [fund, setFund] = useState<FundSearchResult | null>(null);
+  const [startMonth, setStartMonth] = useState("");
+  const [amount, setAmount] = useState("");
+  const [day, setDay] = useState(String(DEFAULT_DAY));
+  const [errors, setErrors] = useState<Partial<Record<SetupField, true>>>({});
+
+  // Search after the person stops typing for a moment.
+  useEffect(() => {
+    if (fund || query.trim().length < 2) return;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      setSearchFailed(false);
+      try {
+        const response = await fetch(`/api/funds?q=${encodeURIComponent(query.trim())}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("search failed");
+        setFound({ query, funds: ((await response.json()) as FundsResponse).funds });
+      } catch {
+        if (!controller.signal.aborted) setSearchFailed(true);
+      } finally {
+        if (!controller.signal.aborted) setSearching(false);
+      }
+    }, 300);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [query, fund]);
+
+  const results = found?.query === query ? found.funds : null;
+  if (!today) return <div className="flex-1" />;
+  const range = startMonthRange(today);
+
+  function submit(event: React.FormEvent) {
+    event.preventDefault();
+    const check = validateSetup({ schemeCode: fund?.schemeCode ?? null, startMonth, amount, day }, today!);
+    setErrors(check.errors);
+    if (check.request) onSubmit(check.request);
+  }
+
+  return (
+    <main className="scroll-soft flex-1 overflow-y-auto">
+      <form onSubmit={submit} noValidate className="mx-auto flex max-w-md flex-col gap-5 px-5 pb-8 pt-6">
+        <div>
+          <h1 className="text-2xl font-semibold leading-tight">{t(copy.setup.title)}</h1>
+          <p className="mt-1.5 text-[15px] text-muted">{t(copy.setup.sub)}</p>
+        </div>
+
+        {problem && (
+          <p role="alert" className="rounded-xl bg-loss-soft px-4 py-3 text-sm text-loss">
+            {problem === "tooNew" ? t(copy.setup.tooNew) : t(copy.common.loadError)}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={onSample}
+          className="flex min-h-12 items-center justify-center rounded-xl bg-primary-soft px-4 text-[15px] font-semibold text-primary ring-1 ring-primary/20 transition-colors hover:bg-primary/10"
+          data-testid="sample"
+        >
+          {t(copy.setup.sample)}
+        </button>
+
+        <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted" aria-hidden>
+          <span className="h-px flex-1 bg-line" />
+          <span>{t(copy.setup.orYours)}</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+
+        <Field label={t(copy.setup.fund)} error={errors.fund ? t(copy.setup.errFund) : undefined} htmlFor="fund">
+          {fund ? (
+            <div className="flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5">
+              <span className="min-w-0 flex-1 text-[15px] font-medium leading-snug">{fund.schemeName}</span>
+              <button
+                type="button"
+                className="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary-soft"
+                onClick={() => {
+                  setFund(null);
+                  setQuery("");
+                }}
+              >
+                {t(copy.setup.changeFund)}
+              </button>
+            </div>
+          ) : (
+            <div className="relative">
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+              <input
+                id="fund"
+                type="search"
+                autoComplete="off"
+                placeholder={t(copy.setup.fundHint)}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="input pl-10"
+                aria-invalid={errors.fund ? true : undefined}
+              />
+            </div>
+          )}
+          {!fund && query.trim().length >= 2 && (
+            <div className="mt-1.5 overflow-hidden rounded-xl border border-line" aria-live="polite">
+              {searching && <p className="px-3 py-2.5 text-sm text-muted">{t(copy.setup.searching)}</p>}
+              {!searching && searchFailed && <p className="px-3 py-2.5 text-sm text-loss">{t(copy.common.loadError)}</p>}
+              {!searching && results && results.length === 0 && (
+                <p className="px-3 py-2.5 text-sm text-muted">{t(copy.setup.noFunds)}</p>
+              )}
+              {!searching &&
+                results?.map((r) => (
+                  <button
+                    key={r.schemeCode}
+                    type="button"
+                    onClick={() => {
+                      setFund(r);
+                      setErrors((e) => ({ ...e, fund: undefined }));
+                    }}
+                    className="block w-full border-b border-line px-3 py-2.5 text-left text-sm leading-snug last:border-b-0 hover:bg-surface"
+                  >
+                    {r.schemeName}
+                  </button>
+                ))}
+            </div>
+          )}
+        </Field>
+
+        <Field
+          label={t(copy.setup.start)}
+          htmlFor="start"
+          error={errors.start ? t(copy.setup.errStart, { min: monthName(range.min, lang), max: monthName(range.max, lang) }) : undefined}
+        >
+          <select id="start" value={startMonth} onChange={(e) => setStartMonth(e.target.value)} className="input" aria-invalid={errors.start ? true : undefined}>
+            <option value="">{t(copy.setup.startHint)}</option>
+            {startMonthOptions(today).map((m) => (
+              <option key={m} value={m}>
+                {monthName(m, lang)}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <div className="grid grid-cols-[1.4fr_1fr] gap-3">
+          <Field label={t(copy.setup.amount)} htmlFor="amount" hint={t(copy.setup.amountHint)} error={errors.amount ? t(copy.setup.errAmount) : undefined}>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">₹</span>
+              <input
+                id="amount"
+                inputMode="numeric"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="5,000"
+                className="input num pl-7"
+                aria-invalid={errors.amount ? true : undefined}
+              />
+            </div>
+          </Field>
+          <Field label={t(copy.setup.day)} htmlFor="day" hint={t(copy.setup.dayHint)} error={errors.day ? t(copy.setup.errDay) : undefined}>
+            <input
+              id="day"
+              inputMode="numeric"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              className="input num"
+              aria-invalid={errors.day ? true : undefined}
+            />
+          </Field>
+        </div>
+
+        <button type="submit" className="btn-primary mt-1">
+          {t(copy.setup.show)}
+        </button>
+      </form>
+    </main>
+  );
+}
+
+function Field({
+  label,
+  htmlFor,
+  hint,
+  error,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  hint?: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium">
+        {label}
+      </label>
+      {children}
+      {error ? (
+        <p className="mt-1.5 text-sm text-loss" role="alert">
+          {error}
+        </p>
+      ) : (
+        hint && <p className="mt-1.5 text-xs text-muted">{hint}</p>
+      )}
+    </div>
+  );
+}
