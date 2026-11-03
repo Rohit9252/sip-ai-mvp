@@ -212,3 +212,14 @@ test("tour of the helper: it explains the question, then the answer, the questio
   await page.getByTestId("tour-next").click();
   await expect(tour).toBeHidden();
 });
+
+test("helper: on desktop the same Your helper button brings the panel into focus", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "the side panel is the desktop layout");
+  await page.goto("/");
+  await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
+  await page.getByTestId("helper-fab").click();
+  await expect(page.getByTestId("helper-panel")).toBeFocused();
+  await page.getByTestId("skip").first().click();
+  await expect(page.getByTestId("helper")).toBeVisible();
+});

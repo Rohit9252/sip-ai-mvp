@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { copy, monthName } from "@/lib/copy/dictionary";
 import { deskCopy } from "@/lib/copy/tour";
 import type { SipResponse } from "@/lib/api/types";
@@ -43,6 +43,8 @@ export function SipScreen({ data, onBack, onSample }: Props) {
   // A dot on the helper button until the person opens what the helper has to say.
   const [unread, setUnread] = useState(false);
   const [waitingOpen, setWaitingOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [flash, setFlash] = useState(0);
 
   const snap = snapshots[index];
   const atEnd = index === snapshots.length - 1;
@@ -58,12 +60,20 @@ export function SipScreen({ data, onBack, onSample }: Props) {
     if (setbackIndex >= 0 && target === setbackIndex && !seenSetback) {
       setSeenSetback(true);
       setSheetOpen(true);
+      if (desktop) setFlash((n) => n + 1);
       track("setback_shown", { month: snapshots[target].monthNumber });
     }
   }
 
   function openHelper() {
     setUnread(false);
+    if (desktop) {
+      // Desktop: the panel is always open, so the button brings it into focus and makes it glow once.
+      setFlash((n) => n + 1);
+      // The panel re-mounts to replay its glow, so focus it on the next frame.
+      requestAnimationFrame(() => panelRef.current?.focus({ preventScroll: true }));
+      return;
+    }
     if (seenSetback && facts) setSheetOpen(true);
     else setWaitingOpen(true);
   }
@@ -279,7 +289,21 @@ export function SipScreen({ data, onBack, onSample }: Props) {
               <div className="rounded-2xl bg-paper p-5 ring-1 ring-line">{chartBlock("h-72")}</div>
 
               <div className="grid grid-cols-2 items-start gap-5">
-                <div className="rounded-2xl bg-paper p-4 ring-1 ring-line">{replayControls}</div>
+                <div className="flex flex-col gap-3 rounded-2xl bg-paper p-4 ring-1 ring-line">
+                  <button
+                    type="button"
+                    onClick={openHelper}
+                    className="relative inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-primary-soft px-3.5 text-sm font-semibold text-primary ring-1 ring-primary/25"
+                    data-testid="helper-fab"
+                  >
+                    <span className="relative">
+                      <HelperIcon width={20} height={20} />
+                      {unread && <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-loss ring-2 ring-primary-soft" aria-hidden />}
+                    </span>
+                    {t(deskCopy.helperTitle)}
+                  </button>
+                  {replayControls}
+                </div>
                 {sipCard}
               </div>
               {endBox}
@@ -288,7 +312,13 @@ export function SipScreen({ data, onBack, onSample }: Props) {
             </section>
 
             <aside className="sticky top-6 self-start">
-              <div className="flex h-[calc(100dvh-8rem)] min-h-[520px] flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-line">
+              <div
+                key={flash}
+                ref={panelRef}
+                tabIndex={-1}
+                className={`flex h-[calc(100dvh-8rem)] min-h-[520px] flex-col overflow-hidden rounded-2xl bg-paper outline-none ring-1 ring-line ${flash ? "panel-flash" : ""}`}
+                data-testid="helper-panel"
+              >
                 <div className="flex shrink-0 items-center gap-2.5 border-b border-line px-5 py-3.5">
                   <span className="grid size-8 place-items-center rounded-full bg-primary text-paper" aria-hidden>
                     <HelperIcon width={16} height={16} />

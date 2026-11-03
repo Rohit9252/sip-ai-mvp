@@ -386,3 +386,25 @@ button {
     animation: none;
   }
 }
+
+/* ---------- Desktop: the helper panel glows once when it steps in or is called ---------- */
+
+@keyframes panel-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 79, 209, 0.55);
+  }
+  60% {
+    box-shadow: 0 0 0 10px rgba(63, 79, 209, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 79, 209, 0);
+  }
+}
+.panel-flash {
+  animation: panel-flash 900ms ease-out 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel-flash {
+    animation: none;
+  }
+}
