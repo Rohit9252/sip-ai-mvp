@@ -83,7 +83,7 @@ export function checkReply(text: string, allowed: Set<string>): ReplyCheck {
   const trimmed = text.trim();
   if (!trimmed) problems.push("empty");
   if (trimmed.length > MAX_REPLY_CHARS) problems.push("length");
-  if (trimmed.includes("2014")) problems.push("em-dash");
+  if (trimmed.includes(String.fromCharCode(0x2014))) problems.push("em-dash");
   const badNumbers = numbersIn(trimmed).filter((n) => !allowed.has(n));
   if (badNumbers.length > 0) problems.push("number");
   if (ADVICE_IN_REPLY.some((p) => p.test(trimmed))) problems.push("advice");

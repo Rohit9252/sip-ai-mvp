@@ -109,7 +109,8 @@ describe("checkReply: every AI reply is checked before it is shown", () => {
   });
 
   test("an em dash or a long reply fails", () => {
-    expect(checkReply("Your fund 2014 like the market 2014 fell.", allowedNumbers(facts)).problems).toContain("em-dash");
+    const dash = String.fromCharCode(0x2014);
+    expect(checkReply(`Your fund ${dash} like the market ${dash} fell.`, allowedNumbers(facts)).problems).toContain("em-dash");
     expect(checkReply("a".repeat(600), allowedNumbers(facts)).problems).toContain("length");
   });
 });
