@@ -17,6 +17,11 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await shot("1-setup");
 
   await page.getByTestId("sample").click();
+  await expect(page.getByTestId("sample-picker")).toBeVisible();
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `docs/screens/${info.project.name}-1b-sample-picker.png` });
+  await page.getByTestId("sample-amount-5000").click();
+  await page.getByTestId("sample-start").click();
   await expect(page.getByTestId("month-badge")).toContainText("Month 1");
   await shot("2-sip-month-1");
 
@@ -31,6 +36,7 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await expect(page.getByTestId("answer")).toContainText("This fall isn't just your fund.");
   await expect(page.getByTestId("reason")).toContainText("11.3%");
   await expect(page.getByTestId("quality-tag")).toBeVisible();
+  await expect(page.getByTestId("cheer")).toContainText("Checking before you decide");
   await shot("4-helper-reason");
 
   await page.getByTestId("ask-more").click();
@@ -49,6 +55,7 @@ test("Hindi: the helper card speaks Hindi", async ({ page }, info) => {
   await page.goto("/");
   await page.getByRole("button", { name: "हिंदी" }).click();
   await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
   await page.getByTestId("skip").click();
   await page.getByTestId("guess-market").click();
   await expect(page.getByTestId("answer")).toContainText("आपने सही समझा।");
@@ -71,6 +78,7 @@ test("tour: first visit spotlights each part, and it does not come back", async 
   await expect(tour).toBeHidden();
 
   await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
   await expect(tour).toBeVisible();
   await expect(tour).toContainText("Your money at a glance");
   await page.waitForTimeout(500);
@@ -86,6 +94,8 @@ test("tour: first visit spotlights each part, and it does not come back", async 
 test("manage: stop asks an optional reason and says nothing real changed; withdraw shows the exit load", async ({ page }, info) => {
   await page.goto("/");
   await page.getByTestId("sample").click();
+  await page.getByTestId("sample-amount-5000").click();
+  await page.getByTestId("sample-start").click();
   await page.getByTestId("skip").click();
   await page.getByTestId(info.project.name === "phone" ? "guess-market" : "guess-market").click();
   await page.getByTestId("got-it").click();
@@ -113,4 +123,14 @@ test("manage: stop asks an optional reason and says nothing real changed; withdr
   await page.getByTestId("reason-money").click();
   await page.getByTestId("manage-confirm").click();
   await expect(page.getByTestId("manage-done")).toContainText("₹35,427");
+});
+
+test("sample at the default Rs 1,000: the same month-8 setback, in smaller rupees", async ({ page }) => {
+  await page.goto("/");
+  await page.getByTestId("sample").click();
+  await page.getByTestId("sample-start").click();
+  await page.getByTestId("skip").click();
+  // Rs 1,000 a month: 8 instalments = Rs 8,000; value scales with the amount (about a fifth of Rs 35,785).
+  await expect(page.getByTestId("ask")).toContainText("₹8,000");
+  await expect(page.getByTestId("month-badge")).toContainText("Month 8");
 });

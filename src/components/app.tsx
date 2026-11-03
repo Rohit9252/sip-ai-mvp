@@ -9,6 +9,7 @@ import { SAMPLE_SIP } from "@/lib/sip/sample";
 import { useT } from "@/components/lang/lang-provider";
 import { Strip } from "@/components/strip";
 import { SetupScreen } from "@/components/setup/setup-screen";
+import { SamplePicker } from "@/components/setup/sample-picker";
 import { SipScreen } from "@/components/sip/sip-screen";
 import { Tour, useTour } from "@/components/tour/tour";
 import { track } from "@/lib/events";
@@ -18,6 +19,7 @@ type View =
   | { kind: "loading" }
   | { kind: "sip"; data: SipResponse; isSample: boolean };
 
+/** The sample's fund, start month and day. The monthly amount is the person's pick (SamplePicker). */
 export const SAMPLE_REQUEST: SipRequest = {
   schemeCode: SAMPLE_SIP.schemeCode,
   startMonth: SAMPLE_SIP.startMonth,
@@ -31,6 +33,11 @@ export const SAMPLE_REQUEST: SipRequest = {
  */
 export function App() {
   const [view, setView] = useState<View>({ kind: "setup" });
+  const [picking, setPicking] = useState(false);
+  const startSample = (monthlyAmount: number) => {
+    setPicking(false);
+    open({ ...SAMPLE_REQUEST, monthlyAmount }, true);
+  };
   const t = useT();
   const setupGuide = useTour("sip-ai-tour-setup");
   const sipGuide = useTour("sip-ai-tour-sip");
@@ -61,7 +68,7 @@ export function App() {
     <div className="flex min-h-0 flex-1 flex-col">
       <Strip onHelp={guide?.start} page={view.kind === "sip" ? "sip" : "setup"} />
       {view.kind === "setup" && (
-        <SetupScreen problem={view.problem} onSubmit={(r) => open(r, false)} onSample={() => open(SAMPLE_REQUEST, true)} />
+        <SetupScreen problem={view.problem} onSubmit={(r) => open(r, false)} onSample={() => setPicking(true)} />
       )}
       {view.kind === "loading" && (
         <div className="flex flex-1 items-center justify-center p-6 text-muted" role="status" aria-live="polite">
@@ -74,9 +81,10 @@ export function App() {
           key={`${view.data.request.schemeCode}-${view.data.request.startMonth}`}
           data={view.data}
           onBack={() => setView({ kind: "setup" })}
-          onSample={() => open(SAMPLE_REQUEST, true)}
+          onSample={() => setPicking(true)}
         />
       )}
+      {picking && <SamplePicker onStart={startSample} onClose={() => setPicking(false)} />}
       {view.kind === "setup" && setupGuide.open && <Tour key="setup" steps={setupTour} onClose={setupGuide.close} />}
       {view.kind === "sip" && sipGuide.open && <Tour key="sip" steps={sipTour} onClose={sipGuide.close} />}
     </div>

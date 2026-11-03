@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AMFI_LINK, copy } from "@/lib/copy/dictionary";
+import { cheerCopy } from "@/lib/copy/tour";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
 import { askQuestion, explain, GUESSES } from "@/lib/helper";
 import type { Guess } from "@/lib/helper";
@@ -147,6 +148,12 @@ export function HelperSheet({
                     </p>
                   </div>
 
+                  {reason && (
+                    <p className="anim-settle mt-4 flex gap-2.5 rounded-xl bg-gain-soft px-3.5 py-3 text-sm font-medium leading-snug text-ink" data-testid="cheer">
+                      <CheckIcon width={16} height={16} className="mt-0.5 shrink-0 text-gain" />
+                      {t(guess === "dunno" || guess === "worth" ? cheerCopy.asked : plain.misread ? cheerCopy.misread : cheerCopy.right)}
+                    </p>
+                  )}
                   {reason && (
                     <p className="mt-3 text-xs font-medium text-gain" data-testid="quality-tag">
                       <CheckIcon width={14} height={14} className="mr-1 inline align-[-2px]" />

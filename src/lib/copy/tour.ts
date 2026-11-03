@@ -41,9 +41,9 @@ export const setupTour: TourStep[] = [
     target: "sample",
     title: e("Start with a real sample", "एक असली sample से शुरू करें", "Ek asli sample se shuru karein"),
     body: e(
-      "A ₹5,000 monthly SIP in a real fund, on real prices. It reaches its first fall in month 8.",
-      "एक असली fund में हर महीने ₹5,000 की SIP, असली कीमतों पर। महीना 8 में इसकी पहली गिरावट आती है।",
-      "Ek asli fund mein har mahine ₹5,000 ki SIP, asli keematon par. Mahina 8 mein iski pehli girawat aati hai.",
+      "Pick a monthly amount close to yours and replay a real fund on real prices. Its first fall comes in month 8.",
+      "अपनी जैसी monthly रकम चुनें और एक असली fund को असली कीमतों पर चलाकर देखें। इसकी पहली गिरावट महीना 8 में आती है।",
+      "Apni jaisi monthly rakam chuniye aur ek asli fund ko asli keematon par chala ke dekhiye. Iski pehli girawat mahina 8 mein aati hai.",
     ),
   },
   {
@@ -148,4 +148,49 @@ export const deskCopy = {
     e("At the first fall, say what you think happened.", "पहली गिरावट पर बताएँ कि आपको क्या लगता है।", "Pehli girawat par bataiye ki aapko kya lagta hai."),
     e("See your fund against the whole market, and ask more.", "अपने fund को पूरे market के सामने देखें, और सवाल पूछें।", "Apne fund ko poore market ke saamne dekhein, aur sawaal poochiye."),
   ],
+};
+
+/** The sample SIP: the person picks the monthly amount, so the numbers feel like their own. */
+export const sampleCopy = {
+  title: e("Try a sample SIP", "Sample SIP देखें", "Sample SIP dekho"),
+  body: e(
+    "We replay a real fund, HDFC Flexi Cap (Direct, Growth), from August 2025 on real prices. Pick a monthly amount close to what you put in, so the numbers feel like yours.",
+    "हम एक असली fund, HDFC Flexi Cap (Direct, Growth), को August 2025 से असली कीमतों पर चलाकर दिखाते हैं। अपनी जैसी monthly रकम चुनें, ताकि numbers आपके अपने लगें।",
+    "Hum ek asli fund, HDFC Flexi Cap (Direct, Growth), ko August 2025 se asli keematon par chala ke dikhate hain. Apni jaisi monthly rakam chuniye, taaki numbers aapke apne lagein.",
+  ),
+  why: e(
+    "Why we ask: this is how we test the moment we built for. At any amount the first fall comes in month 8; the percent moves stay the same, only the rupees change.",
+    "क्यों पूछ रहे हैं: इसी से हम उस पल को test करते हैं जिसके लिए ये बना है। किसी भी रकम पर पहली गिरावट महीना 8 में आती है; % वही रहते हैं, सिर्फ़ रुपये बदलते हैं।",
+    "Kyun pooch rahe hain: isi se hum us pal ko test karte hain jiske liye ye bana hai. Kisi bhi rakam par pehli girawat mahina 8 mein aati hai; % wahi rehte hain, sirf rupaye badalte hain.",
+  ),
+  amount: e("Monthly amount", "हर महीने की रकम", "Har mahine ki rakam"),
+  own: e("Or type your own", "या अपनी रकम लिखें", "Ya apni rakam likhiye"),
+  start: e("Start the replay", "Replay शुरू करें", "Replay shuru karein"),
+  cancel: e("Cancel", "रद्द करें", "Cancel"),
+};
+
+/** Quick picks for the sample. First-timers usually start small, so Rs 1,000 is the default. */
+export const SAMPLE_AMOUNTS = [500, 1000, 2000, 5000] as const;
+export const SAMPLE_DEFAULT_AMOUNT = 1000;
+
+/**
+ * A short, warm line after the reason. It praises understanding, never continuing: no "keep going", no "stay
+ * invested", no "don't worry" (the brief bans nudges). What the person does next stays their call.
+ */
+export const cheerCopy = {
+  right: e(
+    "You read your own money right. That is a real skill.",
+    "आपने अपने पैसे को सही पढ़ा। ये एक असली हुनर है।",
+    "Aapne apne paise ko sahi padha. Ye ek asli hunar hai.",
+  ),
+  misread: e(
+    "Now you know what moved your money. Checking before you decide is a strong habit.",
+    "अब आप जानते हैं कि आपके पैसे को किसने हिलाया। फ़ैसले से पहले जाँचना एक मज़बूत आदत है।",
+    "Ab aap jaante hain ki aapke paise ko kisne hilaya. Faisle se pehle jaanchna ek mazboot aadat hai.",
+  ),
+  asked: e(
+    "Asking was the right first step. You now know what moved your money, and what you do next is your call.",
+    "पूछना सही पहला कदम था। अब आप जानते हैं कि आपके पैसे को किसने हिलाया, और आगे क्या करना है, ये आपका फ़ैसला है।",
+    "Poochhna sahi pehla kadam tha. Ab aap jaante hain ki aapke paise ko kisne hilaya, aur aage kya karna hai, ye aapka faisla hai.",
+  ),
 };
