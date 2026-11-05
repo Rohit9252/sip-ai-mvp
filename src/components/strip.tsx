@@ -8,6 +8,7 @@ import { useLayoutMode } from "@/components/device-shell/layout-mode";
 import { ChevronRightIcon, HelpIcon, InfoIcon, SoundOffIcon, SoundOnIcon } from "@/components/icons";
 import { useStoredChoice } from "@/hooks/use-stored-choice";
 import { SOUND_CHOICES, SOUND_KEY } from "@/lib/sound";
+import Link from "next/link";
 import { consentCopy } from "@/lib/copy/consent";
 
 /**
@@ -33,6 +34,12 @@ export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?
     >
       {sound === "on" ? <SoundOnIcon width={18} height={18} /> : <SoundOffIcon width={18} height={18} />}
     </button>
+  );
+
+  const build = (
+    <Link href="/design" className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full px-3 text-[13px] font-semibold text-primary hover:bg-primary-soft" data-testid="build-link">
+      {t(consentCopy.buildShort)}
+    </Link>
   );
 
   const help = onHelp ? (
@@ -80,6 +87,7 @@ export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?
             <div data-tour="lang">
               <LangSwitch />
             </div>
+            {build}
             {soundSwitch}
             {help}
             {about}

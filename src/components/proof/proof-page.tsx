@@ -19,7 +19,7 @@ export function ProofPage({ current, title, lead, children }: { current: (typeof
           <Link href="/" className="text-sm font-semibold text-primary hover:underline">
             ← Back to the app
           </Link>
-          <nav aria-label="How we built it" className="flex flex-wrap gap-1">
+          <nav aria-label="The proof behind it" className="flex flex-wrap gap-1">
             {PAGES.map((p) => (
               <Link
                 key={p.href}

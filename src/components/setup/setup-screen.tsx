@@ -1,5 +1,6 @@
 "use client";
 
+import { BuildCard } from "@/components/proof/build-links";
 import { useEffect, useState } from "react";
 import { copy, monthName } from "@/lib/copy/dictionary";
 import type { FundsResponse } from "@/lib/api/types";
@@ -230,6 +231,9 @@ export function SetupScreen({
     return (
       <main className="scroll-soft flex-1 overflow-y-auto">
         {form}
+        <div className="mx-auto max-w-md px-5 pb-4">
+          <BuildCard />
+        </div>
         {trust}
       </main>
     );
@@ -248,6 +252,7 @@ export function SetupScreen({
             ))}
           </ol>
           {trust}
+          <BuildCard className="mt-6" />
           <p className="mt-8 max-w-[60ch] text-sm leading-relaxed text-muted">
             {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
           </p>
