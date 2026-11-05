@@ -7,11 +7,12 @@ import { Tour, useTour } from "@/components/tour/tour";
 import { consentCopy } from "@/lib/copy/consent";
 import { learnCards, learnCopy, learnLink } from "@/lib/copy/learn";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
-import { askQuestion, explain, GUESSES } from "@/lib/helper";
+import { askQuestion, explain, GUESSES, isMisread } from "@/lib/helper";
 import type { Explanation, Guess } from "@/lib/helper";
 import type { SipRequest } from "@/lib/setup/rules";
 import type { Facts } from "@/lib/sip";
 import { track } from "@/lib/events";
+import { playSound } from "@/lib/sound";
 import { OverlayLayer } from "@/components/device-shell/overlay-layer";
 import { useLang, useT } from "@/components/lang/lang-provider";
 import { CheckIcon, ChevronRightIcon, HelperIcon, ShieldIcon, TriangleIcon } from "@/components/icons";
@@ -48,6 +49,8 @@ export function HelperSheet({
   const [guess, setGuess] = useState<Guess | null>(null);
   const [fetched, setFetched] = useState<{ key: string; reply: ReasonResponse } | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
+  // The quick check after the reason: "fund" or "market", asked once.
+  const [check, setCheck] = useState<"fund" | "market" | null>(null);
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +71,7 @@ export function HelperSheet({
         const p = explain(facts, guess, lang);
         const result: ReasonResponse = body ?? { opening: p.opening, reason: p.reason, source: "template", case: p.case, misread: p.misread };
         setFetched({ key: thisKey, reply: result });
+        playSound("reason");
         track("reason_shown", { source: result.source, case: result.case });
       });
     return () => {
@@ -92,6 +96,18 @@ export function HelperSheet({
     setGuess(g);
     const e = explain(facts, g, lang);
     track("guess_chosen", { guess: g, misread: e.misread, case: e.case });
+  }
+
+  // Before: the first guess, made without help. After: this answer, made with the reason in front of them.
+  // Same person, same fall, same rule (isMisread), so the two can be compared for "falls read right".
+  function answerCheck(answer: "fund" | "market") {
+    if (!guess || !plain) return;
+    setCheck(answer);
+    track("falls_check", {
+      case: plain.case,
+      before: guess === "fund" || guess === "market" ? (plain.misread ? "wrong" : "right") : "none",
+      after: isMisread(answer, plain.case) ? "wrong" : "right",
+    });
   }
 
   async function ask(question: string) {
@@ -182,6 +198,32 @@ export function HelperSheet({
             <p className="font-medium">{t(cheerCopy.learnHint)}</p>
             <Learn />
           </HelperSays>
+
+          <HelperSays testId="check">
+            <p className="font-medium">{t(copy.helper.checkAsk)}</p>
+          </HelperSays>
+          {!check ? (
+            <div className="ml-11 mt-2 grid grid-cols-2 gap-2" role="group" aria-label={t(copy.helper.checkAsk)}>
+              {(["fund", "market"] as const).map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => answerCheck(a)}
+                  className="min-h-11 rounded-xl bg-paper px-3 py-2 text-left text-sm font-medium ring-1 ring-primary/30 transition-colors hover:bg-primary-soft"
+                  data-testid={`check-${a}`}
+                >
+                  {t(a === "fund" ? copy.helper.checkFund : copy.helper.checkMarket)}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <>
+              <YouSay>{t(check === "fund" ? copy.helper.checkFund : copy.helper.checkMarket)}</YouSay>
+              <HelperSays>
+                <p>{t(copy.helper.checkThanks)}</p>
+              </HelperSays>
+            </>
+          )}
         </>
       )}
 

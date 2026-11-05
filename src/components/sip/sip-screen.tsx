@@ -8,6 +8,7 @@ import { reasonLine } from "@/lib/helper";
 import { describeReturns, formatDate, formatRupees } from "@/lib/sip";
 import type { Snapshot } from "@/lib/sip";
 import { track } from "@/lib/events";
+import { playSound } from "@/lib/sound";
 import { useLang, useT } from "@/components/lang/lang-provider";
 import { useLayoutMode } from "@/components/device-shell/layout-mode";
 import { Segmented } from "@/components/ui/segmented";
@@ -61,6 +62,7 @@ export function SipScreen({ data, onBack, onSample }: Props) {
       setSeenSetback(true);
       setSheetOpen(true);
       if (desktop) setFlash((n) => n + 1);
+      playSound("helper");
       track("setback_shown", { month: snapshots[target].monthNumber });
     }
   }

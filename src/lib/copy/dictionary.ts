@@ -47,6 +47,9 @@ export const copy = {
     loading: e("Getting your SIP...", "आपकी SIP आ रही है...", "Aapki SIP aa rahi hai..."),
     /** NEW. The label of the language switch, for screen readers. */
     langLabel: e("Language", "भाषा", "Bhasha"),
+    /** NEW. The sound switch in the top bar, for screen readers and its tooltip. */
+    soundOff: e("Turn sounds off", "आवाज़ बंद करें", "Awaaz band karein"),
+    soundOn: e("Turn sounds on", "आवाज़ चालू करें", "Awaaz chalu karein"),
   },
 
   /** 2. Set-up screen. */
@@ -197,6 +200,15 @@ export const copy = {
     between: e("{from} to {to}", "{from} से {to} तक", "{from} se {to} tak"),
     got: e("Got it", "समझ गया", "Samajh gaya"),
     more: e("Ask more", "और पूछो", "Aur poochho"),
+    /** NEW. The quick check after the reason: the same question again, now with the reason in front of them. */
+    checkAsk: e(
+      "Quick check: this month, what moved your money most?",
+      "एक छोटा सवाल: इस महीने आपके पैसे को सबसे ज़्यादा किसने हिलाया?",
+      "Ek chhota sawaal: is mahine aapke paise ko sabse zyada kisne hilaya?",
+    ),
+    checkFund: e("My fund", "मेरा fund", "Mera fund"),
+    checkMarket: e("The whole market", "पूरा market", "Poora market"),
+    checkThanks: e("Thanks. That helps us make this clearer.", "शुक्रिया। इससे हमें इसे और साफ़ बनाने में मदद मिलती है।", "Shukriya. Isse humein ise aur saaf banane mein madad milti hai."),
   },
 
   /** 5b. Reason templates, one per case. Also the safe version when an AI check fails. */

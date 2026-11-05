@@ -21,6 +21,21 @@ export const ArrowLeftIcon = (p: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+export const SoundOnIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <path d="M11 5 6 9H3v6h3l5 4z" />
+    <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+    <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+  </svg>
+);
+
+export const SoundOffIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <path d="M11 5 6 9H3v6h3l5 4z" />
+    <path d="m16 9 6 6M22 9l-6 6" />
+  </svg>
+);
+
 export const MonitorIcon = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...p}>
     <rect x="3" y="4" width="18" height="12" rx="2" />

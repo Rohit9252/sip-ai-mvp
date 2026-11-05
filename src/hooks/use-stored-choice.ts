@@ -21,6 +21,11 @@ function read(key: string): string | null {
   return memory.get(key) ?? null;
 }
 
+/** The stored choice outside React (the sound player reads it before each sound). */
+export function readStoredChoice(key: string): string | null {
+  return read(key);
+}
+
 function write(key: string, value: string) {
   memory.set(key, value);
   try {

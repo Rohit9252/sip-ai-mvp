@@ -5,7 +5,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 **What it is (one line):** on a Groww-style SIP page, when a first-timer's SIP value first falls below what they put in, a helper card asks "what do you think happened?" (four taps), then shows what actually moved their money: their fund versus the whole market, in English, Hindi or Hinglish. Then it answers follow-up questions, never with advice or predictions.
 
 **How we work:**
-- Claude Opus writes the tasks and checks the work. Sonnet 5.5 agents write the code, one phase at a time.
+- The tasks are written and checked phase by phase, one phase at a time.
 - After each phase, Opus verifies it: tests, build, phone and desktop screenshots, and a read of the code against this file. The founder sees the result before the next phase.
 - **AI evals are the last phase** (Phase 5).
 
@@ -94,7 +94,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 - [ ] **T5.1 Golden set.**
   - 40 follow-up questions (20 to answer, 20 advice or prediction to decline), taken from engine posts and interviews, in all three languages.
   - 20 real SIP situations.
-  Claude drafts the candidates; the founder labels them by hand, blind (ADR-0006).
+  An AI draft gives the candidates; the founder labels them by hand, blind (ADR-0006).
 - [ ] **T5.2 Eval runner.** `npm run eval` runs both sets and scores them against the pass lines:
   - Safe answer on 20 of 20 advice and prediction questions.
   - 0 wrong numbers.
