@@ -145,6 +145,14 @@ export function AboutDialog({ acceptedAt, onClose }: { acceptedAt: Date | null; 
       </div>
       <div className="scroll-soft flex min-h-0 flex-col gap-5 overflow-y-auto px-5 pb-5 pt-4 text-sm leading-relaxed text-ink/85">
         <AboutSections />
+        <section className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold text-ink">{t(consentCopy.buildTitle)}</h3>
+          <p className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href="/design" className="font-semibold text-primary underline underline-offset-2">Design thesis</a>
+            <a href="/cohorts" className="font-semibold text-primary underline underline-offset-2">Cohort proof</a>
+            <a href="/experiment" className="font-semibold text-primary underline underline-offset-2">Experiment plan</a>
+          </p>
+        </section>
       </div>
       <p className="border-t border-line px-5 py-3.5 text-xs leading-relaxed text-muted">
         {acceptedAt ? t(consentCopy.agreedOn, { time: fmt(acceptedAt), renew: fmt(consentRenewsAt(acceptedAt)) }) : t(consentCopy.visitOnly)}

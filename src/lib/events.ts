@@ -12,6 +12,7 @@ export type EventName =
   | "followup_asked"
   | "got_it"
   | "tester_answer"
+  | "falls_check"
   | "manage_opened"
   | "manage_action";
 

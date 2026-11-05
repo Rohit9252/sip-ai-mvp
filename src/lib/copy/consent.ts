@@ -51,6 +51,8 @@ export const consentCopy = {
   ],
 
   dataTitle: e("What happens to your data", "आपके data का क्या होता है", "Aapke data ka kya hota hai"),
+  /** NEW. In the About popup only: links to the three pages for reviewers (English pages). */
+  buildTitle: e("How we built it (in English)", "हमने इसे कैसे बनाया (English में)", "Humne ise kaise banaya (English mein)"),
   data: e(
     "We never ask for your name, phone, PAN or account. Fund prices come from AMFI's public data (via mfapi.in). To write the explanation and answer your questions, your SIP's numbers and your question are sent to OpenAI; every number is worked out in our code, not by the AI. We do not store your questions or answers. We count anonymous taps (for example, which guess was chosen) with Vercel Analytics to learn what works. OpenAI may keep requests for a short time under its own API policy.",
     "हम कभी आपका नाम, phone, PAN या account नहीं माँगते। Fund की कीमतें AMFI के public data (mfapi.in के ज़रिए) से आती हैं। समझाने और आपके सवालों के जवाब देने के लिए आपकी SIP के numbers और आपका सवाल OpenAI को भेजे जाते हैं; हर number हमारे code में निकाला जाता है, AI से नहीं। हम आपके सवाल या जवाब store नहीं करते। क्या काम करता है, ये समझने के लिए हम Vercel Analytics से anonymous taps गिनते हैं (जैसे कौन सा अंदाज़ा चुना गया)। OpenAI अपनी API policy के तहत requests कुछ समय तक रख सकता है।",

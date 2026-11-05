@@ -55,6 +55,10 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await shot("5-followup");
 
   await expect(page.getByTestId("learn")).toBeVisible();
+  // The quick check after the reason: the "after help" half of "falls read right".
+  await expect(page.getByTestId("check")).toContainText("what moved your money most?");
+  await page.getByTestId("check-market").click();
+  await expect(page.getByText("Thanks. That helps us make this clearer.")).toBeVisible();
   await page.getByTestId("got-it").click();
   await expect(page.getByTestId("reason-line")).toContainText("March 2026");
   await shot("6-reason-line");

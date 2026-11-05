@@ -5,7 +5,9 @@ import { deskCopy, tourCopy } from "@/lib/copy/tour";
 import { LangSwitch } from "@/components/lang/lang-switch";
 import { useT } from "@/components/lang/lang-provider";
 import { useLayoutMode } from "@/components/device-shell/layout-mode";
-import { ChevronRightIcon, HelpIcon, InfoIcon } from "@/components/icons";
+import { ChevronRightIcon, HelpIcon, InfoIcon, SoundOffIcon, SoundOnIcon } from "@/components/icons";
+import { useStoredChoice } from "@/hooks/use-stored-choice";
+import { SOUND_CHOICES, SOUND_KEY } from "@/lib/sound";
 import { consentCopy } from "@/lib/copy/consent";
 
 /**
@@ -16,6 +18,22 @@ import { consentCopy } from "@/lib/copy/consent";
 export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?: () => void; page?: "setup" | "sip" }) {
   const t = useT();
   const desktop = useLayoutMode() === "desktop";
+  const [sound, setSound] = useStoredChoice(SOUND_KEY, SOUND_CHOICES, "on");
+  const soundLabel = sound === "on" ? t(copy.common.soundOff) : t(copy.common.soundOn);
+
+  const soundSwitch = (
+    <button
+      type="button"
+      onClick={() => setSound(sound === "on" ? "off" : "on")}
+      aria-label={soundLabel}
+      aria-pressed={sound === "on"}
+      title={soundLabel}
+      className="grid size-9 place-items-center rounded-full text-muted hover:bg-surface-strong hover:text-ink"
+      data-testid="sound"
+    >
+      {sound === "on" ? <SoundOnIcon width={18} height={18} /> : <SoundOffIcon width={18} height={18} />}
+    </button>
+  );
 
   const help = onHelp ? (
     <button
@@ -62,6 +80,7 @@ export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?
             <div data-tour="lang">
               <LangSwitch />
             </div>
+            {soundSwitch}
             {help}
             {about}
           </div>
@@ -79,6 +98,7 @@ export function Strip({ onHelp, onAbout, page }: { onHelp?: () => void; onAbout?
         {t(copy.common.strip)} <strong className="font-semibold text-ink">{t(copy.common.stripAdvice)}</strong>
       </p>
       <div className="flex items-center justify-end gap-1 px-4 pb-2 pt-1.5">
+        {soundSwitch}
         {about}
         {help}
         <div data-tour="lang">
