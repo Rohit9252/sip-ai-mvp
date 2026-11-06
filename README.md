@@ -55,7 +55,7 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 | People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes planned ([user testing](docs/USER-TESTING.md)) |
 | Eval gate | 40 questions and 20 SIP situations, pass lines fixed in advance ([ADR-0006](docs/adr/0006-release-only-through-the-eval-gate.md)) | **Designed, not run yet** |
 
-What is still open, said plainly: only 1 of our 3 testers is confirmed in our segment, the before-and-after test has not been run with any tester yet, and the eval gate has not run.
+What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), the before-and-after test has not been run with any tester yet, and the eval gate has not run.
 
 ## Run it
 
