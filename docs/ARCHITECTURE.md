@@ -36,6 +36,9 @@ flowchart TD
 | Reply guard | `src/lib/guard/reply.ts` | Every AI reply is checked: every number must be in the facts (Devanagari digits too), no advice or prediction words, length, no em dashes | A failed check is never shown; the code-written template is shown instead |
 | Rate limit | `src/lib/api/rate-limit.ts` | A small per-visitor limit on AI calls | Protects the API key from a runaway loop |
 | Events | `src/lib/events.ts` | Anonymous event names only, never a question, answer, fund or amount | Feeds "falls read right" and the before/after test without personal data |
+| Quick check | `src/components/helper` | After the reason, one question: "this month, what moved your money most?" Scored by the same rule in code as the first guess | Gives the "after" half of the before/after test (event `falls_check`) |
+| Sound | `src/lib/sound.ts` | A soft chime only when help arrives, never for a loss; a mute switch in the top bar, remembered | Calm, not alarm: a sound for a loss would add worry |
+| Proof pages | `src/app/design`, `src/app/cohorts`, `src/app/experiment` | The design thesis, the cohort replay on real prices, and the experiment plan, linked as "See the proof" | Lets a reviewer check the reasoning and the numbers inside the app |
 
 ## What keeps it safe
 
@@ -54,12 +57,25 @@ No prompt or model change goes live until it passes a hand-labelled golden set (
 - The reason matches the numbers: 20 of 20.
 - Answerable questions wrongly given the safe answer: 2 of 20 or fewer.
 
-The scores for each version are kept in the AI Evidence Log, Part B.
+**Status: designed, not run yet.** The scores for each version will be kept in the AI Evidence Log, Part B. Questions from user testing (T1's "should I change my fund?" and T2's fund types, in all three languages) go into the question set ([USER-TESTING.md](USER-TESTING.md)).
 
 ## Tests
 
-- Unit tests (Vitest): the SIP engine, the NAV client, the cases, the guards, the SIP service, the copy in three languages, consent.
-- End-to-end tests (Playwright): the sample flow on phone and desktop.
+Tests were written before the code (test-driven): every task ended with `npm test` and `npm run build` passing.
+
+| Area | What the tests hold the code to | Tests |
+|---|---|---|
+| SIP maths | Instalment dates, units, month-end value, the first fall in months 4 to 12, rupee and percent formats, the 4 hand checks ([hand-checks.md](reference/hand-checks.md)) | 73 |
+| Explanation | Which of the five cases a fall is, the words of the reason, the two bars | 49 |
+| Safety guard | 25 advice and prediction questions blocked in 3 languages, 8 fair questions answered, 8 bad replies caught | 45 |
+| Fund prices | Fetching and caching AMFI prices, a missing fund or price, the cohort replay | 28 |
+| Set-up rules | Start month 4 to 24 months back, amounts, the same rules checked again on the server | 17 |
+| Language and consent | Every line in English, Hindi and Hinglish, no em dashes or advice words in any copy, consent | 15 |
+| **Total (Vitest)** | | **227, all pass** |
+
+End-to-end (Playwright): 9 journeys (sample flow, Hindi, the tour, Stop and Withdraw, consent, the helper on phone and desktop), run on a phone and a desktop screen: **16 of 16 runs pass**, 2 skip because they are phone-only or desktop-only.
+
+What people found when they tried it is in [USER-TESTING.md](USER-TESTING.md).
 
 ## Stack
 
