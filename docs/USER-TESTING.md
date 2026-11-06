@@ -28,7 +28,7 @@ Who tried the MVP, where they got stuck, and what we change because of it. Peopl
 |---|---|
 | 3 testers from our segment | 3 people tried it; **1 of 3 is confirmed in our segment** (T2) |
 | Before-and-after task: "why did your money fall?", first without the helper, then with it, scored by one rule in code | **Built into the MVP, not run yet** with any tester ([experiment plan](https://sip-ai-mvp.vercel.app/experiment)) |
-| Version 2 fixes for what testers hit | Found and planned, being built |
+| Version 2 fixes for what testers hit | Planned, not live yet |
 | New questions from testers in the eval gate | T1's question and T2's fund-type questions, in English, Hindi and Hinglish, go into the eval gate's question set ([ADR-0006](adr/0006-release-only-through-the-eval-gate.md)) |
 
 ## What this testing cannot tell you
