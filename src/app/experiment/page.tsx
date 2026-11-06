@@ -60,7 +60,7 @@ export default function ExperimentPage() {
           (0.38 × 0.62 + 0.34 × 0.66) ÷ 0.04².
         </Row>
         <Row label="Timing">
-          About 7,500 first-timers in the segment start each month at 5% (≈1.5 lakh × 5%), so the arms fill within the first monthly
+          About 3,270 first-timers on Groww start each month at 5% (≈65,000 × 5%, assumed), so the arms fill within about 2 monthly
           cohorts. Each person is read 30 days after their first fall, so the first read comes about 4 to 5 months after launch.
         </Row>
         <Row label="Guardrails">
