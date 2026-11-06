@@ -15,7 +15,7 @@ A concept for a Groww-style SIP page, built for a product management graduation 
 
 ## The problem it solves
 
-In our research, the step where first-time SIP investors drop off most is **months 4 to 12**: only about half keep paying through it, and the stop often comes right after their first fall. In our survey, 3 of 8 first-timers who saw a fall stopped. The app shows them the drop, but never the reason, so a normal market fall looks like their own mistake.
+In our research, the step where first-time SIP investors drop off most is **months 4 to 12**: only about half keep paying through it, and the stop often comes right after their first fall. In our survey, 3 of the 8 first-timers still paying at month 3 stopped after a fall. The app shows them the drop, but never the reason, so a normal market fall looks like their own mistake.
 
 The helper does one job: it makes that first fall readable. It never tells anyone to keep going, and the Stop button stays exactly where it was.
 
@@ -55,7 +55,7 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 | People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes planned ([user testing](docs/USER-TESTING.md)) |
 | Eval gate | 40 questions and 20 SIP situations, pass lines fixed in advance ([ADR-0006](docs/adr/0006-release-only-through-the-eval-gate.md)) | **Designed, not run yet** |
 
-What is still open, said plainly: only 1 of our 3 testers is confirmed in our segment, the before-and-after test has not been run with any tester yet, and the eval gate has not run.
+What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), the before-and-after test has not been run with any tester yet, and the eval gate has not run.
 
 ## Run it
 

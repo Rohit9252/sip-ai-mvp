@@ -13,7 +13,7 @@ Who tried the MVP, where they got stuck, and what we change because of it. Peopl
 | Person | In our segment? | What worked | Where they got stuck | What we change (version 2) |
 |---|---|---|---|---|
 | **E3**, expert who works in finance | No (expert review) | Called it "a very good thing"; the three languages are "quite good" | The basics are shown as a list of folded cards: too much at once | One basic at a time, inside the answer |
-| **T1**, tester | Not confirmed yet | Liked the solution | Asked "should I change my fund? what should I do now?" and got only the safe answer. Nothing else was offered: a dead end | Refuse the advice, then offer their own facts in one tap: their fund against the market over their SIP months, what switching involves, and what stopping does |
+| **T1**, tester | Yes | Liked the solution | Asked "should I change my fund? what should I do now?" and got only the safe answer. Nothing else was offered: a dead end | Refuse the advice, then offer their own facts in one tap: their fund against the market over their SIP months, what switching involves, and what stopping does |
 | **T2**, first-time investor (also interview I7) | **Yes** | "Beginner-friendly"; liked the learning part; "no platform does this" | Wants small cap, mid cap, large cap and hybrid funds explained | Fund-type basics in general terms, from AMFI, with no advice |
 
 ## What we learned
@@ -26,7 +26,7 @@ Who tried the MVP, where they got stuck, and what we change because of it. Peopl
 
 | Planned | What actually ran |
 |---|---|
-| 3 testers from our segment | 3 people tried it; **1 of 3 is confirmed in our segment** (T2) |
+| 3 testers from our segment | 3 people tried it; **2 of 3 are in our segment** (T1, T2); the third is an expert (E3) |
 | Before-and-after task: "why did your money fall?", first without the helper, then with it, scored by one rule in code | **Built into the MVP, not run yet** with any tester ([experiment plan](https://sip-ai-mvp.vercel.app/experiment)) |
 | Version 2 fixes for what testers hit | Planned, not live yet |
 | New questions from testers in the eval gate | T1's question and T2's fund-type questions, in English, Hindi and Hinglish, will go into the eval gate's question set ([ADR-0006](adr/0006-release-only-through-the-eval-gate.md)) |
