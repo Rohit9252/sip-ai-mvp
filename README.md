@@ -15,7 +15,7 @@ A concept for a Groww-style SIP page, built for a product management graduation 
 
 ## The problem it solves
 
-In our research, the step where first-time SIP investors drop off most is **months 4 to 12**: only about half keep paying through it, and the stop often comes right after their first fall. In our survey, 3 of 8 first-timers who saw a fall stopped. The app shows them the drop, but never the reason, so a normal market fall looks like their own mistake.
+In our research, the step where first-time SIP investors drop off most is **months 4 to 12**: only about half keep paying through it, and the stop often comes right after their first fall. In our survey, 3 of the 8 first-timers still paying at month 3 stopped after a fall. The app shows them the drop, but never the reason, so a normal market fall looks like their own mistake.
 
 The helper does one job: it makes that first fall readable. It never tells anyone to keep going, and the Stop button stays exactly where it was.
 
