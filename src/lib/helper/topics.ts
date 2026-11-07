@@ -29,6 +29,12 @@ const BELOW_OR_FALL = /\b(below|less|lower|fall|fell|drop|dropped|down|gira|gira
 const FUND = /\bfund\b|फंड|फ़ंड|\bsip\b/i;
 const MARKET = /\bmarket\b|nifty|मार्केट|बाज़ार|बाजार|निफ्टी/i;
 const COMPARING = /\b(more|less|worse|better|against|compared|than|vs|versus|zyada|jyada|kam|se|aur|mukable|mukabla)\b|ज़्यादा|ज्यादा|कम|खराब|बेहतर|मुकाबले|से|और/i;
+/** A named month or a year: the question is about a period the facts do not hold. */
+const NAMES_A_MONTH =
+  /\b(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec)\b|\b(in|of|during|for|by) may\b|\b20\d\d\b|last month|pichhle mahine|जनवरी|फ़रवरी|फरवरी|मार्च|अप्रैल|मई|जून|जुलाई|अगस्त|सितंबर|अक्टूबर|नवंबर|दिसंबर|पिछले महीने/i;
+/** "My", in the three languages: the question is about the person's own money. */
+const OWN = /\b(my|mera|meri|mere)\b|मेरा|मेरी|मेरे/i;
+const OWN_MONEY = /\b(value|money|paisa|sip|fund|investment|returns?)\b|पैसा|पैसे|value|फंड/i;
 const SINCE_START = /\b(since|start|started|first instalment|first installment|began|begin|beginning|shuru|aarambh)\b|शुरू|शुरुआत|पहली किस्त|तब से/i;
 
 export type FactsTopic = "why-below" | "compare";
@@ -36,7 +42,9 @@ export type Period = "month" | "start";
 
 /** "Why is my value below what I put in?" and "did my fund fall more than the market?" */
 export function detectFactsTopic(question: string): FactsTopic | null {
-  if (WHY.test(question) && BELOW_OR_FALL.test(question)) return "why-below";
+  // The facts hold one month, the month of the fall. A question about another named month goes to the AI path.
+  if (NAMES_A_MONTH.test(question)) return null;
+  if (WHY.test(question) && OWN.test(question) && OWN_MONEY.test(question) && BELOW_OR_FALL.test(question)) return "why-below";
   if (FUND.test(question) && MARKET.test(question) && COMPARING.test(question)) return "compare";
   return null;
 }
@@ -48,7 +56,8 @@ export function detectPeriod(question: string): Period {
 
 /** "What happens to my money if I stop?" A word for stopping, and a word that asks what happens or where it is. */
 const STOP_WORD = /\bstop\b|\bband\b|\brok\w*|बंद|रोक/i;
-const WHAT_HAPPENS = /\bhappens?\b|what about|where|\bkya (hoga|hota)\b|\bkahan\b|\bkahaan\b|\brehta\b|क्या (होगा|होता)|कहाँ|कहां|रहता/i;
+const WHAT_HAPPENS =
+  /\bhappens?\b|what about|\bwhere\b.{0,25}\b(money|paisa|units|investment)\b|\b(money|paisa|units|investment)\b.{0,25}\bwhere\b|\bkya (hoga|hota)\b|(paisa|jama|पैसा|पैसे|जमा).{0,30}(kahan|kahaan|कहाँ|कहां|rehta|रहता)|(kahan|kahaan|कहाँ|कहां).{0,30}(paisa|jama|पैसा|पैसे|जमा)|क्या (होगा|होता)/i;
 
 export function detectStopTopic(question: string): boolean {
   return STOP_WORD.test(question) && WHAT_HAPPENS.test(question);
@@ -61,7 +70,8 @@ const HOW_MANY = /\b(how many|kitn[ie]|kitni)\b|कितनी|कितने/
 const INSTALMENT = /instal?lments?|installments?|\bkisht\w*|किस्त|इंस्टालमेंट/i;
 const HOW_MUCH = /\b(how much|by how much|kitna|kitne)\b|कितना|कितने/i;
 const BELOW = /\b(below|less than|short of|kam|neeche)\b|कम|नीचे/i;
-const PUT_IN = /\b(invest\w*|put in|paid in|lagaya|lagaye|lagai|total|kul)\b|लगाया|लगाए|निवेश|कुल/i;
+const PUT_IN = /\b(invest\w*|put in|paid in|lagaya|lagaye|lagai)\b|लगाया|लगाए|निवेश/i;
+const TOTAL_WORD = /\b(in total|total|kul)\b|कुल/i;
 const MONTH_WORD = /this month|\bis mahine\b|इस महीने/i;
 const MOVE_WORD = /\b(fall|fell|gira|girawat|rose|badha|percent|move)\b|गिरा|बढ़ा|प्रतिशत|percent|%/i;
 
@@ -69,7 +79,8 @@ export function detectNumbersTopic(question: string): NumbersTopic | null {
   if (HOW_MANY.test(question) && INSTALMENT.test(question)) return "instalments";
   if (HOW_MUCH.test(question) && BELOW.test(question) && PUT_IN.test(question)) return "gap";
   if (HOW_MUCH.test(question) && FUND.test(question) && MONTH_WORD.test(question) && MOVE_WORD.test(question)) return "month-move";
-  if (PUT_IN.test(question) && (HOW_MUCH.test(question) || /\b(what|kya)\b|क्या/i.test(question)) && !/exit/i.test(question)) return "invested";
+  // "How much did I put in", "in total, what have I invested": an invest word with "how much" or "total". Not "what did I invest in".
+  if (PUT_IN.test(question) && (HOW_MUCH.test(question) || TOTAL_WORD.test(question)) && !/exit|tax/i.test(question)) return "invested";
   return null;
 }
 

@@ -251,3 +251,38 @@ describe("followupReply: fair questions the AI answered loosely are now answered
     expect(reply.text).toContain("7.0%");
   });
 });
+
+// Last change before release: code answers only when a question truly matches a topic. Everything else goes to the AI
+// path with its existing checks. With the AI off (useAi false) that path ends in "check-failed", so these show that no
+// canned answer was given.
+describe("followupReply: a question that only looks like a topic is not given a canned answer", () => {
+  test.each([
+    "What is the total expense ratio of my fund?",
+    "How much total tax would I pay on this?",
+    "What did I invest in?",
+    "Did my fund do better than the market in January?",
+    "Why did the market fall this month?",
+    "Where do I stop my SIP in the app?",
+  ])("goes to the AI path: %s", async (question) => {
+    const reply = await followupReply(facts, question, "en", false);
+    expect(reply.kind).toBe("check-failed");
+    expect(reply.source).toBe("safe");
+  });
+
+  test("the same topics still match when the question truly is about them", async () => {
+    const stop = await followupReply(facts, "If I stop my SIP, where does my money go?", "en", false);
+    expect(stop.kind).toBe("facts");
+    const invested = await followupReply(facts, "In total, what have I invested and what is my value now?", "en", false);
+    expect(invested.kind).toBe("facts");
+    const why = await followupReply(facts, "Why did my value fall?", "en", false);
+    expect(why.kind).toBe("facts");
+    const compare = await followupReply(facts, "Did my fund do worse than the market?", "en", false);
+    expect(compare.kind).toBe("facts");
+  });
+
+  test("advice and prediction questions stay refused", async () => {
+    expect((await followupReply(facts, "Should I stop my SIP?", "en", false)).kind).toBe("advice");
+    expect((await followupReply(facts, "When will my money come back?", "en", false)).kind).toBe("prediction");
+    expect((await followupReply(facts, "How much will it be by the end of this year?", "en", false)).kind).toBe("prediction");
+  });
+});
