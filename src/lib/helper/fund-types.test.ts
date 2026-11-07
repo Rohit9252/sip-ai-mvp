@@ -94,4 +94,11 @@ describe("fundTypeAnswer: general terms from AMFI and SEBI, in the person's lang
     expect(fundTypeAnswer("large", "en", ["large", "mid"]).next).toBe("mid");
     expect(fundTypeAnswer("small", "en").next).toBe("mid");
   });
+  it("describes the fund's holdings, in words that cannot read as telling the person to invest", () => {
+    for (const lang of ["en", "hi", "hn"] as const) {
+      for (const id of ["small", "mid", "large", "flexi", "hybrid"] as const) {
+        expect(fundTypeAnswer(id, lang).text).not.toMatch(/its money|अपने पैसे|apne paise|लगाता|lagata/);
+      }
+    }
+  });
 });
