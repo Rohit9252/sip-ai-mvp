@@ -36,11 +36,11 @@ flowchart TD
 | Code answers | `src/lib/helper` (`own-facts`, `fund-types`, `topics`) | Fair questions that fixed text and the facts answer better than the AI: the Nifty 50 and exit load definitions, "why is my value below what I put in", "did my fund fall more than the market" (this month and since the start), fund-type names (what the name means, never where a fund invests), and the person's own facts after an advice refusal | The AI answered these loosely in eval version 3: a general definition tagged as their numbers, an exit load called this fund's, a comparison for one period only |
 | AI | `src/lib/ai/helper-ai.ts` | One job: answer a follow-up question, and say what the question asks for. Gets the facts sheet and fixed rules (no advice, no prediction, only numbers from the facts, the total invested is never "this month") | The reason is written by code (ADR-0008), so the model only answers what the person asks. It never works out a number |
 | Question guard | `src/lib/guard/question.ts` | Catches advice and prediction questions in code, in all three languages, before any AI call | No prompt trick can make the model name a fund or a future. "What if I stop?" is let through: it asks for facts, not advice. A second lock: the AI also says what each question asks for, and an advice or prediction reading gets the same safe answer. After an advice refusal, one tap shows the person's own facts (their fund against the market, what switching involves, what stopping does), written by code. Fund-type questions (small, mid, large, flexi cap and hybrid) are answered by code from SEBI's fund categories and AMFI's plain words, with a link to each and no AI |
-| Reply guard | `src/lib/guard/reply.ts` | Every AI reply is checked: every number must be in the facts (Devanagari digits too), no advice or prediction words, length, no em dashes | A failed check is never shown; the code-written template is shown instead |
+| Reply guard | `src/lib/guard/reply.ts` | Every AI reply is checked: every number must be in the facts (Devanagari digits too), no advice or prediction words, length, no em dashes | A failed check is never shown, and the code-written template is shown instead |
 | Rate limit | `src/lib/api/rate-limit.ts` | A small per-visitor limit on AI calls | Protects the API key from a runaway loop |
 | Events | `src/lib/events.ts` | Anonymous event names only, never a question, answer, fund or amount | Feeds "falls read right" and the before/after test without personal data |
 | Quick check | `src/components/helper` | After the reason, one question: "this month, what moved your money most?" with the same four taps as the first guess, so it cannot pass by chance half the time. Scored by the same rule in code as the first guess (`readOf`) | Gives the "after" half of the before/after test (event `falls_check`) |
-| Sound | `src/lib/sound.ts` | A soft chime only when help arrives, never for a loss; a mute switch in the top bar, remembered | Calm, not alarm: a sound for a loss would add worry |
+| Sound | `src/lib/sound.ts` | A soft chime only when help arrives, never for a loss, with a mute switch in the top bar, remembered | Calm, not alarm: a sound for a loss would add worry |
 | Proof pages | `src/app/design`, `src/app/cohorts`, `src/app/experiment` | The design thesis, the cohort replay on real prices, and the experiment plan, linked as "See the proof" | Lets a reviewer check the reasoning and the numbers inside the app |
 
 ## What keeps it safe
@@ -49,7 +49,7 @@ flowchart TD
 2. **Numbers are checked, not trusted.** The reply guard compares every number in a reply with the facts sheet. A number that is not there fails the reply. It also fails a reply that calls the total invested "this month's", which a number check alone cannot see.
 3. **A fallback for every failure.** A failed check, a timeout or an API error shows text written by code. The person always gets an answer.
 4. **No personal data.** No login, name, phone or PAN (ADR-0004). The API key lives only in the server's environment.
-5. **The Stop button is never touched.** The helper explains; it never stands between a person and stopping.
+5. **The Stop button is never touched.** The helper explains, and it never stands between a person and stopping.
 
 ## How the AI is checked (the eval gate)
 

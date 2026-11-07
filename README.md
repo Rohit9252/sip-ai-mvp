@@ -47,9 +47,9 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 
 | Check | How | Result |
 |---|---|---|
-| Unit tests, written before the code (TDD) | Every piece of logic got its test first; every task ended with tests and build passing | **525 of 525 pass** (29 files) |
+| Unit tests, written before the code (TDD) | Every piece of logic got its test first, and every task ended with tests and build passing | **525 of 525 pass** (29 files) |
 | End-to-end, phone and desktop | Playwright walks the real app: sample SIP, the helper, Hindi, the tour, Stop and Withdraw | **16 of 16 pass** (2 are phone-only or desktop-only and skip on the other screen) |
-| SIP maths by hand | 4 SIPs worked out with a calculator; each one is also a test | **4 of 4 match** ([hand checks](docs/reference/hand-checks.md)) |
+| SIP maths by hand | 4 SIPs worked out with a calculator, and each one is also a test | **4 of 4 match** ([hand checks](docs/reference/hand-checks.md)) |
 | Advice and predictions blocked | 25 test questions in English, Hinglish and Hindi | **25 of 25 blocked**, and 8 of 8 fair questions still answered |
 | Bad AI replies caught | Replies with an invented number, advice, a prediction, an em dash or too long | **8 of 8 caught** |
 | People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes shipped in version 2 ([user testing](docs/USER-TESTING.md)) |
