@@ -56,3 +56,7 @@ Still open, and not changed: S11 compares a US fund with the Nifty 50 (ADR-0003)
 ## Where it stands
 
 Version 5 is in `2026-11-07-eval-v5.md`, with its sheet `2026-11-07-founder-scoring-v5.md`. Marks on version 5 are not filled in yet. The two lines the founder scores by hand are open.
+
+## Version 6
+
+The last code change. The patterns that send a question to a code-written answer were tightened, so code answers only when a question truly matches a topic. Version 6 is in `2026-11-07-eval-v6.md` with its sheet `2026-11-07-founder-scoring-v6.md`. Marks on version 6 are not filled in yet. The two hand-scored lines are open and nothing here says either was met.

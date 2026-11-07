@@ -103,7 +103,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
   - 2 of 20 or fewer answerable questions wrongly declined.
   It writes a dated report.
 - [ ] **T5.3 Fix and re-run** until every pass line is met. Record each version's scores and what failed.
-  Status: version 1 failed safe answers (16 of 20), versions 2 to 5 pass the two lines code scores (20 of 20, 0 wrong numbers). The two founder lines (reason matches the numbers, fair questions wrongly refused) are not scored yet, so this stays open.
+  Status: version 1 failed safe answers (16 of 20), versions 2 to 6 pass the two lines code scores (20 of 20, 0 wrong numbers). The two founder lines (reason matches the numbers, fair questions wrongly refused) are not scored yet, so this stays open.
 - [ ] **T5.4 "How we check the AI" page.** It shows the latest report, the sources and the checks.
 - [ ] **T5.5 Evidence Log.**
   - Fill Part B with the MVP golden set and scores.
