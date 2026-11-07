@@ -48,15 +48,39 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await expect(page.getByTestId("cheer")).toContainText("You checked instead");
   await shot("4-helper-reason");
 
-  await page.getByRole("button", { name: "Should I switch to another fund?" }).click();
+  // Version 2, fix 1: an advice question is still refused, then offers the person's own facts in one tap.
+  await page.getByTestId("ask-input").fill("Should I change my fund?");
+  await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByTestId("reply-tag").last()).toContainText("Safe answer");
+  await expect(page.getByTestId("reply").last()).toContainText("I can't tell you what to do with your money");
+  await page.getByTestId("offer-own-facts").click();
+  await expect(page.getByTestId("reply").last()).toContainText("your fund fell 7.0%");
+  await expect(page.getByTestId("reply").last()).toContainText("exit load");
+  await expect(page.getByTestId("reply").last()).toContainText("stays there");
+  await expect(page.getByTestId("reply-tag").last()).toContainText("Numbers from your SIP");
+  await expect(page.getByTestId("offer-own-facts")).toHaveCount(0);
+
   await page.getByRole("button", { name: "What happens if I stop now?" }).click();
-  await expect(page.getByTestId("reply")).toHaveCount(2, { timeout: 30_000 });
+  await expect(page.getByTestId("reply")).toHaveCount(3, { timeout: 30_000 });
+
+  // Version 2, fix 2: fund types are explained in general terms, one at a time.
+  await page.getByRole("button", { name: "What is a small cap fund?" }).click();
+  await expect(page.getByTestId("reply").last()).toContainText("251");
+  await expect(page.getByTestId("reply-tag").last()).toContainText("General terms, from AMFI");
+  await page.getByTestId("next-basic").click();
+  await expect(page.getByTestId("reply").last()).toContainText("101 to 250");
   await shot("5-followup");
 
-  await expect(page.getByTestId("learn")).toBeVisible();
-  // The quick check after the reason: the "after help" half of "falls read right".
+  // Version 2, fix 3: the basics appear one at a time inside the answer, not as a list of folded cards.
+  await expect(page.getByTestId("learn")).toHaveCount(1);
+  await expect(page.getByTestId("learn-title")).toHaveCount(1);
+  await expect(page.locator("[data-testid=learn] details")).toHaveCount(0);
+  const firstBasic = await page.getByTestId("learn-title").textContent();
+  await page.getByTestId("learn-next").click();
+  await expect(page.getByTestId("learn-title")).not.toHaveText(firstBasic ?? "");
+  // The quick check after the reason: the same four taps as the first guess.
   await expect(page.getByTestId("check")).toContainText("what moved your money most?");
+  for (const tap of ["fund", "market", "dunno", "worth"]) await expect(page.getByTestId(`check-${tap}`)).toBeVisible();
   await page.getByTestId("check-market").click();
   await expect(page.getByText("Thanks. That helps us make this clearer.")).toBeVisible();
   await page.getByTestId("got-it").click();

@@ -18,6 +18,8 @@ export function learnLink(path: string, lang: Lang): string {
 
 export const learnCopy = {
   heading: e("Learn the basics", "बुनियादी बातें समझें", "Basic baatein samjhein"),
+  /** Version 2. The basics are shown one at a time: this button shows the next one. */
+  another: e("Another basic ({n} of {total})", "एक और बुनियादी बात ({n}/{total})", "Ek aur basic baat ({n}/{total})"),
   readMore: e("Read more at AMFI", "AMFI पर और पढ़ें", "AMFI par aur padhein"),
   source: e(
     "Links open AMFI's investor-education site, Mutual Funds Sahi Hai.",
@@ -52,8 +54,8 @@ export const learnCards: LearnCard[] = [
     title: e("What does \"below what you put in\" mean?", "\"लगाए हुए पैसे से नीचे\" का क्या मतलब है?", "\"Lagaye hue paise se neeche\" ka kya matlab hai?"),
     body: e(
       "It means your units are worth less today than the money you paid for them. No money has left your account: you still own the same units, and their value moves with prices. A gain or loss becomes final only when units are sold.",
-      "इसका मतलब है कि आज आपकी units की value उस पैसे से कम है जो आपने उनके लिए दिया। आपके account से कोई पैसा नहीं गया: units वही हैं, बस उनकी value कीमतों के साथ बदलती है। फ़ायदा या नुकसान तभी पक्का होता है जब units बेची जाती हैं।",
-      "Iska matlab hai ki aaj aapki units ki value us paise se kam hai jo aapne unke liye diya. Aapke account se koi paisa nahi gaya: units wahi hain, bas unki value keematon ke saath badalti hai. Fayda ya nuksaan tabhi pakka hota hai jab units bechi jaati hain.",
+      "इसका मतलब है कि आज आपकी units की value उस पैसे से कम है जो आपने उनके लिए दिया। आपके account से कोई पैसा नहीं गया: units वही हैं, बस उनकी value कीमतों के साथ बदलती है। फ़ायदा या नुकसान तभी तय होता है जब units बेची जाती हैं।",
+      "Iska matlab hai ki aaj aapki units ki value us paise se kam hai jo aapne unke liye diya. Aapke account se koi paisa nahi gaya: units wahi hain, bas unki value keematon ke saath badalti hai. Fayda ya nuksaan tabhi tay hota hai jab units bechi jaati hain.",
     ),
     path: "how-do-i-get-my-returns-mutual-funds",
   },

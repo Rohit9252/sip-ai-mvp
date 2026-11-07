@@ -4,7 +4,8 @@ import { copy, LANGS, t } from "@/lib/copy/dictionary";
 import type { Lang } from "@/lib/copy/dictionary";
 import { allowedNumbers, checkReply } from "@/lib/guard/reply";
 import { classifyQuestion } from "@/lib/guard/question";
-import { explain, GUESSES, reasonLine } from "@/lib/helper";
+import { detectFundTypes, exitLoadAbout, explain, fundTypeAnswer, GUESSES, reasonLine } from "@/lib/helper";
+import type { FundTypeId } from "@/lib/helper";
 import type { Guess } from "@/lib/helper";
 import { navClient } from "@/lib/nav";
 import { checkSipRequest } from "@/lib/setup/rules";
@@ -32,10 +33,14 @@ export type ReasonResponse = {
 
 export type FollowupResponse = {
   text: string;
-  /** "ai": answered from your numbers and checked. "safe": a fixed safe answer. */
-  source: Exclude<ReplySource, "template">;
-  kind: "answered" | "advice" | "prediction" | "off-topic" | "check-failed";
+  /** "ai": answered from your numbers and checked. "safe": a fixed safe answer. "template": written by code. */
+  source: ReplySource;
+  kind: "answered" | "advice" | "prediction" | "off-topic" | "check-failed" | "basics" | "own-facts";
   link?: string;
+  /** Version 2: after the safe answer to an advice question, the person can open their own facts in one tap. */
+  offer?: "own-facts";
+  /** Version 2: a fund-type basic (written by code), and the one to offer next. */
+  basic?: { id: FundTypeId; next: FundTypeId | null };
 };
 
 const LangSchema = z.enum(LANGS);
@@ -91,18 +96,22 @@ export async function reasonReply(facts: Facts, guess: Guess, lang: Lang, useAi:
   }
 }
 
-/** About 1% of the value, the usual exit load inside a year. Worked out in code, labelled "about". */
-export function exitLoadAbout(facts: Facts): number {
-  return Math.round(facts.value.amount * 0.01);
-}
-
 /** A follow-up answer: advice and predictions get a fixed safe answer before any AI call. */
 export async function followupReply(facts: Facts, question: string, lang: Lang, useAi: boolean): Promise<FollowupResponse> {
   const kind = classifyQuestion(question);
   if (kind === "advice") {
-    return { text: `${t(copy.followup.safeAdvice, lang)} ${t(copy.followup.adviser, lang)}`, source: "safe", kind: "advice", link: "amfi" };
+    // The refusal stays. Then it offers what it can say: the person's own facts, in one tap (version 2).
+    const text = [t(copy.followup.safeAdvice, lang), t(copy.followup.adviser, lang), t(copy.followup.offerAsk, lang)].join(" ");
+    return { text, source: "safe", kind: "advice", link: "amfi", offer: "own-facts" };
   }
   if (kind === "prediction") return { text: t(copy.followup.safePredict, lang), source: "safe", kind: "prediction" };
+
+  // Fund-type basics (small, mid, large cap, hybrid) are written by code from AMFI definitions: no AI, no pick.
+  const named = detectFundTypes(question);
+  if (named.length > 0) {
+    const answer = fundTypeAnswer(named[0], lang, named);
+    return { text: answer.text, source: "template", kind: "basics", basic: { id: answer.id, next: answer.next } };
+  }
 
   const checkFailed: FollowupResponse = {
     text: t(copy.followup.checkFailed, lang, { line: reasonLine(facts, lang) }),

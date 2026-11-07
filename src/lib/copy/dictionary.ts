@@ -200,14 +200,12 @@ export const copy = {
     between: e("{from} to {to}", "{from} से {to} तक", "{from} se {to} tak"),
     got: e("Got it", "समझ गया", "Samajh gaya"),
     more: e("Ask more", "और पूछो", "Aur poochho"),
-    /** NEW. The quick check after the reason: the same question again, now with the reason in front of them. */
+    /** NEW. The quick check after the reason: the same question again, now with the reason in front of them. The four taps are the same as the first guess (optFund and the rest), so it cannot pass by chance half the time. */
     checkAsk: e(
       "Quick check: this month, what moved your money most?",
       "एक छोटा सवाल: इस महीने आपके पैसे को सबसे ज़्यादा किसने हिलाया?",
       "Ek chhota sawaal: is mahine aapke paise ko sabse zyada kisne hilaya?",
     ),
-    checkFund: e("My fund", "मेरा fund", "Mera fund"),
-    checkMarket: e("The whole market", "पूरा market", "Poora market"),
     checkThanks: e("Thanks. That helps us make this clearer.", "शुक्रिया। इससे हमें इसे और साफ़ बनाने में मदद मिलती है।", "Shukriya. Isse humein ise aur saaf banane mein madad milti hai."),
   },
 
@@ -297,11 +295,8 @@ export const copy = {
       "क्या मेरा fund market से खराब चला?",
       "Kya mera fund market se kharab chala?",
     ),
-    qSwitch: e(
-      "Should I switch to another fund?",
-      "क्या मुझे दूसरा fund ले लेना चाहिए?",
-      "Kya mujhe doosra fund le lena chahiye?",
-    ),
+    /** Version 2. Replaces the suggested "Should I switch to another fund?", which led people into a refusal. */
+    qTypes: e("What is a small cap fund?", "Small cap fund क्या होता है?", "Small cap fund kya hota hai?"),
     qLast: e("How long will this fall last?", "ये गिरावट कब तक रहेगी?", "Ye girawat kab tak rahegi?"),
     safeAdvice: e(
       "I can't tell you what to do with your money, like which fund to pick or whether to stop. That would be investment advice. AMFI explains how funds work in plain language.",
@@ -318,6 +313,13 @@ export const copy = {
       "मैं सिर्फ़ इस SIP और इसके साथ क्या हुआ, इसी के बारे में बता सकता हूँ।",
       "Main sirf is SIP aur iske saath kya hua, isi ke baare mein bata sakta hoon.",
     ),
+    /** Version 2. Said right after the safe answer to an advice question: what we can show instead. */
+    offerAsk: e(
+      "What I can show you instead: facts about your own SIP. Your fund against the market, what switching involves, and what stopping does.",
+      "इसकी जगह मैं आपको आपकी अपनी SIP के facts दिखा सकता हूँ: आपका fund market के मुकाबले, fund बदलने में क्या होता है, और SIP रोकने पर क्या होता है।",
+      "Iski jagah main aapko aapki apni SIP ke facts dikha sakta hoon: aapka fund market ke mukable, fund badalne mein kya hota hai, aur SIP rokne par kya hota hai.",
+    ),
+    offerButton: e("Show me my facts", "मेरे facts दिखाइए", "Mere facts dikhaiye"),
     adviser: e(
       "For advice on your own situation, you can speak to a SEBI-registered investment adviser.",
       "अपनी स्थिति पर सलाह के लिए आप किसी SEBI-registered investment adviser से बात कर सकते हैं।",

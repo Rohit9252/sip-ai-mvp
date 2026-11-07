@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classifyCase, GUESSES, isMisread, openingKeys } from "./cases";
+import { classifyCase, fallsCheckResult, GUESSES, isMisread, openingKeys, readOf } from "./cases";
 import type { Case, Guess } from "./cases";
 
 /*
@@ -84,6 +84,47 @@ describe("isMisread", () => {
       expect(isMisread("dunno", c)).toBe(false);
       expect(isMisread("worth", c)).toBe(false);
     }
+  });
+});
+
+/* The quick check after the reason offers the same four taps as the first guess and is scored by the same rule. */
+describe("readOf: one rule for the first guess and the quick check", () => {
+  test("a fund or market tap is 'right' or 'wrong' by the misread rule", () => {
+    expect(readOf("market", "SAME")).toBe("right");
+    expect(readOf("fund", "SAME")).toBe("wrong");
+    expect(readOf("fund", "FUND_MORE")).toBe("right");
+    expect(readOf("market", "FUND_UP")).toBe("wrong");
+  });
+
+  test("'don't know' and 'not worth it' say nothing about what moved the money: 'none'", () => {
+    for (const c of ["SAME", "FUND_MORE", "FUND_LESS", "MARKET_UP", "FUND_UP"] as Case[]) {
+      expect(readOf("dunno", c)).toBe("none");
+      expect(readOf("worth", c)).toBe("none");
+    }
+  });
+
+  test("agrees with isMisread for every guess and case", () => {
+    for (const g of GUESSES) {
+      for (const c of ["SAME", "FUND_MORE", "FUND_LESS", "MARKET_UP", "FUND_UP"] as Case[]) {
+        if (g === "fund" || g === "market") expect(readOf(g, c) === "wrong").toBe(isMisread(g, c));
+        else expect(readOf(g, c)).toBe("none");
+      }
+    }
+  });
+
+  test("a random tap among the four reads right at most half the time, and usually a quarter", () => {
+    const counts = (["SAME", "FUND_MORE", "FUND_LESS", "MARKET_UP", "FUND_UP"] as Case[]).map(
+      (c) => GUESSES.filter((g) => readOf(g, c) === "right").length,
+    );
+    expect(counts).toEqual([1, 2, 1, 1, 0]);
+  });
+});
+
+describe("fallsCheckResult: the before and after of the same person, the same fall, the same rule", () => {
+  test("scores the first guess and the check tap with readOf", () => {
+    expect(fallsCheckResult("fund", "market", "SAME")).toEqual({ case: "SAME", before: "wrong", after: "right" });
+    expect(fallsCheckResult("dunno", "fund", "FUND_MORE")).toEqual({ case: "FUND_MORE", before: "none", after: "right" });
+    expect(fallsCheckResult("market", "worth", "SAME")).toEqual({ case: "SAME", before: "right", after: "none" });
   });
 });
 

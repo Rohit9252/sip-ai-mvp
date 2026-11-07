@@ -5,10 +5,11 @@ import { AMFI_LINK, copy } from "@/lib/copy/dictionary";
 import { cheerCopy, deskCopy, helperTourAnswer, helperTourAsk } from "@/lib/copy/tour";
 import { Tour, useTour } from "@/components/tour/tour";
 import { consentCopy } from "@/lib/copy/consent";
-import { learnCards, learnCopy, learnLink } from "@/lib/copy/learn";
+import { learnCopy, learnLink } from "@/lib/copy/learn";
+import { fundTypeCopy, FUND_TYPES_PATH } from "@/lib/copy/fund-types";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
-import { askQuestion, explain, GUESSES, isMisread } from "@/lib/helper";
-import type { Explanation, Guess } from "@/lib/helper";
+import { askQuestion, basicsFor, explain, fallsCheckResult, fundTypeAnswer, GUESSES, ownFactsReply } from "@/lib/helper";
+import type { Case, Explanation, FundTypeId, Guess } from "@/lib/helper";
 import type { SipRequest } from "@/lib/setup/rules";
 import type { Facts } from "@/lib/sip";
 import { track } from "@/lib/events";
@@ -18,7 +19,7 @@ import { useLang, useT } from "@/components/lang/lang-provider";
 import { CheckIcon, ChevronRightIcon, HelperIcon, ShieldIcon, TriangleIcon } from "@/components/icons";
 
 const OPTION = { fund: copy.helper.optFund, market: copy.helper.optMarket, dunno: copy.helper.optDunno, worth: copy.helper.optWorth };
-const SUGGESTED = [copy.followup.qStop, copy.followup.qWorse, copy.followup.qSwitch, copy.followup.qLast];
+const SUGGESTED = [copy.followup.qStop, copy.followup.qWorse, copy.followup.qTypes, copy.followup.qLast];
 type Turn = { question: string; reply?: FollowupResponse; failed?: boolean };
 
 /**
@@ -49,14 +50,15 @@ export function HelperSheet({
   const [guess, setGuess] = useState<Guess | null>(null);
   const [fetched, setFetched] = useState<{ key: string; reply: ReasonResponse } | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
-  // The quick check after the reason: "fund" or "market", asked once.
-  const [check, setCheck] = useState<"fund" | "market" | null>(null);
+  // The quick check after the reason: the same four taps as the first guess, asked once.
+  const [check, setCheck] = useState<Guess | null>(null);
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
   const plain = guess ? explain(facts, guess, lang) : null;
   const reason = fetched?.key === `${guess}-${lang}` ? fetched.reply : null;
   const busy = turns.some((turn) => !turn.reply && !turn.failed);
+  const offerTaken = turns.some((turn) => turn.reply?.kind === "own-facts");
 
   // The words are fetched again when the language changes, so the reason always matches the screen.
   useEffect(() => {
@@ -98,16 +100,27 @@ export function HelperSheet({
     track("guess_chosen", { guess: g, misread: e.misread, case: e.case });
   }
 
-  // Before: the first guess, made without help. After: this answer, made with the reason in front of them.
-  // Same person, same fall, same rule (isMisread), so the two can be compared for "falls read right".
-  function answerCheck(answer: "fund" | "market") {
+  // Before: the first guess, made without help. After: this tap, made with the reason in front of them.
+  // Same person, same fall, same four taps, same rule (readOf), so the two can be compared for "falls read right".
+  function answerCheck(answer: Guess) {
     if (!guess || !plain) return;
     setCheck(answer);
-    track("falls_check", {
-      case: plain.case,
-      before: guess === "fund" || guess === "market" ? (plain.misread ? "wrong" : "right") : "none",
-      after: isMisread(answer, plain.case) ? "wrong" : "right",
-    });
+    track("falls_check", fallsCheckResult(guess, answer, plain.case));
+  }
+
+  // Answers that code writes from the facts or from AMFI's definitions need no network call.
+  function addLocalTurn(question: string, reply: FollowupResponse) {
+    track("followup_asked", { kind: reply.kind, source: reply.source });
+    setTurns((all) => [...all, { question, reply }]);
+  }
+
+  function showOwnFacts() {
+    addLocalTurn(t(copy.followup.offerButton), { text: ownFactsReply(facts, lang).join("\n\n"), source: "template", kind: "own-facts" });
+  }
+
+  function showFundType(id: FundTypeId) {
+    const answer = fundTypeAnswer(id, lang);
+    addLocalTurn(answer.title, { text: answer.text, source: "template", kind: "basics", basic: { id, next: answer.next } });
   }
 
   async function ask(question: string) {
@@ -188,15 +201,12 @@ export function HelperSheet({
               <CheckIcon width={13} height={13} />
               {reason.source === "ai" ? t(copy.helper.checked) : t(copy.common.tagNumbers)}
             </p>
+            <p className="mt-3 border-t border-line pt-2.5 text-[13px] font-semibold">{t(cheerCopy.learnHint)}</p>
+            <Learn caseOf={plain.case} />
           </HelperSays>
 
           <HelperSays tone="cheer" testId="cheer">
             <p className="font-medium">{t(cheer)}</p>
-          </HelperSays>
-
-          <HelperSays>
-            <p className="font-medium">{t(cheerCopy.learnHint)}</p>
-            <Learn />
           </HelperSays>
 
           <HelperSays testId="check">
@@ -204,21 +214,21 @@ export function HelperSheet({
           </HelperSays>
           {!check ? (
             <div className="ml-11 mt-2 grid grid-cols-2 gap-2" role="group" aria-label={t(copy.helper.checkAsk)}>
-              {(["fund", "market"] as const).map((a) => (
+              {GUESSES.map((a) => (
                 <button
                   key={a}
                   type="button"
                   onClick={() => answerCheck(a)}
-                  className="min-h-11 rounded-xl bg-paper px-3 py-2 text-left text-sm font-medium ring-1 ring-primary/30 transition-colors hover:bg-primary-soft"
+                  className="min-h-11 rounded-xl bg-paper px-3 py-2 text-left text-sm font-medium leading-snug ring-1 ring-primary/30 transition-colors hover:bg-primary-soft"
                   data-testid={`check-${a}`}
                 >
-                  {t(a === "fund" ? copy.helper.checkFund : copy.helper.checkMarket)}
+                  {t(OPTION[a])}
                 </button>
               ))}
             </div>
           ) : (
             <>
-              <YouSay>{t(check === "fund" ? copy.helper.checkFund : copy.helper.checkMarket)}</YouSay>
+              <YouSay>{t(OPTION[check])}</YouSay>
               <HelperSays>
                 <p>{t(copy.helper.checkThanks)}</p>
               </HelperSays>
@@ -232,16 +242,43 @@ export function HelperSheet({
           <YouSay>{turn.question}</YouSay>
           {turn.reply ? (
             <HelperSays testId="reply">
-              <p>{turn.reply.text}</p>
+              <p className="whitespace-pre-line">{turn.reply.text}</p>
+              {turn.reply.offer === "own-facts" && !offerTaken && (
+                <button
+                  type="button"
+                  onClick={showOwnFacts}
+                  className="mt-2.5 min-h-11 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-paper"
+                  data-testid="offer-own-facts"
+                >
+                  {t(copy.followup.offerButton)}
+                </button>
+              )}
               {turn.reply.link === "amfi" && (
-                <a href={AMFI_LINK[lang]} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2">
+                <a href={AMFI_LINK[lang]} target="_blank" rel="noreferrer" className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2">
                   mutualfundssahihai.com
                 </a>
               )}
-              <p className={`mt-2 flex items-center gap-1 text-[11px] font-semibold ${turn.reply.source === "ai" ? "text-gain" : "text-primary"}`} data-testid="reply-tag">
-                {turn.reply.source === "ai" ? <CheckIcon width={12} height={12} /> : <ShieldIcon width={12} height={12} />}
-                {turn.reply.source === "ai" ? t(copy.common.tagNumbers) : t(copy.common.tagSafe)}
-              </p>
+              {turn.reply.basic && (
+                <a
+                  href={learnLink(FUND_TYPES_PATH, lang)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2"
+                >
+                  {t(fundTypeCopy.readMore)}
+                </a>
+              )}
+              {turn.reply.basic?.next && i === turns.length - 1 && (
+                <button
+                  type="button"
+                  onClick={() => showFundType(turn.reply!.basic!.next!)}
+                  className="mt-2 min-h-10 rounded-xl bg-surface px-3 py-2 text-left text-[13px] font-semibold ring-1 ring-primary/30 hover:bg-primary-soft"
+                  data-testid="next-basic"
+                >
+                  {t(fundTypeCopy.next, { name: t(fundTypeCopy.title[turn.reply.basic.next]) })}
+                </button>
+              )}
+              <ReplyTag reply={turn.reply} />
             </HelperSays>
           ) : turn.failed ? (
             <HelperSays>
@@ -422,30 +459,50 @@ function Bars({ plain, between }: { plain: Explanation; between: string }) {
   );
 }
 
-/** The basics, each opening in place with a link to AMFI's investor-education page on it. */
-export function Learn() {
+/** The line under a reply that says where it came from. */
+function ReplyTag({ reply }: { reply: FollowupResponse }) {
+  const t = useT();
+  const fromNumbers = reply.source === "ai" || reply.kind === "own-facts";
+  const label = reply.kind === "basics" ? t(fundTypeCopy.tag) : fromNumbers ? t(copy.common.tagNumbers) : t(copy.common.tagSafe);
+  return (
+    <p className={`mt-2 flex items-center gap-1 text-[11px] font-semibold ${fromNumbers ? "text-gain" : "text-primary"}`} data-testid="reply-tag">
+      {fromNumbers ? <CheckIcon width={12} height={12} /> : reply.kind === "basics" ? null : <ShieldIcon width={12} height={12} />}
+      {label}
+    </p>
+  );
+}
+
+/**
+ * The basics, one at a time (version 2): the one that best fits this person's case first, then "another basic" for
+ * the next. Each has a link to AMFI's investor-education page on it.
+ */
+export function Learn({ caseOf = null }: { caseOf?: Case | null }) {
   const t = useT();
   const { lang } = useLang();
+  const cards = basicsFor(caseOf);
+  const [index, setIndex] = useState(0);
+  const card = cards[index];
   return (
-    <div className="mt-2 flex flex-col gap-1.5" data-testid="learn">
-      {learnCards.map((card) => (
-        <details key={card.id} className="group rounded-xl bg-surface px-3 py-2.5 ring-1 ring-line open:bg-paper">
-          <summary className="flex cursor-pointer list-none items-center gap-2 text-[13px] font-semibold leading-snug">
-            <ChevronRightIcon width={14} height={14} className="shrink-0 text-muted transition-transform group-open:rotate-90" />
-            {t(card.title)}
-          </summary>
-          <p className="mt-2 pl-5.5 text-[13px] leading-relaxed text-muted">{t(card.body)}</p>
-          <a
-            href={learnLink(card.path, lang)}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-1.5 inline-block pl-5.5 text-xs font-semibold text-primary underline underline-offset-2"
-          >
-            {t(learnCopy.readMore)}
-          </a>
-        </details>
-      ))}
-      <p className="mt-0.5 text-[11px] text-muted">{t(learnCopy.source)}</p>
+    <div className="mt-2 rounded-xl bg-surface px-3 py-2.5 ring-1 ring-line" data-testid="learn">
+      <p className="text-[13px] font-semibold leading-snug" data-testid="learn-title">
+        {t(card.title)}
+      </p>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{t(card.body)}</p>
+      <a href={learnLink(card.path, lang)} target="_blank" rel="noreferrer" className="mt-1.5 inline-block text-xs font-semibold text-primary underline underline-offset-2">
+        {t(learnCopy.readMore)}
+      </a>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-[11px] leading-snug text-muted">{t(learnCopy.source)}</p>
+        <button
+          type="button"
+          onClick={() => setIndex((i) => (i + 1) % cards.length)}
+          className="inline-flex shrink-0 items-center gap-1 rounded-full bg-paper px-3 py-1.5 text-xs font-semibold ring-1 ring-primary/30 hover:bg-primary-soft"
+          data-testid="learn-next"
+        >
+          {t(learnCopy.another, { n: index + 1, total: cards.length })}
+          <ChevronRightIcon width={12} height={12} />
+        </button>
+      </div>
     </div>
   );
 }

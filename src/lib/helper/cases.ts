@@ -46,6 +46,23 @@ export function isMisread(guess: Guess, c: Case): boolean {
   return false;
 }
 
+/** How a tap reads against what moved the value: "none" when the tap does not name a cause. */
+export type Read = "right" | "wrong" | "none";
+
+/**
+ * The one rule for scoring a tap, used for the first guess and for the quick check after the reason, so the two
+ * can be compared. Only "my fund" and "the whole market" name a cause; the other two taps say nothing about it.
+ */
+export function readOf(guess: Guess, c: Case): Read {
+  if (guess === "dunno" || guess === "worth") return "none";
+  return isMisread(guess, c) ? "wrong" : "right";
+}
+
+/** The `falls_check` event: the first guess (before) and the quick check tap (after), by the same rule. */
+export function fallsCheckResult(first: Guess, check: Guess, c: Case): { case: Case; before: Read; after: Read } {
+  return { case: c, before: readOf(first, c), after: readOf(check, c) };
+}
+
 /** Names of the opening lines in the dictionary (`copy.opening`). */
 export type OpeningKey =
   | "fundNotJust"
