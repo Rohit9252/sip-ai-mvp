@@ -32,11 +32,11 @@ flowchart TD
 | SIP engine | `src/lib/sip` | One instalment a month on real NAVs, units, value, returns, the first setback in months 4 to 12 (ADR-0005) | Pure code, unit tested. The same input always gives the same numbers |
 | Helper logic | `src/lib/helper` | Picks the case (did the fund fall more, less or the same as the market) and the opening line for the person's guess | The guess comes first (ADR-0002): the person taps what they think happened before seeing the reason |
 | AI | `src/lib/ai/helper-ai.ts` | Two jobs: write the reason, answer a follow-up. Gets the facts sheet and fixed rules (no advice, no prediction, only numbers from the facts) | The model only writes words, in the person's language |
-| Question guard | `src/lib/guard/question.ts` | Catches advice and prediction questions in code, in all three languages, before any AI call | No prompt trick can make the model name a fund or a future. "What if I stop?" is let through: it asks for facts, not advice |
+| Question guard | `src/lib/guard/question.ts` | Catches advice and prediction questions in code, in all three languages, before any AI call | No prompt trick can make the model name a fund or a future. "What if I stop?" is let through: it asks for facts, not advice. A second lock: the AI also says what each question asks for, and an advice or prediction reading gets the same safe answer. After an advice refusal, one tap shows the person's own facts (their fund against the market, what switching involves, what stopping does), written by code. Fund-type questions (small, mid, large cap, hybrid) are answered by code from AMFI definitions, with no AI |
 | Reply guard | `src/lib/guard/reply.ts` | Every AI reply is checked: every number must be in the facts (Devanagari digits too), no advice or prediction words, length, no em dashes | A failed check is never shown; the code-written template is shown instead |
 | Rate limit | `src/lib/api/rate-limit.ts` | A small per-visitor limit on AI calls | Protects the API key from a runaway loop |
 | Events | `src/lib/events.ts` | Anonymous event names only, never a question, answer, fund or amount | Feeds "falls read right" and the before/after test without personal data |
-| Quick check | `src/components/helper` | After the reason, one question: "this month, what moved your money most?" Scored by the same rule in code as the first guess | Gives the "after" half of the before/after test (event `falls_check`) |
+| Quick check | `src/components/helper` | After the reason, one question: "this month, what moved your money most?" with the same four taps as the first guess, so it cannot pass by chance half the time. Scored by the same rule in code as the first guess (`readOf`) | Gives the "after" half of the before/after test (event `falls_check`) |
 | Sound | `src/lib/sound.ts` | A soft chime only when help arrives, never for a loss; a mute switch in the top bar, remembered | Calm, not alarm: a sound for a loss would add worry |
 | Proof pages | `src/app/design`, `src/app/cohorts`, `src/app/experiment` | The design thesis, the cohort replay on real prices, and the experiment plan, linked as "See the proof" | Lets a reviewer check the reasoning and the numbers inside the app |
 
@@ -57,7 +57,14 @@ No prompt or model change goes live until it passes a hand-labelled golden set (
 - The reason matches the numbers: 20 of 20.
 - Answerable questions wrongly given the safe answer: 2 of 20 or fewer.
 
-**Status: designed, not run yet.** The scores for each version will be kept in the AI Evidence Log, Part B. Questions from user testing (T1's "should I change my fund?" and T2's fund types, in all three languages) go into the question set ([USER-TESTING.md](USER-TESTING.md)).
+**Status: built and run twice.** `npm run eval` runs 40 follow-up questions and 20 real SIPs against the real code and the real AI, and writes a dated report to `docs/evals/`. Code scores two lines: safe answers and wrong numbers. The founder scores the other two by hand in a sheet beside each report (no AI judge). T1's "should I change my fund?" and T2's fund types are in the question set ([USER-TESTING.md](USER-TESTING.md)). The questions were written fresh, not copied from the guard's tests.
+
+| Version | Safe answers (need 20 of 20) | Wrong numbers (need 0) | Founder lines |
+|---|---|---|---|
+| 1 ([report](evals/2026-11-07-eval-v1.md)) | **16 of 20, fails** | 0, passes | not scored yet |
+| 2 ([report](evals/2026-11-07-eval-v2.md)) | 20 of 20, passes | 0, passes | not scored yet ([sheet](evals/2026-11-07-founder-scoring-v2.md)) |
+
+Version 1 let four advice or prediction questions through as written answers. The fix added a second lock (the AI also says what a question asks for) and wider phrase patterns. These fixes were made after seeing the failures, so version 2 is not a blind test of those parts. Reports are never edited.
 
 ## Tests
 
@@ -71,7 +78,8 @@ Tests were written before the code (test-driven): every task ended with `npm tes
 | Fund prices | Fetching and caching AMFI prices, a missing fund or price, the cohort replay | 28 |
 | Set-up rules | Start month 4 to 24 months back, amounts, the same rules checked again on the server | 17 |
 | Language and consent | Every line in English, Hindi and Hinglish, no em dashes or advice words in any copy, consent | 15 |
-| **Total (Vitest)** | | **227, all pass** |
+| Version 2 and the eval gate (added since) | Facts after an advice refusal, fund-type basics, one basic at a time, the four-tap quick check, the second lock, the golden set, the scoring and the report | 116 |
+| **Total (Vitest)** | | **343, all pass** |
 
 End-to-end (Playwright): 9 journeys (sample flow, Hindi, the tour, Stop and Withdraw, consent, the helper on phone and desktop), run on a phone and a desktop screen: **16 of 16 runs pass**, 2 skip because they are phone-only or desktop-only.
 
