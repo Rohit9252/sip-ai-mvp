@@ -53,6 +53,17 @@ describe("followupReply: fund-type basics come from code, with no AI and no reco
     expect(reply.text).toMatch(/251/);
   });
 
+  test("'What is a flexi cap fund?' gets the flexi cap definition and 'hybrid' follows it", async () => {
+    const reply = await followupReply(facts, "What is a flexi cap fund?", "en", false);
+    expect(reply).toMatchObject({ kind: "basics", source: "template", basic: { id: "flexi", next: "hybrid" } });
+    expect(reply.text).toMatch(/any size/);
+  });
+
+  test("a question about the person's own flexi cap fund is not answered with a definition", async () => {
+    const reply = await followupReply(facts, "What happened to my flexi cap fund this month?", "en", false);
+    expect(reply.kind).not.toBe("basics");
+  });
+
   test("a question naming two types answers the first and offers the other next", async () => {
     const reply = await followupReply(facts, "mid cap aur large cap mein kya fark hai", "hn", false);
     expect(reply.basic).toEqual({ id: "mid", next: "large" });

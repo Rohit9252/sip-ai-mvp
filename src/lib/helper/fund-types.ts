@@ -14,6 +14,7 @@ const TYPE_PATTERNS: Record<FundTypeId, RegExp> = {
   small: /small[\s-]?cap|स्मॉल[\s-]*कैप|स्माल[\s-]*कैप/i,
   mid: /mid[\s-]?cap|मिड[\s-]*कैप/i,
   large: /large[\s-]?cap|लार्ज[\s-]*कैप/i,
+  flexi: /flexi[\s-]?cap|फ्लेक्सी[\s-]*कैप/i,
   hybrid: /hybrid|हाइब्रिड|हायब्रिड/i,
 };
 
@@ -24,8 +25,12 @@ const ASKS_WHAT_IT_IS: RegExp[] = [
   /क्या|मतलब|अंतर|फ़र्क|फर्क|किसे|कहते|समझा|बता|बारे/,
 ];
 
+/** The question is about the person's own fund ("my flexi cap fund"), so a definition would not answer it. */
+const ABOUT_OWN_FUND = /\b(my|mera|meri|mere)\b|मेरा|मेरी|मेरे/i;
+
 /** The fund types a question names, in the order it names them. Empty when it is not asking what a type is. */
 export function detectFundTypes(question: string): FundTypeId[] {
+  if (ABOUT_OWN_FUND.test(question)) return [];
   if (!ASKS_WHAT_IT_IS.some((p) => p.test(question))) return [];
   return FUND_TYPE_IDS.map((id) => ({ id, at: question.search(TYPE_PATTERNS[id]) }))
     .filter((hit) => hit.at >= 0)

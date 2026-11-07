@@ -66,7 +66,8 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   // Version 2, fix 2: fund types are explained in general terms, one at a time.
   await page.getByRole("button", { name: "What is a small cap fund?" }).click();
   await expect(page.getByTestId("reply").last()).toContainText("251");
-  await expect(page.getByTestId("reply-tag").last()).toContainText("General terms, from AMFI");
+  await expect(page.getByTestId("reply-tag").last()).toContainText("General terms, from AMFI and SEBI");
+  await expect(page.getByTestId("sebi-link").last()).toHaveAttribute("href", /sebi\.gov\.in/);
   await page.getByTestId("next-basic").click();
   await expect(page.getByTestId("reply").last()).toContainText("101 to 250");
   await shot("5-followup");

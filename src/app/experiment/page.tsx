@@ -52,12 +52,12 @@ export default function ExperimentPage() {
         <Row label="Who">5% of first-timers in our segment: first fund folio in the last 12 months, monthly SIP, direct plan, own bank account. Equity funds; Hindi and English first.</Row>
         <Row label="Arms">A: today&apos;s SIP page. B: the SIP page with the helper. Split 50/50 by person, at random.</Row>
         <Row label="Primary metric">
-          Stops after a fall = stopped within 30 days of their first fall ÷ active at month 3 and had a fall. Today 38% (3 of 8 in our
-          survey). Target 34%.
+          Stops after a fall = stopped after a fall ÷ active at month 3. Today 38% (3 of 8 in our survey). Target 34%.
         </Row>
         <Row label="Sample size">
           About <b>{PER_ARM.toLocaleString("en-IN")} people per arm</b> to see 38% → 34% with 5% significance and 80% power: (1.96 + 0.84)² ×
-          (0.38 × 0.62 + 0.34 × 0.66) ÷ 0.04².
+          (0.38 × 0.62 + 0.34 × 0.66) ÷ 0.04². Our cautious sizing implies a lower base of about 8.6%, which would need about 16,000
+          per arm, so the pilot measures the real rate first.
         </Row>
         <Row label="Timing">
           About 3,270 first-timers on Groww start each month at 5% (≈65,000 × 5%, assumed), so the arms fill within about 2 monthly
@@ -67,7 +67,7 @@ export default function ExperimentPage() {
           Advice in replies: 0 (one stops the release). Effort to stop: taps ÷ today&apos;s taps stays 1.0. Amount cuts: no higher than
           arm A.
         </Row>
-        <Row label="Ship if">Stops after a fall drop by 3 points or more, the difference is significant, and every guardrail holds.</Row>
+        <Row label="Ship if">Stops after a fall drop from 38% to 34%, the difference is significant, and every guardrail holds.</Row>
         <Row label="Then">Months 4 to 12 continuation 50% → 54%, and the North Star, 12-month continuation, 56% → 58%, read at month 12.</Row>
       </Card>
     </ProofPage>

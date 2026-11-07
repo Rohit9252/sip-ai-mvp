@@ -17,12 +17,12 @@ const PRINCIPLES = [
   },
   {
     title: "3. One yardstick: their fund against the whole market",
-    why: "3 of 4 people who stopped asked for a way to judge their SIP. A number alone cannot say if a fall is normal.",
+    why: "3 of 4 people who stopped asked for goal progress, a way to judge their SIP. A number alone cannot say if a fall is normal.",
     how: "Two bars for the same month: the whole market (Nifty 50) and their fund. Same dates, same scale (ADR-0003).",
   },
   {
     title: "4. Their own numbers, their own language",
-    why: "94% of investors prefer Hindi or a regional language (SEBI 2025). General answers in English were the help our stoppers found.",
+    why: "94% of households prefer Hindi or a regional language (SEBI 2025). General answers in English were the help our stoppers found.",
     how: "English, Hindi and Hinglish, switchable at any time. Every reply uses only numbers from their SIP.",
   },
   {

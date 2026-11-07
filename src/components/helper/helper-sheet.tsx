@@ -6,7 +6,7 @@ import { cheerCopy, deskCopy, helperTourAnswer, helperTourAsk } from "@/lib/copy
 import { Tour, useTour } from "@/components/tour/tour";
 import { consentCopy } from "@/lib/copy/consent";
 import { learnCopy, learnLink } from "@/lib/copy/learn";
-import { fundTypeCopy, FUND_TYPES_PATH } from "@/lib/copy/fund-types";
+import { fundTypeCopy, FUND_TYPES_PATH, SEBI_CIRCULARS_LINK } from "@/lib/copy/fund-types";
 import type { FollowupResponse, ReasonResponse } from "@/lib/api/helper-routes";
 import { askQuestion, basicsFor, explain, fallsCheckResult, fundTypeAnswer, GUESSES, ownFactsReply } from "@/lib/helper";
 import type { Case, Explanation, FundTypeId, Guess } from "@/lib/helper";
@@ -266,6 +266,17 @@ export function HelperSheet({
                   className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2"
                 >
                   {t(fundTypeCopy.readMore)}
+                </a>
+              )}
+              {turn.reply.basic && (
+                <a
+                  href={SEBI_CIRCULARS_LINK}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2"
+                  data-testid="sebi-link"
+                >
+                  {t(fundTypeCopy.sebi)}
                 </a>
               )}
               {turn.reply.basic?.next && i === turns.length - 1 && (
