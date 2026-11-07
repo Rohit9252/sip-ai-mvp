@@ -47,15 +47,15 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 
 | Check | How | Result |
 |---|---|---|
-| Unit tests, written before the code (TDD) | Every piece of logic got its test first; every task ended with tests and build passing | **517 of 517 pass** (29 files) |
+| Unit tests, written before the code (TDD) | Every piece of logic got its test first; every task ended with tests and build passing | **525 of 525 pass** (29 files) |
 | End-to-end, phone and desktop | Playwright walks the real app: sample SIP, the helper, Hindi, the tour, Stop and Withdraw | **16 of 16 pass** (2 are phone-only or desktop-only and skip on the other screen) |
 | SIP maths by hand | 4 SIPs worked out with a calculator; each one is also a test | **4 of 4 match** ([hand checks](docs/reference/hand-checks.md)) |
 | Advice and predictions blocked | 25 test questions in English, Hinglish and Hindi | **25 of 25 blocked**, and 8 of 8 fair questions still answered |
 | Bad AI replies caught | Replies with an invented number, advice, a prediction, an em dash or too long | **8 of 8 caught** |
-| People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes planned ([user testing](docs/USER-TESTING.md)) |
-| Eval gate | 40 questions and 20 SIP situations, pass lines fixed in advance ([ADR-0006](docs/adr/0006-release-only-through-the-eval-gate.md)) | **Designed, not run yet** |
+| People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes shipped in version 2 ([user testing](docs/USER-TESTING.md)) |
+| Eval gate | 40 questions and 20 SIP situations, pass lines fixed in advance ([ADR-0006](docs/adr/0006-release-only-through-the-eval-gate.md)) | **Run six times.** Version 1 failed at 16 of 20. Versions 2 to 6 pass at 20 of 20, 0 wrong numbers ([latest report](docs/evals/2026-11-07-eval-v6.md)) |
 
-What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), the before-and-after test has not been run with any tester yet, and the eval gate has not run.
+What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), testers have not retried version 2 yet, and the before-and-after test has not been run. All 60 final eval rows are code or fixed text, so AI follow-ups are held by the reply guard and the number check, not by those rows. The two lines the founder scores by hand are open on version 6.
 
 ## Run it
 
