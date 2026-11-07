@@ -18,6 +18,10 @@ export function learnLink(path: string, lang: Lang): string {
 
 export const learnCopy = {
   heading: e("Learn the basics", "बुनियादी बातें समझें", "Basic baatein samjhein"),
+  /** The line under a general definition (the Nifty 50, an exit load) written by code. */
+  tag: e("General terms, from AMFI", "सामान्य परिभाषा, AMFI से", "Aam paribhasha, AMFI se"),
+  /** Version 2. The basics are shown one at a time: this button shows the next one. */
+  another: e("Another basic ({n} of {total})", "एक और बुनियादी बात ({n}/{total})", "Ek aur basic baat ({n}/{total})"),
   readMore: e("Read more at AMFI", "AMFI पर और पढ़ें", "AMFI par aur padhein"),
   source: e(
     "Links open AMFI's investor-education site, Mutual Funds Sahi Hai.",
@@ -52,8 +56,8 @@ export const learnCards: LearnCard[] = [
     title: e("What does \"below what you put in\" mean?", "\"लगाए हुए पैसे से नीचे\" का क्या मतलब है?", "\"Lagaye hue paise se neeche\" ka kya matlab hai?"),
     body: e(
       "It means your units are worth less today than the money you paid for them. No money has left your account: you still own the same units, and their value moves with prices. A gain or loss becomes final only when units are sold.",
-      "इसका मतलब है कि आज आपकी units की value उस पैसे से कम है जो आपने उनके लिए दिया। आपके account से कोई पैसा नहीं गया: units वही हैं, बस उनकी value कीमतों के साथ बदलती है। फ़ायदा या नुकसान तभी पक्का होता है जब units बेची जाती हैं।",
-      "Iska matlab hai ki aaj aapki units ki value us paise se kam hai jo aapne unke liye diya. Aapke account se koi paisa nahi gaya: units wahi hain, bas unki value keematon ke saath badalti hai. Fayda ya nuksaan tabhi pakka hota hai jab units bechi jaati hain.",
+      "इसका मतलब है कि आज आपकी units की value उस पैसे से कम है जो आपने उनके लिए दिया। आपके account से कोई पैसा नहीं गया: units वही हैं, बस उनकी value कीमतों के साथ बदलती है। फ़ायदा या नुकसान तभी तय होता है जब units बेची जाती हैं।",
+      "Iska matlab hai ki aaj aapki units ki value us paise se kam hai jo aapne unke liye diya. Aapke account se koi paisa nahi gaya: units wahi hain, bas unki value keematon ke saath badalti hai. Fayda ya nuksaan tabhi tay hota hai jab units bechi jaati hain.",
     ),
     path: "how-do-i-get-my-returns-mutual-funds",
   },
@@ -68,6 +72,21 @@ export const learnCards: LearnCard[] = [
     path: "sip-and-how-it-works",
   },
 ];
+
+/**
+ * "What is an exit load?" A plain definition: what it is, with no figure and no claim about any one fund
+ * (eval version 4, A06 and A17). The withdraw screen keeps its own card below, which is about costs.
+ */
+export const exitLoadMeaning: LearnCard = {
+  id: "exit-meaning",
+  title: e("What is an exit load?", "Exit load क्या है?", "Exit load kya hai?"),
+  body: e(
+    "An exit load is a fee that some funds take out of the money you withdraw, if you withdraw within a set time, often a year. Each fund has its own rule, and the fund's own page shows it.",
+    "Exit load एक fee है जो कुछ funds आपके निकाले हुए पैसे में से काट लेते हैं, अगर आप तय समय (अक्सर एक साल) के अंदर निकालते हैं। हर fund का अपना नियम होता है, जो fund के अपने page पर दिखता है।",
+    "Exit load ek fee hai jo kuch funds aapke nikaale hue paise mein se kaat lete hain, agar aap tay samay (aksar ek saal) ke andar nikaalte hain. Har fund ka apna niyam hota hai, jo fund ke apne page par dikhta hai.",
+  ),
+  path: "what-costs-does-one-incur-while-redeeming-mutual-fund-units",
+};
 
 /** For the withdraw screen: what costs come with selling units. */
 export const exitLoadLearn: LearnCard = {

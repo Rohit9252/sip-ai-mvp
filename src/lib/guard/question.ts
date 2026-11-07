@@ -25,6 +25,10 @@ const ADVICE: RegExp[] = [
   /\b(is|are) (he|she|they|my (friend|brother|father|colleague|uncle|dad|bhai))\b.{0,10}\bright\b/i,
   /\b(safe|risky|bharosa|bharose)\b.{0,15}\b(hai|hain)\b/i,
   /(सुरक्षित|safe|रिस्की|भरोसे).{0,15}(है|हैं)/,
+  // Added after eval version 1: "is it wise / sensible / okay to ...", "theek rahega", "safe rahega", "sahi hoga"
+  /\b(is|would|will|could)\s+(it|that|this)\s+(be\s+)?(wise|sensible|advisable|smart|ok|okay|fine|alright)\b/i,
+  /\b(theek|thik|sahi|behtar|better|safe|safer|achha|accha)\s+(rahega|rahegi|rahenge|hoga|hogi)\b/i,
+  /(ठीक|सही|बेहतर|सुरक्षित|अच्छा)\s*(रहेगा|रहेगी|रहेंगे|होगा|होगी)/,
   // Hinglish: "kaunsa fund lu", "band kar du", "rok du", "nikal lu", "chalu rakhu", "kya karu", "lena chahiye"
   /\b(kaun ?sa|kon ?sa|konsa|kaunsa|kis)\b.{0,25}\b(fund|mf|sip|scheme)\b/i,
   /\b(band|rok|bech|nikal|switch|badal|chalu|jaari|continue)\w*\b.{0,12}\b(du|doon|dun|du\?|karu|karoon|kar du|kar doon|lu|loon|lun|rakhu|rakhoon|rakhun)\b/i,
@@ -43,12 +47,30 @@ const PREDICTION: RegExp[] = [
   /\bwill\b.{0,30}\b(recover|rise|go up|come back|fall|drop|crash|improve|grow|bounce|double|be (positive|negative|back))\b/i,
   /\b(future|next year|next month|next week|in \d+ years?|expected return|predict|forecast|outlook)\b/i,
   /\bhow much will i (get|make|earn|have)\b/i,
+  // Added after eval version 1: "how long before I get my money back", "will I break even", "kitne mahine mein ..."
+  /\b(how (many|much) (months?|years?|weeks?|time)|how long)\b.{0,30}\b(until|before|till|to (break|recover|get))\b/i,
+  /\b(when|by when|how long|how soon|until)\b.{0,30}\b(money back|break ?even)\b/i,
+  /\bwill\b.{0,30}\bbreak ?even\b/i,
+  /\bkitne (mahine|din|saal|hafte)\b.{0,25}\b(wapas|recover|milega|aayega|aaega|badhega|ho jayega|ho jaega)\b/i,
+  /\bkitna\b.{0,12}\bho\s?(jayega|jaega|jayegi|jaegi|jaaega)\b/i,
+  /(कितने|कितना).{0,15}(वापस आएगा|हो जाएगा)/,
   // Hinglish
   /\bkab tak\b/i,
   /\bkab\b.{0,20}\b(badhega|badhegi|upar|recover|wapas|theek|sudhrega|sudhregi)\b/i,
   /\b(badhega|badhegi|badhenge|girega|giregi|girenge|upar jayega|upar jaega|upar jaayega|wapas aayega|wapas aaega|recover hoga|kitna milega|kitna banega|agle saal|aage kya hoga)\b/i,
   // Hindi in Devanagari
   /(कब तक|बढ़ेगा|बढ़ेगी|बढ़ेंगे|गिरेगा|गिरेगी|गिरेंगे|ऊपर जाएगा|वापस आएगा|कितना मिलेगा|कितना बनेगा|अगले साल|भविष्य|आगे क्या होगा)/,
+  // Added with the one-line refusals: future returns, "by year end", "in 5 months", "will I get my money back"
+  /\bhow much will (it|my (sip|fund|value|money|investment|returns?)|the (fund|market|value)|i (get|make|earn|have))\b/i,
+  /\bwhat will\b.{0,25}\b(be|worth)\b/i,
+  /\b(by|till|until|at|for)\b.{0,15}\b(year ?end|end of (the |this )?year)\b/i,
+  /\bexpect\b/i,
+  /\bwill i\b.{0,10}\b(get|see|have)\b.{0,15}\b(money|it|paisa) back\b/i,
+  /\b\d+\s*(mahine|mahino|saal|din)\s*(mein|me)\b.{0,25}\b(kitna|kitne|return|milega|badhega)\b/i,
+  /\b(year ?end|saal ke end|saal ke ant)\b/i,
+  /\d+\s*महीने\s*(में|मे).{0,25}(कितना|कितने|रिटर्न|मिलेगा|बढ़ेगा)/,
+  /कब.{0,15}(वापस|मिलेगा|मिलेंगे|मिलेगी)/,
+  /साल के (अंत|end|आखिर|आख़िर)/,
 ];
 
 /**
@@ -57,8 +79,8 @@ const PREDICTION: RegExp[] = [
  */
 const FACTS_ABOUT_STOPPING: RegExp[] = [
   /\bwhat (happens|will happen|would happen)\b.{0,20}\bif i\b/i,
-  /\b(agar|agr)\b.{0,30}\b(to|toh)\b.{0,10}\bkya (hoga|hota)\b/i,
-  /अगर.{0,30}तो क्या (होगा|होता)/,
+  /\b(agar|agr)\b.{0,40}\b(to|toh)\b.{0,30}\bkya (hoga|hota)\b/i,
+  /अगर.{0,40}तो.{0,30}क्या (होगा|होता)/,
 ];
 
 export function classifyQuestion(question: string): QuestionKind {

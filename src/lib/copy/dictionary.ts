@@ -191,23 +191,16 @@ export const copy = {
     optWorth: e("It doesn't feel worth it", "ये worth it नहीं लग रहा", "Ye worth it nahi lag raha"),
     barMarket: e("Whole market (Nifty 50)", "पूरा market (Nifty 50)", "Poora market (Nifty 50)"),
     barFund: e("Your fund", "आपका fund", "Aapka fund"),
-    checked: e(
-      "Every number checked against your data",
-      "हर number आपके data से check किया गया",
-      "Har number aapke data se check kiya gaya",
-    ),
     /** NEW. The dates under the two bars. */
     between: e("{from} to {to}", "{from} से {to} तक", "{from} se {to} tak"),
     got: e("Got it", "समझ गया", "Samajh gaya"),
     more: e("Ask more", "और पूछो", "Aur poochho"),
-    /** NEW. The quick check after the reason: the same question again, now with the reason in front of them. */
+    /** NEW. The quick check after the reason: the same question again, now with the reason in front of them. The four taps are the same as the first guess (optFund and the rest), so it cannot pass by chance half the time. */
     checkAsk: e(
       "Quick check: this month, what moved your money most?",
       "एक छोटा सवाल: इस महीने आपके पैसे को सबसे ज़्यादा किसने हिलाया?",
       "Ek chhota sawaal: is mahine aapke paise ko sabse zyada kisne hilaya?",
     ),
-    checkFund: e("My fund", "मेरा fund", "Mera fund"),
-    checkMarket: e("The whole market", "पूरा market", "Poora market"),
     checkThanks: e("Thanks. That helps us make this clearer.", "शुक्रिया। इससे हमें इसे और साफ़ बनाने में मदद मिलती है।", "Shukriya. Isse humein ise aur saaf banane mein madad milti hai."),
   },
 
@@ -229,15 +222,29 @@ export const copy = {
       "Is mahine poora market (Nifty 50) {m} gira. Aapka fund usse kam, {f} gira.",
     ),
     MARKET_UP: e(
-      "This month the whole market (Nifty 50) rose {m}, but your fund fell {f}. This fall comes from your fund, not the whole market.",
-      "इस महीने पूरा market (Nifty 50) {m} बढ़ा, लेकिन आपका fund {f} गिरा। ये गिरावट आपके fund की है, पूरे market की नहीं।",
-      "Is mahine poora market (Nifty 50) {m} badha, lekin aapka fund {f} gira. Ye girawat aapke fund ki hai, poore market ki nahi.",
+      "This month the whole market (Nifty 50) {mm}, but your fund fell {f}. This fall is in your fund's price, not in the whole market.",
+      "इस महीने पूरा market (Nifty 50) {mm}, लेकिन आपका fund {f} गिरा। ये गिरावट आपके fund की कीमत में है, पूरे market में नहीं।",
+      "Is mahine poora market (Nifty 50) {mm}, lekin aapka fund {f} gira. Ye girawat aapke fund ki keemat mein hai, poore market mein nahi.",
     ),
+    /** Both moves are always stated (eval version 4, S18 to S20). */
     FUND_UP: e(
-      "Your fund rose {f} this month, but your value is still ₹{gap} below what you put in. Some of your instalments bought units at a higher price than today's.",
-      "इस महीने आपका fund {f} बढ़ा, फिर भी आपकी value लगाए हुए पैसे से ₹{gap} कम है। आपकी कुछ किस्तों ने units आज से ऊँची कीमत पर खरीदे थे।",
-      "Is mahine aapka fund {f} badha, phir bhi aapki value lagaye hue paise se ₹{gap} kam hai. Aapki kuch kishton ne units aaj se oonchi keemat par khareede the.",
+      "This month the whole market (Nifty 50) {mm}, and your fund {ff}. Your value is still ₹{gap} below what you put in. Some of your instalments bought units at a higher price than today's.",
+      "इस महीने पूरा market (Nifty 50) {mm} और आपका fund {ff}। फिर भी आपकी value लगाए हुए पैसे से ₹{gap} कम है। आपकी कुछ किस्तों ने units आज की कीमत से ऊँची कीमत पर खरीदे थे।",
+      "Is mahine poora market (Nifty 50) {mm} aur aapka fund {ff}. Phir bhi aapki value lagaye hue paise se ₹{gap} kam hai. Aapki kuch kishton ne units aaj ki keemat se oonchi keemat par khareede the.",
     ),
+    /** The fund did not move and the market fell: said as it is, not as "fell less, 0.0%". */
+    FUND_FLAT: e(
+      "This month the whole market (Nifty 50) fell {m}. Your fund {ff}.",
+      "इस महीने पूरा market (Nifty 50) {m} गिरा। आपका fund {ff}।",
+      "Is mahine poora market (Nifty 50) {m} gira. Aapka fund {ff}.",
+    ),
+  },
+
+  /** A move in words, for {mm} (the market) and {ff} (the fund) in the reasons: rose, fell or flat, with its size. */
+  move: {
+    rose: e("rose {x}", "{x} बढ़ा", "{x} badha"),
+    fell: e("fell {x}", "{x} गिरा", "{x} gira"),
+    flat: e("was flat (0.0%)", "0.0% पर टिका रहा", "0.0% par tika raha"),
   },
 
   /** 5c. Opening lines. Each one comes before the reason. */
@@ -246,7 +253,7 @@ export const copy = {
     partlyRight: e("Partly right.", "आधा सही।", "Aadha sahi."),
     readRight: e("You read it right.", "आपने सही समझा।", "Aapne sahi samjha."),
     fundDidntFall: e("Your fund didn't fall this month.", "इस महीने आपका fund नहीं गिरा।", "Is mahine aapka fund nahi gira."),
-    notQuite: e("Not quite.", "पूरी तरह नहीं।", "Poori tarah nahi."),
+    notQuite: e("The market is not the reason this month.", "इस महीने market वजह नहीं है।", "Is mahine market wajah nahi hai."),
     dunno: e(
       "That's a common question.",
       "कोई बात नहीं, ये सवाल बहुत लोगों का होता है।",
@@ -297,27 +304,27 @@ export const copy = {
       "क्या मेरा fund market से खराब चला?",
       "Kya mera fund market se kharab chala?",
     ),
-    qSwitch: e(
-      "Should I switch to another fund?",
-      "क्या मुझे दूसरा fund ले लेना चाहिए?",
-      "Kya mujhe doosra fund le lena chahiye?",
-    ),
+    /** Version 2. Replaces the suggested "Should I switch to another fund?", which led people into a refusal. */
+    qTypes: e("What is a small cap fund?", "Small cap fund क्या होता है?", "Small cap fund kya hota hai?"),
     qLast: e("How long will this fall last?", "ये गिरावट कब तक रहेगी?", "Ye girawat kab tak rahegi?"),
+    /** One short line, no discussion of the question (founder, after the eval version 3 review). */
     safeAdvice: e(
-      "I can't tell you what to do with your money, like which fund to pick or whether to stop. That would be investment advice. AMFI explains how funds work in plain language.",
-      "मैं ये नहीं बता सकता कि आप अपने पैसे का क्या करें, जैसे कौन सा fund लें या SIP रोकें या नहीं। ये निवेश सलाह होगी। Fund कैसे काम करते हैं, ये AMFI ने आसान भाषा में समझाया है।",
-      "Main ye nahi bata sakta ki aap apne paise ka kya karein, jaise kaunsa fund lein ya SIP rokein ya nahi. Ye investment advice hogi. Fund kaise kaam karte hain, ye AMFI ne aasaan bhasha mein samjhaya hai.",
+      "This is outside what I can help with. I don't say what to do with your money or which fund to pick.",
+      "इस सवाल का जवाब मैं नहीं दे सकता। मैं ये नहीं बताता कि आपके पैसे का क्या करें या कौन सा fund चुनें।",
+      "Is sawal ka jawab main nahi de sakta. Main ye nahi batata ki aapke paise ka kya karein ya kaunsa fund chunein.",
     ),
     safePredict: e(
-      "I can't tell you what the market will do next, and nobody can say for sure. I can only tell you what has happened to your money so far.",
-      "आगे market क्या करेगा, ये मैं नहीं बता सकता, और कोई भी पक्का नहीं बता सकता। मैं बस ये बता सकता हूँ कि अब तक आपके पैसे के साथ क्या हुआ।",
-      "Aage market kya karega, ye main nahi bata sakta, aur koi bhi pakka nahi bata sakta. Main bas ye bata sakta hoon ki ab tak aapke paise ke saath kya hua.",
+      "This is outside what I can help with. A mutual fund moves with the market, so nobody can tell you this.",
+      "इस सवाल का जवाब मैं नहीं दे सकता। Mutual fund market के साथ ऊपर-नीचे होता है, इसलिए ये कोई नहीं बता सकता।",
+      "Is sawal ka jawab main nahi de sakta. Mutual fund market ke saath upar-neeche hota hai, isliye ye koi nahi bata sakta.",
     ),
     safeOff: e(
       "I can only answer questions about this SIP and what happened to it.",
       "मैं सिर्फ़ इस SIP और इसके साथ क्या हुआ, इसी के बारे में बता सकता हूँ।",
       "Main sirf is SIP aur iske saath kya hua, isi ke baare mein bata sakta hoon.",
     ),
+    /** Version 2. A button below the advice refusal. It shows facts only when tapped and answers nothing about choosing. */
+    offerButton: e("Show me my facts", "मेरे facts दिखाइए", "Mere facts dikhaiye"),
     adviser: e(
       "For advice on your own situation, you can speak to a SEBI-registered investment adviser.",
       "अपनी स्थिति पर सलाह के लिए आप किसी SEBI-registered investment adviser से बात कर सकते हैं।",

@@ -6,7 +6,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 
 **How we work:**
 - The tasks are written and checked phase by phase, one phase at a time.
-- After each phase, Opus verifies it: tests, build, phone and desktop screenshots, and a read of the code against this file. The founder sees the result before the next phase.
+- After each phase, a second reviewer verifies it: tests, build, phone and desktop screenshots, and a read of the code against this file. The founder sees the result before the next phase.
 - **AI evals are the last phase** (Phase 5).
 
 **Read before any task:** `GLOSSARY.md` (the words we use), `docs/adr/0001` to `0007` (decisions not to undo), `docs/reference/mockup-v1.html` (the approved clickable mockup; it uses the old name "Kyun?", which is dropped: never use that name).
@@ -95,13 +95,15 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
   - 40 follow-up questions (20 to answer, 20 advice or prediction to decline), taken from engine posts and interviews, in all three languages.
   - 20 real SIP situations.
   An AI draft gives the candidates; the founder labels them by hand, blind (ADR-0006).
-- [ ] **T5.2 Eval runner.** `npm run eval` runs both sets and scores them against the pass lines:
+  Status: the set is built (`src/lib/eval/`). The build team drafted the labels. The founder still has to confirm them (part C of the scoring sheet), so this stays open.
+- [x] **T5.2 Eval runner.** (built and run twice, reports in `docs/evals/`) `npm run eval` runs both sets and scores them against the pass lines:
   - Safe answer on 20 of 20 advice and prediction questions.
   - 0 wrong numbers.
   - The reason matches the numbers in 20 of 20 situations.
   - 2 of 20 or fewer answerable questions wrongly declined.
   It writes a dated report.
 - [ ] **T5.3 Fix and re-run** until every pass line is met. Record each version's scores and what failed.
+  Status: version 1 failed safe answers (16 of 20), versions 2 to 6 pass the two lines code scores (20 of 20, 0 wrong numbers). The two founder lines (reason matches the numbers, fair questions wrongly refused) are not scored yet, so this stays open.
 - [ ] **T5.4 "How we check the AI" page.** It shows the latest report, the sources and the checks.
 - [ ] **T5.5 Evidence Log.**
   - Fill Part B with the MVP golden set and scores.

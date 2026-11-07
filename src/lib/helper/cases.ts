@@ -22,16 +22,27 @@ export const CLOSE_TENTHS = 15;
  * Works out the case from the month's fund move and market move, as the person sees them (one decimal).
  *  - The fund rose: FUND_UP (the value is still below what was put in, or there would be no setback).
  *  - The fund fell and the market rose or stayed flat: MARKET_UP.
- *  - Both fell: SAME if within 1.5 points, FUND_MORE if the fund fell more than 1.5 points more,
- *    FUND_LESS if it fell more than 1.5 points less.
+ *  - Both fell: SAME if within 1.5 points and the gap is no more than a third of the bigger fall (so -1.7 against
+ *    -3.1 is not the same: the fund fell about half as much), FUND_MORE if the fund fell more than that,
+ *    FUND_LESS if it fell less than that.
  *  - The fund was flat (0.0): FUND_LESS if the market fell, FUND_UP if the market did not.
  */
+/**
+ * Two moves are "close" when they are within 1.5 points and the gap is no more than a third of the bigger move.
+ * One rule, used for the reason and for "did my fund do better or worse than the market".
+ */
+export function isClose(fundPct: number, marketPct: number): boolean {
+  const gapTenths = Math.abs(Math.round((fundPct - marketPct) * 10));
+  const biggerTenths = Math.max(Math.abs(Math.round(fundPct * 10)), Math.abs(Math.round(marketPct * 10)));
+  return gapTenths <= CLOSE_TENTHS && gapTenths * 3 <= biggerTenths;
+}
+
 export function classifyCase(fundPct: number, marketPct: number): Case {
   if (fundPct > 0) return "FUND_UP";
   if (fundPct === 0) return marketPct < 0 ? "FUND_LESS" : "FUND_UP";
   if (marketPct >= 0) return "MARKET_UP";
   const gapTenths = Math.round((fundPct - marketPct) * 10);
-  if (Math.abs(gapTenths) <= CLOSE_TENTHS) return "SAME";
+  if (isClose(fundPct, marketPct)) return "SAME";
   return gapTenths < 0 ? "FUND_MORE" : "FUND_LESS";
 }
 
@@ -44,6 +55,23 @@ export function isMisread(guess: Guess, c: Case): boolean {
   if (guess === "fund") return c === "SAME" || c === "FUND_LESS" || c === "FUND_UP";
   if (guess === "market") return c === "MARKET_UP" || c === "FUND_UP";
   return false;
+}
+
+/** How a tap reads against what moved the value: "none" when the tap does not name a cause. */
+export type Read = "right" | "wrong" | "none";
+
+/**
+ * The one rule for scoring a tap, used for the first guess and for the quick check after the reason, so the two
+ * can be compared. Only "my fund" and "the whole market" name a cause; the other two taps say nothing about it.
+ */
+export function readOf(guess: Guess, c: Case): Read {
+  if (guess === "dunno" || guess === "worth") return "none";
+  return isMisread(guess, c) ? "wrong" : "right";
+}
+
+/** The `falls_check` event: the first guess (before) and the quick check tap (after), by the same rule. */
+export function fallsCheckResult(first: Guess, check: Guess, c: Case): { case: Case; before: Read; after: Read } {
+  return { case: c, before: readOf(first, c), after: readOf(check, c) };
 }
 
 /** Names of the opening lines in the dictionary (`copy.opening`). */

@@ -28,17 +28,17 @@ The helper does one job: it makes that first fall readable. It never tells anyon
 
 ## How it works
 
-**Numbers from code, words from AI.** Every number comes from real AMFI fund prices (via mfapi.in) and is worked out in code. The AI (OpenAI gpt-4.1-mini) only writes the words around a fixed list of facts. Code checks every reply before it is shown; a reply that fails shows a code-written template instead.
+**Numbers and the reason from code, follow-up answers from AI.** Every number comes from real AMFI fund prices (via mfapi.in) and is worked out in code. The reason that explains what moved the value is written by code from a fixed template, in English, Hindi and Hinglish. The AI (OpenAI gpt-4.1-mini) only answers follow-up questions from a fixed list of facts. Code checks every AI reply before it is shown. A reply that fails shows a code-written line instead.
 
 ```mermaid
 flowchart LR
     A[Person's SIP<br/>fund, amount, start month] --> B[Code replays it<br/>on real AMFI prices]
     B --> C[Facts sheet<br/>invested, value, fund move, market move]
-    C --> D[AI writes words only]
-    D --> E{Code checks the reply<br/>numbers, advice, prediction}
-    E -- pass --> F[Shown: Numbers from your SIP]
-    E -- fail --> G[Code-written template shown]
-    Q[Advice or prediction question] --> H[Blocked before any AI call:<br/>fixed safe answer]
+    C --> D[Reason written by code<br/>fixed template, no AI]
+    D --> F[Shown: Numbers from your SIP]
+    Q[Follow-up question] --> E{Code checks the question}
+    E -- advice or prediction --> H[One-line safe answer<br/>no AI call]
+    E -- fair question --> I[Code or AI answers<br/>every AI reply checked]
 ```
 
 The full picture, with every part and why it is built that way, is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -47,7 +47,7 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 
 | Check | How | Result |
 |---|---|---|
-| Unit tests, written before the code (TDD) | Every piece of logic got its test first; every task ended with tests and build passing | **227 of 227 pass** (16 files) |
+| Unit tests, written before the code (TDD) | Every piece of logic got its test first; every task ended with tests and build passing | **517 of 517 pass** (29 files) |
 | End-to-end, phone and desktop | Playwright walks the real app: sample SIP, the helper, Hindi, the tour, Stop and Withdraw | **16 of 16 pass** (2 are phone-only or desktop-only and skip on the other screen) |
 | SIP maths by hand | 4 SIPs worked out with a calculator; each one is also a test | **4 of 4 match** ([hand checks](docs/reference/hand-checks.md)) |
 | Advice and predictions blocked | 25 test questions in English, Hinglish and Hindi | **25 of 25 blocked**, and 8 of 8 fair questions still answered |

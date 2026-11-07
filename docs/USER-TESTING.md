@@ -28,8 +28,8 @@ Who tried the MVP, where they got stuck, and what we change because of it. Peopl
 |---|---|
 | 3 testers from our segment | 3 people tried it; **2 of 3 are in our segment** (T1, T2); the third is an expert (E3) |
 | Before-and-after task: "why did your money fall?", first without the helper, then with it, scored by one rule in code | **Built into the MVP, not run yet** with any tester ([experiment plan](https://sip-ai-mvp.vercel.app/experiment)) |
-| Version 2 fixes for what testers hit | Planned, not live yet |
-| New questions from testers in the eval gate | T1's question and T2's fund-type questions, in English, Hindi and Hinglish, will go into the eval gate's question set ([ADR-0006](adr/0006-release-only-through-the-eval-gate.md)) |
+| Version 2 fixes for what testers hit | **Built and tested on a branch** (open pull request, not merged and not deployed yet). An advice question is refused in one short line, with a "Show me my facts" button below it (the founder will decide whether it stays). Fund types (small, mid, large, flexi cap and hybrid) are explained in general terms, with SEBI and AMFI links. Basics show one at a time inside the answer. All in English, Hindi and Hinglish |
+| New questions from testers in the eval gate | T1's question and T2's fund-type questions, in English, Hindi and Hinglish, are in the eval gate's question set (D04, A07, A08, A13 and A18), and the gate has run five times: version 1 failed the safe-answer line at 16 of 20, versions 2 to 5 passed it at 20 of 20. An independent reader found real faults in version 3 that the code check missed, and version 4 fixes them ([review notes](evals/2026-11-07-review-notes.md)) ([reports](evals/), [ADR-0006](adr/0006-release-only-through-the-eval-gate.md)). The two lines the founder scores by hand are still open |
 
 ## What this testing cannot tell you
 

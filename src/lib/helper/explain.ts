@@ -62,9 +62,13 @@ export function explain(facts: Facts, guess: Guess, lang: Lang): Explanation {
   const market = facts.monthMove.marketMove;
   const c = classifyCase(fund.pct, market.pct);
 
+  const moveWords = (p: PercentFact) =>
+    t(p.pct > 0 ? copy.move.rose : p.pct < 0 ? copy.move.fell : copy.move.flat, lang, { x: p.absText });
   const values: TemplateValues = {
     m: market.absText,
     f: fund.absText,
+    mm: moveWords(market),
+    ff: moveWords(fund),
     gap: formatRupees(facts.invested.amount - facts.value.amount),
     months: facts.monthsKept,
     invested: facts.invested.text,
@@ -76,7 +80,7 @@ export function explain(facts: Facts, guess: Guess, lang: Lang): Explanation {
     case: c,
     misread: isMisread(guess, c),
     opening: openingKeys(guess, c).map((key) => t(copy.opening[key], lang, values)),
-    reason: t(copy.reason[c], lang, values),
+    reason: t(c === "FUND_LESS" && fund.pct === 0 ? copy.reason.FUND_FLAT : copy.reason[c], lang, values),
     bars: {
       market: bar(t(copy.helper.barMarket, lang), market, scale),
       fund: bar(t(copy.helper.barFund, lang), fund, scale),

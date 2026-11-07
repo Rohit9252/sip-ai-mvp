@@ -129,9 +129,9 @@ export const deskCopy = {
     {
       title: e("Checked AI", "जाँचा हुआ AI", "Jaancha hua AI"),
       body: e(
-        "The AI only writes words. Every reply is checked against your numbers before you see it.",
-        "AI सिर्फ़ शब्द लिखता है। हर जवाब आपको दिखने से पहले आपके numbers से जाँचा जाता है।",
-        "AI sirf shabd likhta hai. Har jawab aapko dikhne se pehle aapke numbers se jaancha jaata hai.",
+        "The reason is written by code. The AI only answers your follow-up questions, in words, and every reply is checked against your numbers before you see it.",
+        "वजह code लिखता है। AI सिर्फ़ आपके follow-up सवालों के जवाब देता है, और हर जवाब आपको दिखने से पहले आपके numbers से जाँचा जाता है।",
+        "Wajah code likhta hai. AI sirf aapke follow-up sawaalon ke jawab deta hai, aur har jawab aapko dikhne se pehle aapke numbers se jaancha jaata hai.",
       ),
     },
     {
