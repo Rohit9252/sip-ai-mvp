@@ -66,6 +66,11 @@ describe("auditNumbers: every number the person is shown must be in the facts", 
     expect(audit.wrong).toEqual([]);
   });
 
+  test("a total described as this month's is a wrong statement, though the number is in the facts (eval version 3 review)", () => {
+    const audit = auditNumbers([{ id: "s2", text: "आपने इस महीने ₹40,000 लगाए थे।", facts }]);
+    expect(audit.wrong).toEqual([{ id: "s2", numbers: ["₹40,000 (a total described as this month)"] }]);
+  });
+
   test("Devanagari digits are read as digits", () => {
     const audit = auditNumbers([{ id: "s1", text: "आपका fund १२.५% गिरा।", facts }]);
     expect(audit.wrong).toEqual([{ id: "s1", numbers: ["12.5"] }]);

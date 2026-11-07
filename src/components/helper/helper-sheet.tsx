@@ -199,7 +199,7 @@ export function HelperSheet({
             <Bars plain={plain} between={t(copy.helper.between, { from: facts.monthMove.fromText, to: facts.monthMove.toText })} />
             <p className="mt-2.5 flex items-center gap-1 text-xs font-medium text-gain" data-testid="quality-tag">
               <CheckIcon width={13} height={13} />
-              {reason.source === "ai" ? t(copy.helper.checked) : t(copy.common.tagNumbers)}
+              {t(copy.common.tagNumbers)}
             </p>
             <p className="mt-3 border-t border-line pt-2.5 text-[13px] font-semibold">{t(cheerCopy.learnHint)}</p>
             <Learn caseOf={plain.case} />
@@ -256,6 +256,16 @@ export function HelperSheet({
               {turn.reply.link === "amfi" && (
                 <a href={AMFI_LINK[lang]} target="_blank" rel="noreferrer" className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2">
                   mutualfundssahihai.com
+                </a>
+              )}
+              {turn.reply.learnPath && (
+                <a
+                  href={learnLink(turn.reply.learnPath, lang)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2"
+                >
+                  {t(learnCopy.readMore)}
                 </a>
               )}
               {turn.reply.basic && (
@@ -473,8 +483,14 @@ function Bars({ plain, between }: { plain: Explanation; between: string }) {
 /** The line under a reply that says where it came from. */
 function ReplyTag({ reply }: { reply: FollowupResponse }) {
   const t = useT();
-  const fromNumbers = reply.source === "ai" || reply.kind === "own-facts";
-  const label = reply.kind === "basics" ? t(fundTypeCopy.tag) : fromNumbers ? t(copy.common.tagNumbers) : t(copy.common.tagSafe);
+  const fromNumbers = reply.source === "ai" || reply.kind === "own-facts" || reply.kind === "facts";
+  const label = reply.learnPath
+    ? t(learnCopy.tag)
+    : reply.kind === "basics"
+      ? t(fundTypeCopy.tag)
+      : fromNumbers
+        ? t(copy.common.tagNumbers)
+        : t(copy.common.tagSafe);
   return (
     <p className={`mt-2 flex items-center gap-1 text-[11px] font-semibold ${fromNumbers ? "text-gain" : "text-primary"}`} data-testid="reply-tag">
       {fromNumbers ? <CheckIcon width={12} height={12} /> : reply.kind === "basics" ? null : <ShieldIcon width={12} height={12} />}

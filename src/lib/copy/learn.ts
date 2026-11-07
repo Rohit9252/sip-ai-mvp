@@ -18,6 +18,8 @@ export function learnLink(path: string, lang: Lang): string {
 
 export const learnCopy = {
   heading: e("Learn the basics", "बुनियादी बातें समझें", "Basic baatein samjhein"),
+  /** The line under a general definition (the Nifty 50, an exit load) written by code. */
+  tag: e("General terms, from AMFI", "सामान्य परिभाषा, AMFI से", "Aam paribhasha, AMFI se"),
   /** Version 2. The basics are shown one at a time: this button shows the next one. */
   another: e("Another basic ({n} of {total})", "एक और बुनियादी बात ({n}/{total})", "Ek aur basic baat ({n}/{total})"),
   readMore: e("Read more at AMFI", "AMFI पर और पढ़ें", "AMFI par aur padhein"),

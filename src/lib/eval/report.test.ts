@@ -33,7 +33,7 @@ function situation(id: string): SituationRun {
     case: "SAME",
     opening: ["This fall isn't just your fund."],
     reason: "This month the whole market (Nifty 50) fell 11.3%. Your fund fell 11.7%.",
-    source: "ai",
+    source: "template",
   };
 }
 

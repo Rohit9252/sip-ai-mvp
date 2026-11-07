@@ -60,6 +60,17 @@ const PREDICTION: RegExp[] = [
   /\b(badhega|badhegi|badhenge|girega|giregi|girenge|upar jayega|upar jaega|upar jaayega|wapas aayega|wapas aaega|recover hoga|kitna milega|kitna banega|agle saal|aage kya hoga)\b/i,
   // Hindi in Devanagari
   /(कब तक|बढ़ेगा|बढ़ेगी|बढ़ेंगे|गिरेगा|गिरेगी|गिरेंगे|ऊपर जाएगा|वापस आएगा|कितना मिलेगा|कितना बनेगा|अगले साल|भविष्य|आगे क्या होगा)/,
+  // Added with the one-line refusals: future returns, "by year end", "in 5 months", "will I get my money back"
+  /\bhow much will (it|my (sip|fund|value|money|investment|returns?)|the (fund|market|value)|i (get|make|earn|have))\b/i,
+  /\bwhat will\b.{0,25}\b(be|worth)\b/i,
+  /\b(by|till|until|at|for)\b.{0,15}\b(year ?end|end of (the |this )?year)\b/i,
+  /\bexpect\b/i,
+  /\bwill i\b.{0,10}\b(get|see|have)\b.{0,15}\b(money|it|paisa) back\b/i,
+  /\b\d+\s*(mahine|mahino|saal|din)\s*(mein|me)\b.{0,25}\b(kitna|kitne|return|milega|badhega)\b/i,
+  /\b(year ?end|saal ke end|saal ke ant)\b/i,
+  /\d+\s*महीने\s*(में|मे).{0,25}(कितना|कितने|रिटर्न|मिलेगा|बढ़ेगा)/,
+  /कब.{0,15}(वापस|मिलेगा|मिलेंगे|मिलेगी)/,
+  /साल के (अंत|end|आखिर|आख़िर)/,
 ];
 
 /**

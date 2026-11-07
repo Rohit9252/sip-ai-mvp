@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { LANGS } from "@/lib/copy/dictionary";
-import { detectFundTypes, fundTypeAnswer, nextFundType } from "./fund-types";
+import { detectFundTypes, fundTypeAnswer, fundTypesAnswer, nextFundType } from "./fund-types";
 
 describe("detectFundTypes: a plain question about what a fund type is", () => {
   test.each([
@@ -51,20 +51,22 @@ describe("fundTypeAnswer: general terms from AMFI and SEBI, in the person's lang
     }
   });
 
-  test("the English answers keep to the definitions: sizes by rank, the share each fund puts in", () => {
-    expect(fundTypeAnswer("large", "en").text).toMatch(/100/);
-    expect(fundTypeAnswer("large", "en").text).toMatch(/80%/);
-    expect(fundTypeAnswer("mid", "en").text).toMatch(/101/);
-    expect(fundTypeAnswer("mid", "en").text).toMatch(/65%/);
-    expect(fundTypeAnswer("small", "en").text).toMatch(/251/);
-    expect(fundTypeAnswer("small", "en").text).toMatch(/65%/);
-    expect(fundTypeAnswer("flexi", "en").text).toMatch(/any size/);
-    expect(fundTypeAnswer("flexi", "en").text).toMatch(/65%/);
-    expect(fundTypeAnswer("flexi", "en").text).toMatch(/large, mid and small/);
-    expect(fundTypeAnswer("hybrid", "en").text).toMatch(/65% to 80%/);
-    expect(fundTypeAnswer("hybrid", "en").text).toMatch(/10% to 25%/);
-    expect(fundTypeAnswer("hybrid", "en").text).toMatch(/shares/i);
-    expect(fundTypeAnswer("hybrid", "en").text).toMatch(/bonds/i);
+  test("each answer explains only what the name means: ranks for large, mid and small, 'not tied to one size' for flexi, 'a mix' for hybrid", () => {
+    expect(fundTypeAnswer("large", "en").text).toContain("The name large cap means the 100 biggest listed companies by size");
+    expect(fundTypeAnswer("mid", "en").text).toContain("The name mid cap means companies ranked 101 to 250 by size");
+    expect(fundTypeAnswer("small", "en").text).toContain("The name small cap means companies ranked 251 and below by size");
+    expect(fundTypeAnswer("flexi", "en").text).toContain("The name flexi cap means the fund is not tied to one company size");
+    expect(fundTypeAnswer("hybrid", "en").text).toContain("The name hybrid means a mix of different kinds of assets, such as shares and bonds");
+  });
+
+  test("no answer says where a fund invests: no percentage and no words about buying, holdings or where money goes", () => {
+    const where = /%|invest|buys|holdings|lagata|लगाता|खरीद|at least|kam se kam|कम से कम|its money|apne paise|अपने पैसे/i;
+    for (const lang of LANGS) {
+      for (const id of ["small", "mid", "large", "flexi", "hybrid"] as const) {
+        expect(where.test(fundTypeAnswer(id, lang).text), `${id} in ${lang}`).toBe(false);
+      }
+      expect(where.test(fundTypesAnswer(["small", "mid", "large", "flexi", "hybrid"], lang).text), `all in ${lang}`).toBe(false);
+    }
   });
 
   test("the ranks are worded as SEBI's market-cap ranks, in every language", () => {
@@ -89,17 +91,21 @@ describe("fundTypeAnswer: general terms from AMFI and SEBI, in the person's lang
     expect(nextFundType("hybrid")).toBeNull();
   });
 
-  test("when the question named two types, the next one is the other type it named", () => {
-    expect(fundTypeAnswer("mid", "en", ["mid", "large"]).next).toBe("large");
-    expect(fundTypeAnswer("large", "en", ["large", "mid"]).next).toBe("mid");
-    expect(fundTypeAnswer("small", "en").next).toBe("mid");
+  test("a question naming several types answers all of them, in the order named, with the general line once (T2's question)", () => {
+    const answer = fundTypesAnswer(["small", "mid", "large"], "en");
+    expect(answer.text).toContain("251 and below");
+    expect(answer.text).toContain("101 to 250");
+    expect(answer.text).toContain("100 biggest");
+    expect(answer.text.indexOf("small cap")).toBeLessThan(answer.text.indexOf("mid cap"));
+    expect(answer.text.indexOf("mid cap")).toBeLessThan(answer.text.indexOf("large cap"));
+    expect(answer.text.match(/does not say which fund/g)).toHaveLength(1);
+    expect(answer.ids).toEqual(["small", "mid", "large"]);
   });
 
-  test("describes the fund's holdings, in words that cannot read as telling the person to invest", () => {
-    for (const lang of ["en", "hi", "hn"] as const) {
-      for (const id of ["small", "mid", "large", "flexi", "hybrid"] as const) {
-        expect(fundTypeAnswer(id, lang).text).not.toMatch(/its money|अपने पैसे|apne paise|लगाता|lagata/);
-      }
-    }
+  test("the next basic after several is the first type after the last named one, or nothing", () => {
+    expect(fundTypesAnswer(["small", "mid", "large"], "en").next).toBe("flexi");
+    expect(fundTypesAnswer(["large", "mid"], "en").next).toBe("flexi");
+    expect(fundTypesAnswer(["mid", "hybrid"], "en").next).toBeNull();
+    expect(fundTypesAnswer(["small"], "en").next).toBe("mid");
   });
 });

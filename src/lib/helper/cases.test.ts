@@ -40,6 +40,19 @@ describe("classifyCase", () => {
     expect(classifyCase(-3.0, -4.5)).toBe("SAME");
   });
 
+  test("fell about half as much is not close: -1.7 against -3.1 is FUND_LESS, not SAME (found in eval version 3)", () => {
+    expect(classifyCase(-1.7, -3.1)).toBe("FUND_LESS");
+    expect(classifyCase(-3.1, -1.7)).toBe("FUND_MORE");
+    expect(classifyCase(-1.0, -2.0)).toBe("FUND_LESS");
+    expect(classifyCase(-2.0, -1.0)).toBe("FUND_MORE");
+  });
+
+  test("a small gap on a small fall is close when it is a third of the fall or less", () => {
+    expect(classifyCase(-2.9, -3.1)).toBe("SAME");
+    expect(classifyCase(-2.6, -3.1)).toBe("SAME");
+    expect(classifyCase(-9.9, -11.3)).toBe("SAME");
+  });
+
   test("1.6 points apart is not close", () => {
     expect(classifyCase(-4.6, -3.0)).toBe("FUND_MORE");
     expect(classifyCase(-3.0, -4.6)).toBe("FUND_LESS");

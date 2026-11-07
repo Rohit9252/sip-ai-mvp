@@ -165,12 +165,11 @@ export function buildReport(run: EvalRun): string {
   for (const s of run.situations) {
     const changed = s.case === s.situation.expectedCase ? s.case : `${s.situation.expectedCase}, now ${s.case}`;
     out.push(
-      `| ${s.situation.id.toUpperCase()} | ${LANG_NAME[s.situation.lang]} | ${plain(situationLine(s))} | ${changed} | ${s.situation.guess} | ${s.source === "ai" ? "AI words, passed every check" : "code template"} |`,
+      `| ${s.situation.id.toUpperCase()} | ${LANG_NAME[s.situation.lang]} | ${plain(situationLine(s))} | ${changed} | ${s.situation.guess} | code template |`,
     );
   }
   out.push("");
-  const aiCount = run.situations.filter((s) => s.source === "ai").length;
-  out.push(`${aiCount} of ${run.situations.length} reasons were the AI's words. The rest fell back to the code's template.`);
+  out.push(`All ${run.situations.length} reasons are written by code from the template for the case. No AI is used for them.`);
   out.push("");
 
   out.push("## Numbers audit");
@@ -246,7 +245,7 @@ function replyCell(s: SituationRun): string {
     `They tapped: ${t(optionByGuess[s.situation.guess], lang)}`,
     ...s.opening.map((o) => `Opening line: ${o}`),
     `Reason: ${s.reason}`,
-    `Tag: ${s.source === "ai" ? t(copy.helper.checked, lang) : t(copy.common.tagNumbers, lang)}`,
+    `Tag: ${t(copy.common.tagNumbers, lang)}`,
   ];
   return parts.map(plain).join("<br>");
 }

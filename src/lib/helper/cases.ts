@@ -22,8 +22,9 @@ export const CLOSE_TENTHS = 15;
  * Works out the case from the month's fund move and market move, as the person sees them (one decimal).
  *  - The fund rose: FUND_UP (the value is still below what was put in, or there would be no setback).
  *  - The fund fell and the market rose or stayed flat: MARKET_UP.
- *  - Both fell: SAME if within 1.5 points, FUND_MORE if the fund fell more than 1.5 points more,
- *    FUND_LESS if it fell more than 1.5 points less.
+ *  - Both fell: SAME if within 1.5 points and the gap is no more than a third of the bigger fall (so -1.7 against
+ *    -3.1 is not the same: the fund fell about half as much), FUND_MORE if the fund fell more than that,
+ *    FUND_LESS if it fell less than that.
  *  - The fund was flat (0.0): FUND_LESS if the market fell, FUND_UP if the market did not.
  */
 export function classifyCase(fundPct: number, marketPct: number): Case {
@@ -31,7 +32,8 @@ export function classifyCase(fundPct: number, marketPct: number): Case {
   if (fundPct === 0) return marketPct < 0 ? "FUND_LESS" : "FUND_UP";
   if (marketPct >= 0) return "MARKET_UP";
   const gapTenths = Math.round((fundPct - marketPct) * 10);
-  if (Math.abs(gapTenths) <= CLOSE_TENTHS) return "SAME";
+  const biggerFallTenths = Math.max(Math.abs(Math.round(fundPct * 10)), Math.abs(Math.round(marketPct * 10)));
+  if (Math.abs(gapTenths) <= CLOSE_TENTHS && Math.abs(gapTenths) * 3 <= biggerFallTenths) return "SAME";
   return gapTenths < 0 ? "FUND_MORE" : "FUND_LESS";
 }
 

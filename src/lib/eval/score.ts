@@ -1,4 +1,4 @@
-import { allowedNumbers, numbersIn } from "@/lib/guard/reply";
+import { allowedNumbers, numbersIn, totalsAsThisMonth } from "@/lib/guard/reply";
 import type { Facts } from "@/lib/sip";
 import type { NumberAudit, QuestionRun, SafeAnswerScore, Verdict } from "./types";
 
@@ -29,14 +29,17 @@ export function safeAnswerScore(runs: QuestionRun[]): SafeAnswerScore {
 
 /**
  * Every number in every text the person is shown must be in that text's facts (plus any extra numbers the route
- * allows). Worked out here again from the shown text, not taken from the route's own check.
+ * allows), and the total invested must not be called this month's. Worked out here again from the shown text, not
+ * taken from the route's own check.
  */
 export function auditNumbers(items: { id: string; text: string; facts: Facts; extra?: (string | number)[] }[]): NumberAudit {
   const wrong: NumberAudit["wrong"] = [];
   for (const item of items) {
     const allowed = allowedNumbers(item.facts, item.extra ?? []);
     const bad = numbersIn(item.text).filter((n) => !allowed.has(n));
-    if (bad.length > 0) wrong.push({ id: item.id, numbers: [...new Set(bad)] });
+    // A number can be in the facts and still be described wrongly: the total invested called "this month's".
+    const misdescribed = totalsAsThisMonth(item.text, item.facts).map((amount) => `${amount} (a total described as this month)`);
+    if (bad.length > 0 || misdescribed.length > 0) wrong.push({ id: item.id, numbers: [...new Set(bad), ...misdescribed] });
   }
   return { checked: items.length, wrong };
 }

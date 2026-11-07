@@ -8,6 +8,12 @@ import type { Entry } from "./dictionary";
 const e = (en: string, hi: string, hn: string): Entry => ({ en, hi, hn });
 
 export const ownFactsCopy = {
+  /** What was put in and what it is worth. The start of the answer to "why is my value below what I put in". */
+  totals: e(
+    "You have put in {invested} and it is now worth {value}.",
+    "आपने {invested} लगाए हैं और अभी उनकी value {value} है।",
+    "Aapne {invested} lagaye hain aur abhi unki value {value} hai.",
+  ),
   /** Their fund against the market over the same dates, from their first instalment to now. */
   vsMarket: e(
     "Your fund against the market, {from} to {to}: your fund {fVerb} {f} and the whole market (Nifty 50) {mVerb} {m}.",

@@ -4,12 +4,13 @@ import { copy, LANGS } from "./dictionary";
 import type { Entry } from "./dictionary";
 import { fundTypeCopy } from "./fund-types";
 import { ownFactsCopy } from "./own-facts";
-import { learnCards, learnCopy } from "./learn";
+import { exitLoadLearn, learnCards, learnCopy } from "./learn";
 
 /** The copy added in version 2, each line with its name. */
 function newEntries(): [string, Entry][] {
   const out: [string, Entry][] = [
-    ["followup.offerAsk", copy.followup.offerAsk],
+    ["followup.safeAdvice", copy.followup.safeAdvice],
+    ["followup.safePredict", copy.followup.safePredict],
     ["followup.offerButton", copy.followup.offerButton],
     ["followup.qTypes", copy.followup.qTypes],
     ["helper.checkAsk", copy.helper.checkAsk],
@@ -20,6 +21,8 @@ function newEntries(): [string, Entry][] {
     else for (const [id, entry] of Object.entries(value)) out.push([`fundTypes.${key}.${id}`, entry as Entry]);
   }
   out.push(["learn.another", learnCopy.another]);
+  out.push(["learn.tag", learnCopy.tag]);
+  out.push(["learn.exitLoad.body", exitLoadLearn.body]);
   for (const card of learnCards) out.push([`learn.${card.id}`, card.body]);
   return out;
 }

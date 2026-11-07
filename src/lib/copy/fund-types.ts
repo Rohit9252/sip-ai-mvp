@@ -2,13 +2,13 @@ import type { Entry } from "./dictionary";
 
 /**
  * Fund-type basics (version 2, from T2's request): what small cap, mid cap, large cap, flexi cap and hybrid mean.
- * General terms only. The shares of money each type keeps come from SEBI's circular "Categorization and
- * Rationalization of Mutual Fund Schemes" of 26 February 2026, HO/24/13/15(2)2026-IMD-RAC4/I/5764/2026 (checked
- * against its text: large cap 80%, mid cap 65%, small cap 65%, flexi cap 65%, aggressive hybrid 65% to 80% in
- * shares, conservative hybrid 10% to 25%). The market-cap ranks (large: the 100 biggest listed companies, mid: ranked
- * 101 to 250, small: 251 and below) sit in SEBI's Master Circular for Mutual Funds, clause 2.7, which the circular
- * points to, so the copy calls them SEBI's market-cap ranks. The plain words follow AMFI's investor-education page on
- * the types of funds. Code writes these answers, so no AI is involved and none of them picks a fund.
+ * Each answer explains only what the NAME means. It never says where a fund invests: no percentages and no words
+ * about buying, holdings or where money goes (founder decision after the eval version 3 review), so none of it can
+ * read as a pointer to a fund. The market-cap ranks (large: the 100 biggest listed companies, mid: ranked 101 to
+ * 250, small: 251 and below) sit in SEBI's Master Circular for Mutual Funds, clause 2.7, which SEBI's circular
+ * "Categorization and Rationalization of Mutual Fund Schemes" of 26 February 2026 points to
+ * (HO/24/13/15(2)2026-IMD-RAC4/I/5764/2026), so the copy calls them SEBI's market-cap ranks. The plain words follow
+ * AMFI's investor-education page on the types of funds. Code writes these answers, so no AI is involved.
  * Same three languages and style as dictionary.ts. No em dashes and no semicolons.
  */
 const e = (en: string, hi: string, hn: string): Entry => ({ en, hi, hn });
@@ -27,11 +27,12 @@ export const SEBI_CIRCULARS_LINK = "https://www.sebi.gov.in/sebiweb/home/HomeAct
 
 type ByType = Record<FundTypeId, Entry>;
 
-const GENERAL = {
-  en: "This explains the name. It does not say which fund suits you.",
-  hi: "ये बस नाम का मतलब समझाता है। ये नहीं बताता कि आपके लिए कौन सा fund ठीक है।",
-  hn: "Ye bas naam ka matlab samjhata hai. Ye nahi batata ki aapke liye kaunsa fund theek hai.",
-};
+/** Said once at the end of every answer, however many types it covers. */
+export const fundTypeGeneral: Entry = e(
+  "This explains the name. It does not say which fund suits you.",
+  "ये बस नाम का मतलब समझाता है। ये नहीं बताता कि आपके लिए कौन सा fund ठीक है।",
+  "Ye bas naam ka matlab samjhata hai. Ye nahi batata ki aapke liye kaunsa fund theek hai.",
+);
 
 export const fundTypeCopy: { title: ByType; body: ByType; next: Entry; tag: Entry; readMore: Entry; sebi: Entry } = {
   title: {
@@ -43,29 +44,29 @@ export const fundTypeCopy: { title: ByType; body: ByType; next: Entry; tag: Entr
   },
   body: {
     small: e(
-      `A small cap fund mainly buys shares of smaller companies. By SEBI's rules, at least 65% of the fund's holdings are in these companies. By SEBI's market-cap ranks, companies ranked 251 and below by size are small caps. ${GENERAL.en}`,
-      `Small cap fund मुख्य रूप से छोटी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से 251वें नंबर और उससे नीचे की companies small cap हैं। ${GENERAL.hi}`,
-      `Small cap fund mainly chhoti companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se 251ve number aur usse neeche ki companies small cap hain. ${GENERAL.hn}`,
+      "The name small cap means companies ranked 251 and below by size, by SEBI's market-cap ranks.",
+      "Small cap नाम का मतलब है SEBI की market-cap ranking में size के हिसाब से 251वें नंबर और उससे नीचे की companies।",
+      "Small cap naam ka matlab hai SEBI ki market-cap ranking mein size ke hisaab se 251ve number aur usse neeche ki companies.",
     ),
     mid: e(
-      `A mid cap fund mainly buys shares of medium-sized companies. By SEBI's rules, at least 65% of the fund's holdings are in these companies. By SEBI's market-cap ranks, companies ranked 101 to 250 by size are mid caps. ${GENERAL.en}`,
-      `Mid cap fund मुख्य रूप से मझोली companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से 101वें से 250वें नंबर तक की companies mid cap हैं। ${GENERAL.hi}`,
-      `Mid cap fund mainly majholi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se 101ve se 250ve number tak ki companies mid cap hain. ${GENERAL.hn}`,
+      "The name mid cap means companies ranked 101 to 250 by size, by SEBI's market-cap ranks.",
+      "Mid cap नाम का मतलब है SEBI की market-cap ranking में size के हिसाब से 101वें से 250वें नंबर तक की companies।",
+      "Mid cap naam ka matlab hai SEBI ki market-cap ranking mein size ke hisaab se 101ve se 250ve number tak ki companies.",
     ),
     large: e(
-      `A large cap fund mainly buys shares of the biggest companies in India. By SEBI's rules, at least 80% of the fund's holdings are in these companies. By SEBI's market-cap ranks, the 100 biggest listed companies by size are large caps. ${GENERAL.en}`,
-      `Large cap fund मुख्य रूप से भारत की सबसे बड़ी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 80% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से सबसे बड़ी 100 listed companies large cap हैं। ${GENERAL.hi}`,
-      `Large cap fund mainly Bharat ki sabse badi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 80% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se sabse badi 100 listed companies large cap hain. ${GENERAL.hn}`,
+      "The name large cap means the 100 biggest listed companies by size, by SEBI's market-cap ranks.",
+      "Large cap नाम का मतलब है SEBI की market-cap ranking में size के हिसाब से सबसे बड़ी 100 listed companies।",
+      "Large cap naam ka matlab hai SEBI ki market-cap ranking mein size ke hisaab se sabse badi 100 listed companies.",
     ),
     flexi: e(
-      `A flexi cap fund buys shares of companies of any size. By SEBI's rules, at least 65% of the fund's holdings are in shares. The fund manager can move between large, mid and small companies. ${GENERAL.en}`,
-      `Flexi cap fund किसी भी size की companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% shares में होता है। Fund manager large, mid और small companies के बीच बदलाव कर सकता है। ${GENERAL.hi}`,
-      `Flexi cap fund kisi bhi size ki companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% shares mein hota hai. Fund manager large, mid aur small companies ke beech badlaav kar sakta hai. ${GENERAL.hn}`,
+      "The name flexi cap means the fund is not tied to one company size.",
+      "Flexi cap नाम का मतलब है कि fund किसी एक company size से बँधा नहीं है।",
+      "Flexi cap naam ka matlab hai ki fund kisi ek company size se bandha nahi hai.",
     ),
     hybrid: e(
-      `A hybrid fund buys a mix of shares (equity) and bonds (debt), and sometimes other assets. The split depends on the kind of hybrid fund. For example, an aggressive hybrid fund holds 65% to 80% in shares, and a conservative one holds 10% to 25%. ${GENERAL.en}`,
-      `Hybrid fund shares (equity) और bonds (debt) का मिला-जुला मिश्रण खरीदता है, और कभी-कभी दूसरी चीज़ें भी। दोनों का हिस्सा hybrid fund की किस्म पर निर्भर है। जैसे aggressive hybrid fund की holdings का 65% से 80% shares में होता है, और conservative hybrid fund का 10% से 25%। ${GENERAL.hi}`,
-      `Hybrid fund shares (equity) aur bonds (debt) ka mila-jula mishran khareedta hai, aur kabhi-kabhi doosri cheezein bhi. Dono ka hissa hybrid fund ki kism par nirbhar hai. Jaise aggressive hybrid fund ki holdings ka 65% se 80% shares mein hota hai, aur conservative hybrid fund ka 10% se 25%. ${GENERAL.hn}`,
+      "The name hybrid means a mix of different kinds of assets, such as shares and bonds.",
+      "Hybrid नाम का मतलब है अलग-अलग तरह की assets का मिश्रण, जैसे shares और bonds।",
+      "Hybrid naam ka matlab hai alag-alag tarah ki assets ka mishran, jaise shares aur bonds.",
     ),
   },
   next: e("Next basic: {name}", "अगली बुनियादी बात: {name}", "Agli basic baat: {name}"),

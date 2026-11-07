@@ -47,8 +47,8 @@ export type SituationRun = {
   case: Case;
   opening: string[];
   reason: string;
-  /** "ai": the model's words passed every check. "template": the code's words were shown. */
-  source: "ai" | "template";
+  /** Always "template": the reason is written by code (ADR-0008). Reports before version 4 could hold "ai". */
+  source: "template";
 };
 
 export type SafeAnswerScore = { passed: number; total: number; failures: QuestionRun[] };

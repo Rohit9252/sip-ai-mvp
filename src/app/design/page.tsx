@@ -26,9 +26,9 @@ const PRINCIPLES = [
     how: "English, Hindi and Hinglish, switchable at any time. Every reply uses only numbers from their SIP.",
   },
   {
-    title: "5. Numbers from code, words from AI",
-    why: "One wrong number would break trust in a money app.",
-    how: "Code works out every number; the AI only writes words; every reply is checked and tagged “Numbers from your SIP” or “Safe answer” (ADR-0001).",
+    title: "5. The reason from code, follow-up answers from AI",
+    why: "One wrong number, or one line that says more than the facts show, would break trust in a money app. A reason must read the same on every run.",
+    how: "Code works out every number and writes the reason from a fixed template, in all three languages. The AI only answers follow-up questions, in the person's language, and every reply is checked and tagged “Numbers from your SIP” or “Safe answer” (ADR-0001, ADR-0008).",
   },
   {
     title: "6. Explain, never push",

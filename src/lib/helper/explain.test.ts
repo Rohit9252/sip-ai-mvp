@@ -132,7 +132,7 @@ describe("explain: the other four cases", () => {
     expect(x.misread).toBe(false);
     expect(x.opening).toEqual(["You read it right."]);
     expect(x.reason).toBe(
-      "This month the whole market (Nifty 50) rose 3.6%, but your fund fell 2.5%. This fall comes from your fund, not the whole market.",
+      "This month the whole market (Nifty 50) rose 3.6%, but your fund fell 2.5%. This fall is in your fund's price, not in the whole market.",
     );
   });
 

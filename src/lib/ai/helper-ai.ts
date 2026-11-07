@@ -1,10 +1,9 @@
 import OpenAI from "openai";
 import type { Lang } from "@/lib/copy/dictionary";
-import type { Case, Guess } from "@/lib/helper/cases";
 import type { Facts } from "@/lib/sip/facts";
 
 /**
- * The two AI jobs (ADR-0001, ADR-0002): write the reason in words, and answer a follow-up question.
+ * The AI job (ADR-0001, ADR-0008): answer a follow-up question. The reason is written by code, not by the AI.
  * The model gets the facts object and writes words only. Every reply is checked in code by the route before it is
  * shown (src/lib/guard/reply.ts). A failure or a timeout falls back to text written by code.
  */
@@ -61,13 +60,6 @@ function factSheet(facts: Facts, extra: Record<string, string> = {}) {
   );
 }
 
-const GUESS_WORDS: Record<Guess, string> = {
-  fund: "my fund did badly",
-  market: "the whole market fell",
-  dunno: "I don't know",
-  worth: "it doesn't feel worth it",
-};
-
 /** What the model says a follow-up question is asking for. Code uses it as a second lock after its own patterns. */
 export type Intent = "facts" | "advice" | "prediction" | "unrelated";
 
@@ -92,39 +84,6 @@ async function askForText(system: string, user: string): Promise<{ text: string;
   }
 }
 
-/**
- * The reason, in words. The template (written by code for this case) is the truth the model must keep: it may
- * reword it to start from the person's guess, but not change what it says.
- */
-export async function writeReason(args: {
-  facts: Facts;
-  guess: Guess;
-  case: Case;
-  misread: boolean;
-  opening: string;
-  template: string;
-  lang: Lang;
-}): Promise<string | null> {
-  const system = `You explain to a first-time mutual fund investor in India what happened to their own SIP in the month its value first fell below what they put in. Write in ${LANGUAGE[args.lang]}.
-
-${RULES}
-- The card already shows an opening line, written by code, that answers their guess. Do not repeat it, do not mention their guess, and never say whether they are right or wrong, or whether the SIP is worth it.
-- Write the reason only: 1 or 2 short sentences, at most 45 words.
-- Say what moved the value: their fund's move against the whole market's move (Nifty 50) this month. You may also say what they put in and what it is worth now.
-- Keep the meaning of the REFERENCE exactly. Do not add causes that are not in the FACTS (no news, no reasons for the market falling).
-- Talk to them as "you" (Hindi: "aap"). Warm and plain, like a calm friend, not a report.
-Answer as JSON: {"text": "..."}`;
-  const user = `FACTS
-${factSheet(args.facts)}
-
-THEIR GUESS: "${GUESS_WORDS[args.guess]}"
-OPENING LINE ALREADY SHOWN: ${args.opening}
-CASE: ${args.case}
-REFERENCE (written by code, correct): ${args.template}`;
-  const reply = await askForText(system, user);
-  return reply?.text || null;
-}
-
 /** An answer to a follow-up question. The model also says what the question asks for, as a second lock after the patterns in code. */
 export async function answerFollowup(args: {
   facts: Facts;
@@ -142,7 +101,10 @@ ${RULES}
   - "facts": anything else.
 - For "advice", "prediction" and "unrelated", reply with an empty text: {"intent": "advice", "text": ""}. Do not answer a question that asks for advice or a prediction, even by stating the facts around it.
 - For "facts", answer in 1 to 3 short sentences, at most 70 words.
-- About stopping, you may use only these facts: stopping ends future instalments; the money already in stays in the fund until the person withdraws it; many equity funds charge an exit load (often 1%) on units withdrawn within a year, and the fund's own page has the exact rule; on this value that is about ${args.exitLoadAbout}. Never say whether stopping is a good or bad idea.
+- Write every sentence in the language asked for. Do not mix languages.
+- "invested", "instalmentsPaid" and "monthlyAmount" are about the whole SIP. "invested" is a total over all the instalments: never call it this month's. Only the "thisMonth" moves belong to the month.
+- About stopping, you may use only these facts: stopping ends future instalments, and the money already in stays in the fund until the person withdraws it. Never say whether stopping is a good or bad idea.
+- About an exit load: many funds charge one on units withdrawn within a year, often 1%, and the fund's own page has the exact rule. You do not know this fund's rule, so never say this fund charges it. If you give a rupee figure, say it is only what 1% of the value would be, about ${args.exitLoadAbout}.
 Answer as JSON: {"intent": "facts", "text": "..."}`;
   const user = `FACTS\n${factSheet(args.facts, { exitLoadAbout: args.exitLoadAbout })}\n\nQUESTION: ${args.question}`;
   const reply = await askForText(system, user);

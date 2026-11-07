@@ -5,7 +5,7 @@
  */
 
 export const CONSENT_KEY = "sip-ai-consent";
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 export const CONSENT_LIFETIME_MS = 5 * 60 * 60 * 1000;
 /** Allows for a device clock that runs slightly behind the one that saved the record. */
 const CLOCK_SKEW_MS = 60 * 1000;

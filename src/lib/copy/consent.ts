@@ -3,7 +3,7 @@ import type { Entry } from "./dictionary";
 /**
  * The first-visit notice and the About popup (same content, as in the attempt-one MVP). Every claim about data
  * matches the code: no personal data asked; NAVs from AMFI via mfapi.in; the SIP numbers and the question go to
- * OpenAI to write words; questions and answers are not stored; anonymous events go to Vercel Analytics; 40 AI calls
+ * OpenAI to answer follow-up questions (the reason is written by code); questions and answers are not stored; anonymous events go to Vercel Analytics; 40 AI calls
  * per visitor every 10 minutes (src/lib/api/rate-limit.ts). Raise CONSENT_VERSION when this changes. No em dashes.
  */
 const e = (en: string, hi: string, hn: string): Entry => ({ en, hi, hn });
@@ -61,16 +61,16 @@ export const consentCopy = {
     "Har design faisle ke peeche ki research, 13 mahino se shuru hui ek hi SIP ka replay, aur hum ise kaise test karenge.",
   ),
   data: e(
-    "We never ask for your name, phone, PAN or account. Fund prices come from AMFI's public data (via mfapi.in). To write the explanation and answer your questions, your SIP's numbers and your question are sent to OpenAI; every number is worked out in our code, not by the AI. We do not store your questions or answers. We count anonymous taps (for example, which guess was chosen) with Vercel Analytics to learn what works. OpenAI may keep requests for a short time under its own API policy.",
-    "हम कभी आपका नाम, phone, PAN या account नहीं माँगते। Fund की कीमतें AMFI के public data (mfapi.in के ज़रिए) से आती हैं। समझाने और आपके सवालों के जवाब देने के लिए आपकी SIP के numbers और आपका सवाल OpenAI को भेजे जाते हैं; हर number हमारे code में निकाला जाता है, AI से नहीं। हम आपके सवाल या जवाब store नहीं करते। क्या काम करता है, ये समझने के लिए हम Vercel Analytics से anonymous taps गिनते हैं (जैसे कौन सा अंदाज़ा चुना गया)। OpenAI अपनी API policy के तहत requests कुछ समय तक रख सकता है।",
-    "Hum kabhi aapka naam, phone, PAN ya account nahi maangte. Fund ki keematein AMFI ke public data (mfapi.in ke zariye) se aati hain. Samjhaane aur aapke sawaalon ke jawab dene ke liye aapki SIP ke numbers aur aapka sawaal OpenAI ko bheje jaate hain; har number hamare code mein nikala jaata hai, AI se nahi. Hum aapke sawaal ya jawab store nahi karte. Kya kaam karta hai, ye samajhne ke liye hum Vercel Analytics se anonymous taps ginte hain (jaise kaunsa andaaza chuna gaya). OpenAI apni API policy ke tahat requests kuch samay tak rakh sakta hai.",
+    "We never ask for your name, phone, PAN or account. Fund prices come from AMFI's public data (via mfapi.in). To answer your follow-up questions, your SIP's numbers and your question are sent to OpenAI. The explanation of what moved your money is written by our code, and every number is worked out in our code, not by the AI. We do not store your questions or answers. We count anonymous taps (for example, which guess was chosen) with Vercel Analytics to learn what works. OpenAI may keep requests for a short time under its own API policy.",
+    "हम कभी आपका नाम, phone, PAN या account नहीं माँगते। Fund की कीमतें AMFI के public data (mfapi.in के ज़रिए) से आती हैं। आपके follow-up सवालों के जवाब देने के लिए आपकी SIP के numbers और आपका सवाल OpenAI को भेजे जाते हैं। आपके पैसे को किसने हिलाया, इसकी वजह हमारा code लिखता है, और हर number हमारे code में निकाला जाता है, AI से नहीं। हम आपके सवाल या जवाब store नहीं करते। क्या काम करता है, ये समझने के लिए हम Vercel Analytics से anonymous taps गिनते हैं (जैसे कौन सा अंदाज़ा चुना गया)। OpenAI अपनी API policy के तहत requests कुछ समय तक रख सकता है।",
+    "Hum kabhi aapka naam, phone, PAN ya account nahi maangte. Fund ki keematein AMFI ke public data (mfapi.in ke zariye) se aati hain. Aapke follow-up sawaalon ke jawab dene ke liye aapki SIP ke numbers aur aapka sawaal OpenAI ko bheje jaate hain. Aapke paise ko kisne hilaya, iski wajah hamara code likhta hai, aur har number hamare code mein nikala jaata hai, AI se nahi. Hum aapke sawaal ya jawab store nahi karte. Kya kaam karta hai, ye samajhne ke liye hum Vercel Analytics se anonymous taps ginte hain (jaise kaunsa andaaza chuna gaya). OpenAI apni API policy ke tahat requests kuch samay tak rakh sakta hai.",
   ),
 
   limitsTitle: e("Limits", "सीमाएँ", "Limits"),
   limits: e(
-    "This free prototype uses a paid AI service, so each visitor can make about 40 AI requests every 10 minutes. After that you still see the explanation written by our code.",
-    "ये free prototype एक paid AI service इस्तेमाल करता है, इसलिए हर visitor हर 10 मिनट में लगभग 40 AI requests कर सकता है। उसके बाद भी आपको हमारे code का लिखा हुआ explanation दिखता रहेगा।",
-    "Ye free prototype ek paid AI service use karta hai, isliye har visitor har 10 minute mein lagbhag 40 AI requests kar sakta hai. Uske baad bhi aapko hamare code ka likha hua explanation dikhta rahega.",
+    "This free prototype uses a paid AI service, so each visitor can make about 40 AI requests every 10 minutes for follow-up questions. The explanation of what moved your money is written by our code and is not limited.",
+    "ये free prototype एक paid AI service इस्तेमाल करता है, इसलिए हर visitor हर 10 मिनट में follow-up सवालों के लिए लगभग 40 AI requests कर सकता है। आपके पैसे को किसने हिलाया, इसका explanation हमारा code लिखता है और उस पर कोई सीमा नहीं है।",
+    "Ye free prototype ek paid AI service use karta hai, isliye har visitor har 10 minute mein follow-up sawaalon ke liye lagbhag 40 AI requests kar sakta hai. Aapke paise ko kisne hilaya, iska explanation hamara code likhta hai aur us par koi seema nahi hai.",
   ),
 
   renew: e(

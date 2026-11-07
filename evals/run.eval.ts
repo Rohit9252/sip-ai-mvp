@@ -94,7 +94,7 @@ test("the eval gate: golden set against the real code and the real AI", async ()
     // 20 real SIPs: replayed on live prices, then the first card the person sees (the reason).
     situations = await inBatches(GOLDEN_SITUATIONS, 4, async (situation) => {
       const facts = await factsOf(situation.request, situation.id);
-      const reply = await reasonReply(facts, situation.guess, situation.lang, true);
+      const reply = reasonReply(facts, situation.guess, situation.lang);
       return { situation, facts, case: reply.case as SituationRun["case"], opening: reply.opening, reason: reply.reason, source: reply.source };
     });
 

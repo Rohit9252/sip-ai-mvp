@@ -5,7 +5,7 @@ import type { Facts } from "@/lib/sip/facts";
  * the person sees the code-written template or the safe answer instead. The fixed safe answers are not checked here.
  */
 
-export type ReplyProblem = "number" | "advice" | "prediction" | "length" | "empty" | "em-dash";
+export type ReplyProblem = "number" | "advice" | "prediction" | "length" | "empty" | "em-dash" | "total-as-month";
 export type ReplyCheck = { ok: boolean; problems: ReplyProblem[]; badNumbers: string[] };
 
 export const MAX_REPLY_CHARS = 480;
@@ -78,7 +78,31 @@ export function allowedNumbers(facts: Facts, extra: (string | number)[] = []): S
   return allowed;
 }
 
-export function checkReply(text: string, allowed: Set<string>): ReplyCheck {
+/** "This month" in the three languages. */
+const THIS_MONTH = /this month|in the month|last month|इस महीने|महीने में|is mahine|iss mahine|is month/i;
+/** A word for putting money in, in the three languages. */
+const PUTTING_IN = /put in|invested|invest|paid|added|लगाए|लगाया|लगाई|निवेश|भरे|दिए|laga[yi]e?|lagaye|lagaya|bhare|diye/i;
+/** Clauses end at punctuation or at a word that starts a new thought. */
+const CLAUSE_END = /[.।?!;,:]|\bbut\b|\bwhile\b|\band\b|\bjabki\b|\blekin\b|\baur\b|जबकि|लेकिन|और/;
+
+/**
+ * Finds the total invested described as this month's: a clause with "this month", a word for putting money in, and
+ * the total invested. The number is in the facts, so the number check passes it, but it is a wrong statement about
+ * the person's money. Narrow on purpose. In month 1 the total is one instalment, so nothing is flagged.
+ */
+export function totalsAsThisMonth(text: string, facts: Facts): string[] {
+  if (facts.invested.amount === facts.sip.monthlyAmount.amount) return [];
+  const total = normalise(String(facts.invested.amount));
+  // The commas inside a number ("40,000") must not end a clause.
+  const flat = asciiDigits(text).replace(/(\d),(?=\d)/g, "$1");
+  for (const clause of flat.split(CLAUSE_END)) {
+    if (!THIS_MONTH.test(clause) || !PUTTING_IN.test(clause)) continue;
+    if (numbersIn(clause).includes(total)) return [facts.invested.text];
+  }
+  return [];
+}
+
+export function checkReply(text: string, allowed: Set<string>, facts?: Facts): ReplyCheck {
   const problems: ReplyProblem[] = [];
   const trimmed = text.trim();
   if (!trimmed) problems.push("empty");
@@ -86,6 +110,7 @@ export function checkReply(text: string, allowed: Set<string>): ReplyCheck {
   if (trimmed.includes(String.fromCharCode(0x2014))) problems.push("em-dash");
   const badNumbers = numbersIn(trimmed).filter((n) => !allowed.has(n));
   if (badNumbers.length > 0) problems.push("number");
+  if (facts && totalsAsThisMonth(trimmed, facts).length > 0) problems.push("total-as-month");
   if (ADVICE_IN_REPLY.some((p) => p.test(trimmed))) problems.push("advice");
   if (PREDICTION_IN_REPLY.some((p) => p.test(trimmed))) problems.push("prediction");
   return { ok: problems.length === 0, problems, badNumbers };

@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }, info) => {
   if (info.title.startsWith("consent")) return;
   await page.addInitScript(() => {
-    localStorage.setItem("sip-ai-consent", JSON.stringify({ version: 1, acceptedAt: new Date().toISOString() }));
+    localStorage.setItem("sip-ai-consent", JSON.stringify({ version: 2, acceptedAt: new Date().toISOString() }));
   });
   if (info.title.startsWith("tour")) return;
   await page.addInitScript(() => {
@@ -52,7 +52,7 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await page.getByTestId("ask-input").fill("Should I change my fund?");
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByTestId("reply-tag").last()).toContainText("Safe answer");
-  await expect(page.getByTestId("reply").last()).toContainText("I can't tell you what to do with your money");
+  await expect(page.getByTestId("reply").last()).toContainText("This is outside what I can help with. I don't say which fund to choose or change.");
   await page.getByTestId("offer-own-facts").click();
   await expect(page.getByTestId("reply").last()).toContainText("your fund fell 7.0%");
   await expect(page.getByTestId("reply").last()).toContainText("exit load");
