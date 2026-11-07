@@ -60,7 +60,7 @@ No prompt or model change goes live until it passes a hand-labelled golden set (
 - The reason matches the numbers: 20 of 20.
 - Answerable questions wrongly given the safe answer: 2 of 20 or fewer.
 
-**Status: built and run four times.** `npm run eval` runs 40 follow-up questions and 20 real SIPs against the real code and the real AI, and writes a dated report to `docs/evals/`. Code scores two lines: safe answers and wrong numbers. The founder scores the other two by hand in a sheet beside each report (no AI judge). T1's "should I change my fund?" and T2's fund types are in the question set ([USER-TESTING.md](USER-TESTING.md)). The questions were written fresh, not copied from the guard's tests.
+**Status: built and run five times.** `npm run eval` runs 40 follow-up questions and 20 real SIPs against the real code and the real AI, and writes a dated report to `docs/evals/`. Code scores two lines: safe answers and wrong numbers. The founder scores the other two by hand in a sheet beside each report (no AI judge). T1's "should I change my fund?" and T2's fund types are in the question set ([USER-TESTING.md](USER-TESTING.md)). The questions were written fresh, not copied from the guard's tests.
 
 | Version | Safe answers (need 20 of 20) | Wrong numbers (need 0) | Founder lines |
 |---|---|---|---|
@@ -68,10 +68,11 @@ No prompt or model change goes live until it passes a hand-labelled golden set (
 | 2 ([report](evals/2026-11-07-eval-v2.md)) | 20 of 20, passes | 0, passes | not scored yet ([sheet](evals/2026-11-07-founder-scoring-v2.md)) |
 | 3 ([report](evals/2026-11-07-eval-v3.md)) | 20 of 20, passes | 0, passes | not scored yet ([sheet](evals/2026-11-07-founder-scoring-v3.md)) |
 | 4 ([report](evals/2026-11-07-eval-v4.md)) | 20 of 20, passes | 0, passes | not scored yet ([sheet](evals/2026-11-07-founder-scoring-v4.md)) |
+| 5 ([report](evals/2026-11-07-eval-v5.md)) | 20 of 20, passes | 0, passes | not scored yet ([sheet](evals/2026-11-07-founder-scoring-v5.md)) |
 
 Version 1 let four advice or prediction questions through as written answers. The fix added a second lock (the AI also says what a question asks for) and wider phrase patterns. These fixes were made after seeing the failures, so version 2 is not a blind test of those parts. Reports are never edited.
 
-An independent AI reader drafted marks on version 3 and found real faults that the code check could not see (a total called "this month's", a month said to take the value below what was put in when it was already below, one fund-type question only partly answered). The founder read the sheet too. Version 4 is the fix: the reason is now written by code, refusals are one line, and fund-type answers explain only the name. Marks on version 4 are not filled in yet. See [review notes](evals/2026-11-07-review-notes.md).
+An independent AI reader drafted marks on version 3 and found real faults that the code check could not see (a total called "this month's", a month said to take the value below what was put in when it was already below, one fund-type question only partly answered). The founder read the sheet too. Version 4 is the fix: the reason is now written by code, refusals are one line, and fund-type answers explain only the name. Marks on versions 4 and 5 are not filled in yet. A second read of version 4 found the AI had put a right number to a wrong meaning (the amount invested named as what stays in the fund after stopping), so more fair questions are now answered by code: stopping, how much was put in, how many instalments, how far below, comparisons and "why is my value below", each with the direct line first. See [review notes](evals/2026-11-07-review-notes.md).
 
 ## Tests
 
@@ -85,8 +86,8 @@ Tests were written before the code (test-driven): every task ended with `npm tes
 | Fund prices | Fetching and caching AMFI prices, a missing fund or price, the cohort replay | 28 |
 | Set-up rules | Start month 4 to 24 months back, amounts, the same rules checked again on the server | 17 |
 | Language and consent | Every line in English, Hindi and Hinglish, no em dashes or advice words in any copy, consent | 15 |
-| Version 2 and the eval gate (added since) | Facts after an advice refusal, fund-type basics, one basic at a time, the four-tap quick check, the second lock, the golden set, the scoring and the report | 204 |
-| **Total (Vitest)** | | **431, all pass** |
+| Version 2 and the eval gate (added since) | Facts after an advice refusal, fund-type basics, one basic at a time, the four-tap quick check, the second lock, the golden set, the scoring and the report | 290 |
+| **Total (Vitest)** | | **517, all pass** |
 
 End-to-end (Playwright): 9 journeys (sample flow, Hindi, the tour, Stop and Withdraw, consent, the helper on phone and desktop), run on a phone and a desktop screen: **16 of 16 runs pass**, 2 skip because they are phone-only or desktop-only.
 

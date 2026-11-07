@@ -34,6 +34,25 @@ Plain notes on how version 3 was read, and what changed because of it. Nothing h
 
 The golden questions, their labels, the pass lines and the earlier reports were not edited.
 
+## Version 5: the second read
+
+An independent AI reader drafted marks on version 4 as well. These are drafts, not the score. The reader found no wrong number and no wrong direction in the reasons. It found these faults, and version 5 fixes them.
+
+| Row | Fault found in version 4 | What it became in version 5 |
+|---|---|---|
+| A12 | The AI said the 40,000 rupees invested stays in the fund. The holding is worth 35,785. It also gave a guessed exit load figure. | "What happens if I stop" is answered by code in all three languages, with the current value and the date. No reply holds a guessed exit load figure, including the person's own facts. |
+| S18, S19, S20 | The reason left out the market move. In S19 the market had fallen and the person tapped that. | Every reason now states the market's move and the fund's move with the right direction, in all three languages, for every mix of rise, fall and flat. Tests cover each mix. |
+| A03, A05 | One shared answer lost the direct answer. A05 opened with the wrong period. | One plain line first (about the same, ahead or behind, for the period asked), then that period's numbers, then the other period's. A05 opens with "since your first instalment". |
+| A14, A19 | Numbers with no plain answer first. | A "why is my value below" answer opens with the reason in one line: today's price is lower than the average price the instalments paid. Then both periods. |
+| A16 | Both periods but no conclusion. | The same direct line first. |
+| A06, A17 | The exit load definition was lost. | A plain general definition is back: a fee some funds take from what you withdraw within a set time. No figure and no claim about any fund. |
+| A01, A02, A04, A09, A10, A15 | Answered by the AI, which can put a right number to a wrong meaning. | Answered by code from the facts: how much put in, how many instalments, how far below, this month's move. |
+| Refusals | The Hindi and Hinglish opening sounded translated. The advice line named only choosing a fund. | Hindi and Hinglish open with "इस सवाल का जवाब मैं नहीं दे सकता।" and "Is sawal ka jawab main nahi de sakta." The advice line now says it does not say what to do with your money or which fund to pick. |
+| Number audit | It skipped the code-written answers that hold numbers. | It now covers them, and a total described as this month's still counts as a wrong number. |
+| S04 | The golden set says SAME. The reason is now FUND_LESS. | Stated plainly in the version 5 report. The golden set was not edited. The rule for "close" changed in version 4, so S04 has another case now. |
+
+Still open, and not changed: S11 compares a US fund with the Nifty 50 (ADR-0003). S15's opening confirms "my fund did badly" for this month while the fund is up since the start. The A08 hybrid line is a borderline call for the expert. The "Show me my facts" tap stays under the advice refusal until the founder decides. The Hindi and Hinglish wording still needs a native ear.
+
 ## Where it stands
 
-Version 4 is in `2026-11-07-eval-v4.md`, with its sheet `2026-11-07-founder-scoring-v4.md`. Marks on version 4 are not filled in yet. The two lines the founder scores by hand are open.
+Version 5 is in `2026-11-07-eval-v5.md`, with its sheet `2026-11-07-founder-scoring-v5.md`. Marks on version 5 are not filled in yet. The two lines the founder scores by hand are open.
