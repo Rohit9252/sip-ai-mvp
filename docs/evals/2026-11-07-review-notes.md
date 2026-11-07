@@ -60,3 +60,14 @@ Version 5 is in `2026-11-07-eval-v5.md`, with its sheet `2026-11-07-founder-scor
 ## Version 6
 
 The last code change. The patterns that send a question to a code-written answer were tightened, so code answers only when a question truly matches a topic. Version 6 is in `2026-11-07-eval-v6.md` with its sheet `2026-11-07-founder-scoring-v6.md`. Marks on version 6 are not filled in yet. The two hand-scored lines are open and nothing here says either was met.
+
+## Who read which version
+
+| Version | Reader | What they gave |
+|---|---|---|
+| 3 | Founder | Read all 60 rows and asked for changes |
+| 3, 4 | A second AI model | Draft marks, and the faults listed above |
+| 5 | A second AI model | Draft marks: reasons 20 of 20 yes, 14 with doubt, 0 of 20 wrongly refused, 40 of 40 labels agreed ([marks](2026-11-07-second-reader-v5.md)) |
+| 6 | None by hand yet | Same replies to the golden set as version 5, and the founder's sheet is open |
+
+All 60 rows in version 5 and version 6 are code or fixed text. AI follow-ups are held by the reply guard and the number check, not by these rows.
