@@ -6,7 +6,7 @@ Part 5 of the Groww SIP brief. Live by Thu 5 Nov 2026. User tests Fri 6 and Sat 
 
 **How we work:**
 - The tasks are written and checked phase by phase, one phase at a time.
-- After each phase, Opus verifies it: tests, build, phone and desktop screenshots, and a read of the code against this file. The founder sees the result before the next phase.
+- After each phase, a second reviewer verifies it: tests, build, phone and desktop screenshots, and a read of the code against this file. The founder sees the result before the next phase.
 - **AI evals are the last phase** (Phase 5).
 
 **Read before any task:** `GLOSSARY.md` (the words we use), `docs/adr/0001` to `0007` (decisions not to undo), `docs/reference/mockup-v1.html` (the approved clickable mockup; it uses the old name "Kyun?", which is dropped: never use that name).
