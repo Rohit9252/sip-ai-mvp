@@ -3,7 +3,7 @@ import { LANGS } from "@/lib/copy/dictionary";
 import { allowedNumbers, checkReply } from "@/lib/guard/reply";
 import { sampleFacts } from "@/lib/testing/sample-facts";
 import type { Facts } from "@/lib/sip";
-import { exitLoadAbout, ownFactsReply } from "./own-facts";
+import { ownFactsReply } from "./own-facts";
 
 let facts: Facts;
 beforeAll(async () => {
@@ -20,13 +20,24 @@ describe("ownFactsReply: the person's own facts after a question that asked for 
     expect(parts[1]).toMatch(/switching/i);
     expect(parts[1]).toContain("exit load");
     expect(parts[2]).toMatch(/stopping/i);
-    expect(parts[2]).toContain("stays");
+    expect(parts[2]).toContain("stay in your fund");
   });
 
-  test("the exit load is about 1% of the value, in whole rupees, and labelled 'about'", () => {
-    expect(exitLoadAbout(facts)).toBe(358);
-    expect(ownFactsReply(facts, "en")[1]).toContain("about ₹358");
-    expect(ownFactsReply(facts, "en")[1]).toContain("₹35,785");
+  test("no reply holds a guessed exit load in rupees: the general rule only, with the fund's own page for the real one", () => {
+    for (const lang of LANGS) {
+      const text = ownFactsReply(facts, lang).join(" ");
+      expect(text, lang).not.toContain("₹358");
+    }
+    const switching = ownFactsReply(facts, "en")[1];
+    expect(switching).toContain("exit load");
+    expect(switching).toContain("often 1%");
+    expect(switching).not.toContain("₹");
+  });
+
+  test("what stopping does names the current value, not the amount invested", () => {
+    const stopping = ownFactsReply(facts, "en")[2];
+    expect(stopping).toContain("worth ₹35,785 on 31 Mar 2026");
+    expect(stopping).not.toContain("₹40,000");
   });
 
   test("a fund that rose says 'rose'", () => {
@@ -51,7 +62,7 @@ describe("ownFactsReply: the person's own facts after a question that asked for 
   });
 
   test("every number in it comes from the facts or the exit-load line, and none of it is advice or a prediction", () => {
-    const allowed = allowedNumbers(facts, [exitLoadAbout(facts), 1]);
+    const allowed = allowedNumbers(facts, [1]);
     for (const lang of LANGS) {
       const check = checkReply(ownFactsReply(facts, lang).join(" "), allowed);
       expect(check.problems.filter((p) => p !== "length"), lang).toEqual([]);

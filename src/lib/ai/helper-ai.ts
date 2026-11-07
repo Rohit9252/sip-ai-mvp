@@ -89,7 +89,6 @@ export async function answerFollowup(args: {
   facts: Facts;
   question: string;
   lang: Lang;
-  exitLoadAbout: string;
 }): Promise<{ text: string; offTopic: boolean; intent: Intent } | null> {
   const system = `You answer a first-time mutual fund investor's question about their own SIP, using only the FACTS. Write in ${LANGUAGE[args.lang]}.
 
@@ -104,9 +103,10 @@ ${RULES}
 - Write every sentence in the language asked for. Do not mix languages.
 - "invested", "instalmentsPaid" and "monthlyAmount" are about the whole SIP. "invested" is a total over all the instalments: never call it this month's. Only the "thisMonth" moves belong to the month.
 - About stopping, you may use only these facts: stopping ends future instalments, and the money already in stays in the fund until the person withdraws it. Never say whether stopping is a good or bad idea.
-- About an exit load: many funds charge one on units withdrawn within a year, often 1%, and the fund's own page has the exact rule. You do not know this fund's rule, so never say this fund charges it. If you give a rupee figure, say it is only what 1% of the value would be, about ${args.exitLoadAbout}.
+- About an exit load: many funds charge one on units withdrawn within a year, often 1%, and the fund's own page has the exact rule. You do not know this fund's rule, so never say this fund charges it and never give a rupee figure for it.
+- About what stays in the fund, always use "value", never "invested". The money put in is not what the units are worth now.
 Answer as JSON: {"intent": "facts", "text": "..."}`;
-  const user = `FACTS\n${factSheet(args.facts, { exitLoadAbout: args.exitLoadAbout })}\n\nQUESTION: ${args.question}`;
+  const user = `FACTS\n${factSheet(args.facts)}\n\nQUESTION: ${args.question}`;
   const reply = await askForText(system, user);
   if (!reply) return null;
   const intent = reply.intent ?? (reply.offTopic ? "unrelated" : "facts");

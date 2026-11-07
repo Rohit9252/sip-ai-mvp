@@ -103,6 +103,26 @@ describe("buildReport", () => {
     expect(md).toContain("You could look at a large cap fund.");
   });
 
+  test("says plainly when a situation's case differs from the golden set, and that the golden set was not edited (S04)", () => {
+    const moved = situation("s04");
+    moved.situation.expectedCase = "SAME";
+    moved.case = "FUND_LESS";
+    const md = buildReport(makeRun({ situations: [moved] }));
+    expect(md).toContain("Cases that differ from the golden set");
+    expect(md).toContain("S04");
+    expect(md).toContain("SAME");
+    expect(md).toContain("FUND_LESS");
+    expect(md).toContain("The golden set was not edited");
+  });
+
+  test("with no difference, it says so", () => {
+    expect(buildReport(makeRun())).toContain("None. Every situation has the case it was chosen with.");
+  });
+
+  test("the numbers audit says it covers the code-written answers with numbers too", () => {
+    expect(buildReport(makeRun())).toContain("every code-written answer that holds the person's numbers");
+  });
+
   test("says what the run cannot show", () => {
     expect(buildReport(makeRun())).toContain("What this run cannot tell you");
   });

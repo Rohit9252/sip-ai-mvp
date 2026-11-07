@@ -27,13 +27,22 @@ export const CLOSE_TENTHS = 15;
  *    FUND_LESS if it fell less than that.
  *  - The fund was flat (0.0): FUND_LESS if the market fell, FUND_UP if the market did not.
  */
+/**
+ * Two moves are "close" when they are within 1.5 points and the gap is no more than a third of the bigger move.
+ * One rule, used for the reason and for "did my fund do better or worse than the market".
+ */
+export function isClose(fundPct: number, marketPct: number): boolean {
+  const gapTenths = Math.abs(Math.round((fundPct - marketPct) * 10));
+  const biggerTenths = Math.max(Math.abs(Math.round(fundPct * 10)), Math.abs(Math.round(marketPct * 10)));
+  return gapTenths <= CLOSE_TENTHS && gapTenths * 3 <= biggerTenths;
+}
+
 export function classifyCase(fundPct: number, marketPct: number): Case {
   if (fundPct > 0) return "FUND_UP";
   if (fundPct === 0) return marketPct < 0 ? "FUND_LESS" : "FUND_UP";
   if (marketPct >= 0) return "MARKET_UP";
   const gapTenths = Math.round((fundPct - marketPct) * 10);
-  const biggerFallTenths = Math.max(Math.abs(Math.round(fundPct * 10)), Math.abs(Math.round(marketPct * 10)));
-  if (Math.abs(gapTenths) <= CLOSE_TENTHS && Math.abs(gapTenths) * 3 <= biggerFallTenths) return "SAME";
+  if (isClose(fundPct, marketPct)) return "SAME";
   return gapTenths < 0 ? "FUND_MORE" : "FUND_LESS";
 }
 

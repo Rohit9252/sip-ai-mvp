@@ -2,7 +2,6 @@ import { t } from "@/lib/copy/dictionary";
 import type { Lang } from "@/lib/copy/dictionary";
 import { copy } from "@/lib/copy/dictionary";
 import { ownFactsCopy } from "@/lib/copy/own-facts";
-import { formatRupees } from "@/lib/sip/format";
 import type { Facts } from "@/lib/sip/facts";
 
 /**
@@ -10,11 +9,6 @@ import type { Facts } from "@/lib/sip/facts";
  * their fund against the market, what switching involves, what stopping does. Written by code from the facts
  * object. It states facts and never says what to do.
  */
-
-/** About 1% of the value, the usual exit load inside a year. Worked out in code, labelled "about". */
-export function exitLoadAbout(facts: Facts): number {
-  return Math.round(facts.value.amount * 0.01);
-}
 
 /** Three short parts, one per paragraph. */
 export function ownFactsReply(facts: Facts, lang: Lang): string[] {
@@ -30,7 +24,7 @@ export function ownFactsReply(facts: Facts, lang: Lang): string[] {
       fVerb: verb(fund.pct),
       mVerb: verb(market.pct),
     }),
-    t(ownFactsCopy.switching, lang, { load: formatRupees(exitLoadAbout(facts)), value: facts.value.text }),
-    t(ownFactsCopy.stopping, lang),
+    t(ownFactsCopy.switching, lang),
+    t(ownFactsCopy.stopping, lang, { value: facts.value.text, date: facts.dateText }),
   ];
 }

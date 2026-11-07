@@ -4,13 +4,26 @@ import { copy, LANGS, t } from "@/lib/copy/dictionary";
 import type { Lang } from "@/lib/copy/dictionary";
 import { allowedNumbers, checkReply } from "@/lib/guard/reply";
 import { classifyQuestion } from "@/lib/guard/question";
-import { detectFactsTopic, detectFundTypes, detectLearnTopic, exitLoadAbout, explain, factsAnswer, fundTypesAnswer, GUESSES, reasonLine } from "@/lib/helper";
+import {
+  detectFactsTopic,
+  detectFundTypes,
+  detectLearnTopic,
+  detectNumbersTopic,
+  detectPeriod,
+  detectStopTopic,
+  explain,
+  factsAnswer,
+  fundTypesAnswer,
+  GUESSES,
+  numbersAnswer,
+  reasonLine,
+  stopAnswer,
+} from "@/lib/helper";
 import type { FundTypeId } from "@/lib/helper";
 import type { Guess } from "@/lib/helper";
 import { navClient } from "@/lib/nav";
 import { checkSipRequest } from "@/lib/setup/rules";
 import type { SipRequest } from "@/lib/setup/rules";
-import { formatRupees } from "@/lib/sip/format";
 import type { Facts } from "@/lib/sip/facts";
 import { buildSip } from "./sip-service";
 import { todayInIndia } from "./today";
@@ -117,8 +130,15 @@ export async function followupReply(
   if (card) return { text: t(card.body, lang), source: "template", kind: "basics", learnPath: card.path };
 
   // "Why is my value below what I put in" and "did my fund fall more than the market": written by code from the facts.
+  // "What happens if I stop": the current value of the units held, never the amount invested (eval version 4, A12).
+  if (detectStopTopic(question)) return { text: stopAnswer(facts, lang), source: "template", kind: "facts" };
+
   const topic = detectFactsTopic(question);
-  if (topic) return { text: factsAnswer(facts, topic, lang), source: "template", kind: "facts" };
+  if (topic) return { text: factsAnswer(facts, topic, lang, detectPeriod(question)), source: "template", kind: "facts" };
+
+  // Plain questions about the person's own amounts: how much put in, how many instalments, how far below.
+  const amounts = detectNumbersTopic(question);
+  if (amounts) return { text: numbersAnswer(facts, amounts, lang), source: "template", kind: "facts" };
 
   const checkFailed: FollowupResponse = {
     text: t(copy.followup.checkFailed, lang, { line: reasonLine(facts, lang) }),
@@ -127,13 +147,12 @@ export async function followupReply(
   };
   if (!useAi) return checkFailed;
   try {
-    const load = exitLoadAbout(facts);
-    const reply = await ask({ facts, question, lang, exitLoadAbout: formatRupees(load) });
+    const reply = await ask({ facts, question, lang });
     if (!reply) return checkFailed;
     if (reply.intent === "advice") return adviceReply(lang);
     if (reply.intent === "prediction") return predictionReply(lang);
     if (reply.offTopic || !reply.text) return { text: t(copy.followup.safeOff, lang), source: "safe", kind: "off-topic" };
-    const check = checkReply(reply.text, allowedNumbers(facts, [load, 1, 12]), facts);
+    const check = checkReply(reply.text, allowedNumbers(facts, [1, 12]), facts);
     if (!check.ok) {
       console.log(`followup: AI reply rejected (${check.problems.join(", ")}${check.badNumbers.length ? `: ${check.badNumbers.join(" ")}` : ""})`);
       return checkFailed;

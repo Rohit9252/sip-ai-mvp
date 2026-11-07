@@ -73,6 +73,21 @@ export const learnCards: LearnCard[] = [
   },
 ];
 
+/**
+ * "What is an exit load?" A plain definition: what it is, with no figure and no claim about any one fund
+ * (eval version 4, A06 and A17). The withdraw screen keeps its own card below, which is about costs.
+ */
+export const exitLoadMeaning: LearnCard = {
+  id: "exit-meaning",
+  title: e("What is an exit load?", "Exit load क्या है?", "Exit load kya hai?"),
+  body: e(
+    "An exit load is a fee that some funds take out of the money you withdraw, if you withdraw within a set time, often a year. Each fund has its own rule, and the fund's own page shows it.",
+    "Exit load एक fee है जो कुछ funds आपके निकाले हुए पैसे में से काट लेते हैं, अगर आप तय समय (अक्सर एक साल) के अंदर निकालते हैं। हर fund का अपना नियम होता है, जो fund के अपने page पर दिखता है।",
+    "Exit load ek fee hai jo kuch funds aapke nikaale hue paise mein se kaat lete hain, agar aap tay samay (aksar ek saal) ke andar nikaalte hain. Har fund ka apna niyam hota hai, jo fund ke apne page par dikhta hai.",
+  ),
+  path: "what-costs-does-one-incur-while-redeeming-mutual-fund-units",
+};
+
 /** For the withdraw screen: what costs come with selling units. */
 export const exitLoadLearn: LearnCard = {
   id: "exit",

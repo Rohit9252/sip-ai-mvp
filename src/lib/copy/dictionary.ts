@@ -222,15 +222,29 @@ export const copy = {
       "Is mahine poora market (Nifty 50) {m} gira. Aapka fund usse kam, {f} gira.",
     ),
     MARKET_UP: e(
-      "This month the whole market (Nifty 50) rose {m}, but your fund fell {f}. This fall is in your fund's price, not in the whole market.",
-      "इस महीने पूरा market (Nifty 50) {m} बढ़ा, लेकिन आपका fund {f} गिरा। ये गिरावट आपके fund की कीमत में है, पूरे market में नहीं।",
-      "Is mahine poora market (Nifty 50) {m} badha, lekin aapka fund {f} gira. Ye girawat aapke fund ki keemat mein hai, poore market mein nahi.",
+      "This month the whole market (Nifty 50) {mm}, but your fund fell {f}. This fall is in your fund's price, not in the whole market.",
+      "इस महीने पूरा market (Nifty 50) {mm}, लेकिन आपका fund {f} गिरा। ये गिरावट आपके fund की कीमत में है, पूरे market में नहीं।",
+      "Is mahine poora market (Nifty 50) {mm}, lekin aapka fund {f} gira. Ye girawat aapke fund ki keemat mein hai, poore market mein nahi.",
     ),
+    /** Both moves are always stated (eval version 4, S18 to S20). */
     FUND_UP: e(
-      "Your fund rose {f} this month, but your value is still ₹{gap} below what you put in. Some of your instalments bought units at a higher price than today's.",
-      "इस महीने आपका fund {f} बढ़ा, फिर भी आपकी value लगाए हुए पैसे से ₹{gap} कम है। आपकी कुछ किस्तों ने units आज से ऊँची कीमत पर खरीदे थे।",
-      "Is mahine aapka fund {f} badha, phir bhi aapki value lagaye hue paise se ₹{gap} kam hai. Aapki kuch kishton ne units aaj se oonchi keemat par khareede the.",
+      "This month the whole market (Nifty 50) {mm}, and your fund {ff}. Your value is still ₹{gap} below what you put in. Some of your instalments bought units at a higher price than today's.",
+      "इस महीने पूरा market (Nifty 50) {mm} और आपका fund {ff}। फिर भी आपकी value लगाए हुए पैसे से ₹{gap} कम है। आपकी कुछ किस्तों ने units आज की कीमत से ऊँची कीमत पर खरीदे थे।",
+      "Is mahine poora market (Nifty 50) {mm} aur aapka fund {ff}. Phir bhi aapki value lagaye hue paise se ₹{gap} kam hai. Aapki kuch kishton ne units aaj ki keemat se oonchi keemat par khareede the.",
     ),
+    /** The fund did not move and the market fell: said as it is, not as "fell less, 0.0%". */
+    FUND_FLAT: e(
+      "This month the whole market (Nifty 50) fell {m}. Your fund {ff}.",
+      "इस महीने पूरा market (Nifty 50) {m} गिरा। आपका fund {ff}।",
+      "Is mahine poora market (Nifty 50) {m} gira. Aapka fund {ff}.",
+    ),
+  },
+
+  /** A move in words, for {mm} (the market) and {ff} (the fund) in the reasons: rose, fell or flat, with its size. */
+  move: {
+    rose: e("rose {x}", "{x} बढ़ा", "{x} badha"),
+    fell: e("fell {x}", "{x} गिरा", "{x} gira"),
+    flat: e("was flat (0.0%)", "0.0% पर टिका रहा", "0.0% par tika raha"),
   },
 
   /** 5c. Opening lines. Each one comes before the reason. */
@@ -295,14 +309,14 @@ export const copy = {
     qLast: e("How long will this fall last?", "ये गिरावट कब तक रहेगी?", "Ye girawat kab tak rahegi?"),
     /** One short line, no discussion of the question (founder, after the eval version 3 review). */
     safeAdvice: e(
-      "This is outside what I can help with. I don't say which fund to choose or change.",
-      "ये मेरी मदद के दायरे से बाहर है। मैं नहीं बताता कि कौन सा fund चुनें या बदलें।",
-      "Ye meri madad ke daayre se bahar hai. Main nahi batata ki kaunsa fund chunein ya badlein.",
+      "This is outside what I can help with. I don't say what to do with your money or which fund to pick.",
+      "इस सवाल का जवाब मैं नहीं दे सकता। मैं ये नहीं बताता कि आपके पैसे का क्या करें या कौन सा fund चुनें।",
+      "Is sawal ka jawab main nahi de sakta. Main ye nahi batata ki aapke paise ka kya karein ya kaunsa fund chunein.",
     ),
     safePredict: e(
       "This is outside what I can help with. A mutual fund moves with the market, so nobody can tell you this.",
-      "ये मेरी मदद के दायरे से बाहर है। Mutual fund market के साथ ऊपर-नीचे होता है, इसलिए ये कोई नहीं बता सकता।",
-      "Ye meri madad ke daayre se bahar hai. Mutual fund market ke saath upar-neeche hota hai, isliye ye koi nahi bata sakta.",
+      "इस सवाल का जवाब मैं नहीं दे सकता। Mutual fund market के साथ ऊपर-नीचे होता है, इसलिए ये कोई नहीं बता सकता।",
+      "Is sawal ka jawab main nahi de sakta. Mutual fund market ke saath upar-neeche hota hai, isliye ye koi nahi bata sakta.",
     ),
     safeOff: e(
       "I can only answer questions about this SIP and what happened to it.",

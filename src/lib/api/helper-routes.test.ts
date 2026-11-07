@@ -26,7 +26,7 @@ describe("followupReply: an advice question is refused, then offers the person's
 
   test("the refusal is one short line and the small pointer, and nothing else", async () => {
     const reply = await followupReply(facts, "Should I change my fund?", "en", false);
-    expect(t(copy.followup.safeAdvice, "en")).toBe("This is outside what I can help with. I don't say which fund to choose or change.");
+    expect(t(copy.followup.safeAdvice, "en")).toBe("This is outside what I can help with. I don't say what to do with your money or which fund to pick.");
     expect(reply.text).toBe(`${t(copy.followup.safeAdvice, "en")} ${t(copy.followup.adviser, "en")}`);
     expect(reply.link).toBe("amfi");
   });
@@ -60,6 +60,26 @@ describe("followupReply: an advice question is refused, then offers the person's
     const reply = await followupReply(facts, question, lang, false);
     expect(reply.kind).toBe("prediction");
     expect(reply.text).toBe(`${t(copy.followup.safePredict, lang)} ${t(copy.followup.adviser, lang)}`);
+  });
+
+  test("Hindi and Hinglish refusals open with the natural line (founder, after the eval version 4 review)", () => {
+    expect(t(copy.followup.safeAdvice, "hi").startsWith("इस सवाल का जवाब मैं नहीं दे सकता।")).toBe(true);
+    expect(t(copy.followup.safePredict, "hi").startsWith("इस सवाल का जवाब मैं नहीं दे सकता।")).toBe(true);
+    expect(t(copy.followup.safeAdvice, "hn").startsWith("Is sawal ka jawab main nahi de sakta.")).toBe(true);
+    expect(t(copy.followup.safePredict, "hn").startsWith("Is sawal ka jawab main nahi de sakta.")).toBe(true);
+    expect(t(copy.followup.safeAdvice, "en").startsWith("This is outside what I can help with.")).toBe(true);
+    expect(t(copy.followup.safePredict, "en").startsWith("This is outside what I can help with.")).toBe(true);
+    expect(t(copy.followup.safeAdvice, "hi")).not.toContain("दायरे");
+    expect(t(copy.followup.safeAdvice, "hn")).not.toContain("daayre");
+  });
+
+  test("the advice refusal covers stopping, withdrawing and adding, not only choosing a fund, in one short sentence", () => {
+    expect(t(copy.followup.safeAdvice, "en")).toContain("what to do with your money");
+    expect(t(copy.followup.safeAdvice, "hi")).toContain("आपके पैसे का क्या करें");
+    expect(t(copy.followup.safeAdvice, "hn")).toContain("aapke paise ka kya karein");
+    for (const lang of ["en", "hi", "hn"] as const) {
+      expect(t(copy.followup.safeAdvice, lang).length).toBeLessThan(140);
+    }
   });
 
   test("the prediction refusal never names or suggests a fund", () => {
@@ -133,12 +153,12 @@ describe("followupReply: the AI's reading of the question is a second lock", () 
   });
 
   test("a facts question is answered, after the usual checks", async () => {
-    const reply = await followupReply(facts, "How much did I invest?", "en", true, asking("facts", "You put in ₹40,000 in 8 instalments."));
+    const reply = await followupReply(facts, "Tell me about my SIP", "en", true, asking("facts", "You put in ₹40,000 in 8 instalments."));
     expect(reply).toMatchObject({ source: "ai", kind: "answered", text: "You put in ₹40,000 in 8 instalments." });
   });
 
   test("a facts reply with a number that is not in the facts is still thrown away", async () => {
-    const reply = await followupReply(facts, "How much did I invest?", "en", true, asking("facts", "You put in ₹41,000."));
+    const reply = await followupReply(facts, "Tell me about my SIP", "en", true, asking("facts", "You put in ₹41,000."));
     expect(reply.kind).toBe("check-failed");
     expect(reply.source).toBe("safe");
   });
@@ -168,9 +188,45 @@ describe("followupReply: fair questions the AI answered loosely are now answered
   test("'What is an exit load?' is a general definition, with no rupee figure and no claim about this fund", async () => {
     const reply = await followupReply(facts, "What is an exit load?", "en", false);
     expect(reply).toMatchObject({ kind: "basics", source: "template" });
-    expect(reply.text).toContain("Many funds charge an exit load");
+    expect(reply.text).toContain("An exit load is a fee");
     expect(reply.text).not.toMatch(/₹|this fund/);
     expect(reply.learnPath).toBeTruthy();
+  });
+
+  test("'What happens if I stop?' is answered by code with the current value, never the amount invested (A12)", async () => {
+    for (const [lang, question] of [
+      ["hi", "अगर मैं SIP रोक दूँ तो जमा पैसे का क्या होता है?"],
+      ["hn", "SIP band karne par mera jama paisa kahan rehta hai?"],
+      ["en", "What happens to my money if I stop paying?"],
+    ] as const) {
+      const reply = await followupReply(facts, question, lang, false);
+      expect(reply, question).toMatchObject({ kind: "facts", source: "template" });
+      expect(reply.text, question).toContain("₹35,785");
+      expect(reply.text, question).not.toContain("₹40,000");
+      expect(reply.text, question).not.toContain("₹358");
+    }
+  });
+
+  test("plain questions about the person's own amounts are answered by code", async () => {
+    const invested = await followupReply(facts, "Ab tak maine kul kitna paisa lagaya hai?", "hn", false);
+    expect(invested).toMatchObject({ kind: "facts", source: "template" });
+    expect(invested.text).toContain("₹40,000");
+    const count = await followupReply(facts, "How many instalments have I paid so far?", "en", false);
+    expect(count.text).toBe("You have paid 8 instalments of ₹5,000 each, ₹40,000 in all.");
+    const gap = await followupReply(facts, "By how much is my value below what I invested?", "en", false);
+    expect(gap.text).toBe("Your value is ₹4,215 below what you put in.");
+  });
+
+  test("a comparison since the start opens with that period (A05) and one for the month opens with the month (A03)", async () => {
+    const since = await followupReply(facts, "Since my first instalment, how has my fund done against the market?", "en", false);
+    expect(since.text.split("\n\n")[0]).toBe("Your fund came out ahead of the whole market since your first instalment.");
+    const month = await followupReply(facts, "In the setback month, did the market fall more than my fund?", "en", false);
+    expect(month.text.split("\n\n")[0]).toBe("Your fund and the whole market moved about the same in March 2026.");
+  });
+
+  test("'why is my value below' opens with the reason in one plain line (A14, A19)", async () => {
+    const reply = await followupReply(facts, "Meri value lagaye hue paise se neeche kyun hai?", "hn", false);
+    expect(reply.text.split("\n\n")[0]).toContain("Wajah ye hai ki aaj fund ki keemat");
   });
 
   test("'What is the Nifty 50?' is the general definition, not tagged as the person's numbers", async () => {

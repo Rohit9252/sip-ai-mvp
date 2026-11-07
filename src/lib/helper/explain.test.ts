@@ -143,7 +143,7 @@ describe("explain: the other four cases", () => {
     expect(x.misread).toBe(true);
     expect(x.opening).toEqual(["Your fund didn't fall this month."]);
     expect(x.reason).toBe(
-      "Your fund rose 2.1% this month, but your value is still ₹174 below what you put in. Some of your instalments bought units at a higher price than today's.",
+      "This month the whole market (Nifty 50) fell 1.0%, and your fund rose 2.1%. Your value is still ₹174 below what you put in. Some of your instalments bought units at a higher price than today's.",
     );
   });
 

@@ -172,10 +172,22 @@ export function buildReport(run: EvalRun): string {
   out.push(`All ${run.situations.length} reasons are written by code from the template for the case. No AI is used for them.`);
   out.push("");
 
+  out.push("## Cases that differ from the golden set");
+  out.push("");
+  const moved = run.situations.filter((s) => s.case !== s.situation.expectedCase);
+  if (moved.length === 0) {
+    out.push("None. Every situation has the case it was chosen with.");
+  } else {
+    out.push(
+      `The golden set records the case each SIP had when it was chosen. The golden set was not edited. The rule for "close" has changed since, so these now have another case: ${moved.map((s) => `${s.situation.id.toUpperCase()} was ${s.situation.expectedCase} and is now ${s.case}`).join(", ")}.`,
+    );
+  }
+  out.push("");
+
   out.push("## Numbers audit");
   out.push("");
   out.push(
-    `${run.audit.checked} shown texts were checked again, number by number, against their facts: every reason, every AI answer to a follow-up, and the person's own facts in each language. Fund-type basics hold general figures from AMFI and SEBI, not figures from a SIP, so they are not in this count. Wrong numbers found: **${wrongCount}**.`,
+    `${run.audit.checked} shown texts were checked again, number by number, against their facts: every reason, every AI answer to a follow-up, every code-written answer that holds the person's numbers, and the person's own facts in each language. A total described as this month's counts as a wrong number. Fund-type basics hold general figures from AMFI and SEBI, not figures from a SIP, so they are not in this count. Wrong numbers found: **${wrongCount}**.`,
   );
   out.push("");
 

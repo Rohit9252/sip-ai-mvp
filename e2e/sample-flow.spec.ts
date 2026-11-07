@@ -52,17 +52,19 @@ test("sample SIP: replay to the setback, tap a guess, read the reason, ask a fol
   await page.getByTestId("ask-input").fill("Should I change my fund?");
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByTestId("reply-tag").last()).toContainText("Safe answer");
-  await expect(page.getByTestId("reply").last()).toContainText("This is outside what I can help with. I don't say which fund to choose or change.");
+  await expect(page.getByTestId("reply").last()).toContainText("This is outside what I can help with. I don't say what to do with your money or which fund to pick.");
   await page.getByTestId("offer-own-facts").click();
   await expect(page.getByTestId("reply").last()).toContainText("your fund fell 7.0%");
   await expect(page.getByTestId("reply").last()).toContainText("exit load");
-  await expect(page.getByTestId("reply").last()).toContainText("stays there");
+  await expect(page.getByTestId("reply").last()).toContainText("stay in your fund, worth ₹35,785");
   await expect(page.getByTestId("reply-tag").last()).toContainText("Numbers from your SIP");
   await expect(page.getByTestId("offer-own-facts")).toHaveCount(0);
 
   await page.getByRole("button", { name: "What happens if I stop now?" }).click();
   await expect(page.getByTestId("reply")).toHaveCount(3, { timeout: 30_000 });
-
+  // A12 in eval version 4: stopping names the current value of the units, never the amount invested.
+  await expect(page.getByTestId("reply").last()).toContainText("₹35,785");
+  await expect(page.getByTestId("reply").last()).not.toContainText("₹40,000");
   // Version 2, fix 2: fund types are explained in general terms, one at a time.
   await page.getByRole("button", { name: "What is a small cap fund?" }).click();
   await expect(page.getByTestId("reply").last()).toContainText("251");

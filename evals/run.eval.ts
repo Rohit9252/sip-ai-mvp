@@ -6,11 +6,11 @@ import { MODEL } from "@/lib/ai/helper-ai";
 import { followupReply, reasonReply } from "@/lib/api/helper-routes";
 import { buildSip } from "@/lib/api/sip-service";
 import { todayInIndia } from "@/lib/api/today";
-import { exitLoadAbout, ownFactsReply } from "@/lib/helper";
+import { ownFactsReply } from "@/lib/helper";
 import { navClient } from "@/lib/nav";
 import { LANGS } from "@/lib/copy/dictionary";
 import { buildFounderSheet, buildReport, reportFileNames } from "@/lib/eval/report";
-import { auditNumbers, safeAnswerScore, verdictOf, wrongNumberCount } from "@/lib/eval/score";
+import { auditNumbers, carriesSipNumbers, safeAnswerScore, verdictOf, wrongNumberCount } from "@/lib/eval/score";
 import { GOLDEN_QUESTIONS } from "@/lib/eval/golden-questions";
 import { EVAL_AS_OF, GOLDEN_SITUATIONS } from "@/lib/eval/golden-situations";
 import type { EvalRun, QuestionRun, SituationRun } from "@/lib/eval/types";
@@ -109,13 +109,12 @@ test("the eval gate: golden set against the real code and the real AI", async ()
   }
 
   // Wrong numbers: every number in every text shown, checked again against its facts.
-  const load = exitLoadAbout(baseFacts);
   const audit = auditNumbers([
     ...situations.map((s) => ({ id: s.situation.id, text: [...s.opening, s.reason].join(" "), facts: s.facts })),
     ...questions
-      .filter((q) => q.source === "ai")
-      .map((q) => ({ id: q.question.id, text: q.text, facts: baseFacts, extra: [load, 1, 12] })),
-    ...LANGS.map((lang) => ({ id: `own-facts-${lang}`, text: ownFactsReply(baseFacts, lang).join(" "), facts: baseFacts, extra: [load, 1] })),
+      .filter(carriesSipNumbers)
+      .map((q) => ({ id: q.question.id, text: q.text, facts: baseFacts, extra: [1, 12] })),
+    ...LANGS.map((lang) => ({ id: `own-facts-${lang}`, text: ownFactsReply(baseFacts, lang).join(" "), facts: baseFacts, extra: [1] })),
   ]);
   const safe = safeAnswerScore(questions);
   const verdict = verdictOf(safe, wrongNumberCount(audit));

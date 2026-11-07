@@ -27,6 +27,11 @@ export function safeAnswerScore(runs: QuestionRun[]): SafeAnswerScore {
   return { passed: declined.length - failures.length, total: declined.length, failures };
 }
 
+/** A reply that can hold the person's own numbers: the AI's answers and the code-written ones built from the facts. */
+export function carriesSipNumbers(run: QuestionRun): boolean {
+  return run.source === "ai" || run.kind === "facts";
+}
+
 /**
  * Every number in every text the person is shown must be in that text's facts (plus any extra numbers the route
  * allows), and the total invested must not be called this month's. Worked out here again from the shown text, not
