@@ -43,24 +43,24 @@ export const fundTypeCopy: { title: ByType; body: ByType; next: Entry; tag: Entr
   },
   body: {
     small: e(
-      `A small cap fund mainly buys shares of smaller companies. By SEBI's rules, at least 65% of the fund's holdings must be in these companies. By SEBI's market-cap ranks, companies ranked 251 and below by size are small caps. ${GENERAL.en}`,
-      `Small cap fund मुख्य रूप से छोटी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होना ज़रूरी है। SEBI की market-cap ranking में size के हिसाब से 251वें नंबर और उससे नीचे की companies small cap हैं। ${GENERAL.hi}`,
-      `Small cap fund mainly chhoti companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hona zaroori hai. SEBI ki market-cap ranking mein size ke hisaab se 251ve number aur usse neeche ki companies small cap hain. ${GENERAL.hn}`,
+      `A small cap fund mainly buys shares of smaller companies. By SEBI's rules, at least 65% of the fund's holdings are in these companies. By SEBI's market-cap ranks, companies ranked 251 and below by size are small caps. ${GENERAL.en}`,
+      `Small cap fund मुख्य रूप से छोटी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से 251वें नंबर और उससे नीचे की companies small cap हैं। ${GENERAL.hi}`,
+      `Small cap fund mainly chhoti companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se 251ve number aur usse neeche ki companies small cap hain. ${GENERAL.hn}`,
     ),
     mid: e(
-      `A mid cap fund mainly buys shares of medium-sized companies. By SEBI's rules, at least 65% of the fund's holdings must be in these companies. By SEBI's market-cap ranks, companies ranked 101 to 250 by size are mid caps. ${GENERAL.en}`,
-      `Mid cap fund मुख्य रूप से मझोली companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होना ज़रूरी है। SEBI की market-cap ranking में size के हिसाब से 101वें से 250वें नंबर तक की companies mid cap हैं। ${GENERAL.hi}`,
-      `Mid cap fund mainly majholi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hona zaroori hai. SEBI ki market-cap ranking mein size ke hisaab se 101ve se 250ve number tak ki companies mid cap hain. ${GENERAL.hn}`,
+      `A mid cap fund mainly buys shares of medium-sized companies. By SEBI's rules, at least 65% of the fund's holdings are in these companies. By SEBI's market-cap ranks, companies ranked 101 to 250 by size are mid caps. ${GENERAL.en}`,
+      `Mid cap fund मुख्य रूप से मझोली companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से 101वें से 250वें नंबर तक की companies mid cap हैं। ${GENERAL.hi}`,
+      `Mid cap fund mainly majholi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se 101ve se 250ve number tak ki companies mid cap hain. ${GENERAL.hn}`,
     ),
     large: e(
-      `A large cap fund mainly buys shares of the biggest companies in India. By SEBI's rules, at least 80% of the fund's holdings must be in these companies. By SEBI's market-cap ranks, the 100 biggest listed companies by size are large caps. ${GENERAL.en}`,
-      `Large cap fund मुख्य रूप से भारत की सबसे बड़ी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 80% इन्हीं companies में होना ज़रूरी है। SEBI की market-cap ranking में size के हिसाब से सबसे बड़ी 100 listed companies large cap हैं। ${GENERAL.hi}`,
-      `Large cap fund mainly Bharat ki sabse badi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 80% inhi companies mein hona zaroori hai. SEBI ki market-cap ranking mein size ke hisaab se sabse badi 100 listed companies large cap hain. ${GENERAL.hn}`,
+      `A large cap fund mainly buys shares of the biggest companies in India. By SEBI's rules, at least 80% of the fund's holdings are in these companies. By SEBI's market-cap ranks, the 100 biggest listed companies by size are large caps. ${GENERAL.en}`,
+      `Large cap fund मुख्य रूप से भारत की सबसे बड़ी companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 80% इन्हीं companies में होता है। SEBI की market-cap ranking में size के हिसाब से सबसे बड़ी 100 listed companies large cap हैं। ${GENERAL.hi}`,
+      `Large cap fund mainly Bharat ki sabse badi companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 80% inhi companies mein hota hai. SEBI ki market-cap ranking mein size ke hisaab se sabse badi 100 listed companies large cap hain. ${GENERAL.hn}`,
     ),
     flexi: e(
-      `A flexi cap fund buys shares of companies of any size. By SEBI's rules, at least 65% of the fund's holdings must be in shares. The fund manager can move between large, mid and small companies. ${GENERAL.en}`,
-      `Flexi cap fund किसी भी size की companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% shares में होना ज़रूरी है। Fund manager large, mid और small companies के बीच बदलाव कर सकता है। ${GENERAL.hi}`,
-      `Flexi cap fund kisi bhi size ki companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% shares mein hona zaroori hai. Fund manager large, mid aur small companies ke beech badlaav kar sakta hai. ${GENERAL.hn}`,
+      `A flexi cap fund buys shares of companies of any size. By SEBI's rules, at least 65% of the fund's holdings are in shares. The fund manager can move between large, mid and small companies. ${GENERAL.en}`,
+      `Flexi cap fund किसी भी size की companies के shares खरीदता है। SEBI के नियमों के हिसाब से fund की holdings का कम से कम 65% shares में होता है। Fund manager large, mid और small companies के बीच बदलाव कर सकता है। ${GENERAL.hi}`,
+      `Flexi cap fund kisi bhi size ki companies ke shares khareedta hai. SEBI ke niyam ke hisaab se fund ki holdings ka kam se kam 65% shares mein hota hai. Fund manager large, mid aur small companies ke beech badlaav kar sakta hai. ${GENERAL.hn}`,
     ),
     hybrid: e(
       `A hybrid fund buys a mix of shares (equity) and bonds (debt), and sometimes other assets. The split depends on the kind of hybrid fund. For example, an aggressive hybrid fund holds 65% to 80% in shares, and a conservative one holds 10% to 25%. ${GENERAL.en}`,
