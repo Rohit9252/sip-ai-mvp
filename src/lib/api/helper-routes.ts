@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { answerFollowup, writeReason } from "@/lib/ai/helper-ai";
+import { answerFollowup as answerFollowupWithAi, writeReason } from "@/lib/ai/helper-ai";
 import { copy, LANGS, t } from "@/lib/copy/dictionary";
 import type { Lang } from "@/lib/copy/dictionary";
 import { allowedNumbers, checkReply } from "@/lib/guard/reply";
@@ -96,15 +96,32 @@ export async function reasonReply(facts: Facts, guess: Guess, lang: Lang, useAi:
   }
 }
 
-/** A follow-up answer: advice and predictions get a fixed safe answer before any AI call. */
-export async function followupReply(facts: Facts, question: string, lang: Lang, useAi: boolean): Promise<FollowupResponse> {
+/** The safe answer to a question that asks for advice. The refusal stays, then it offers the person's own facts in one tap. */
+function adviceReply(lang: Lang): FollowupResponse {
+  const text = [t(copy.followup.safeAdvice, lang), t(copy.followup.adviser, lang), t(copy.followup.offerAsk, lang)].join(" ");
+  return { text, source: "safe", kind: "advice", link: "amfi", offer: "own-facts" };
+}
+
+function predictionReply(lang: Lang): FollowupResponse {
+  return { text: t(copy.followup.safePredict, lang), source: "safe", kind: "prediction" };
+}
+
+/**
+ * A follow-up answer. Two locks stand before a written reply. First, patterns in code catch advice and prediction
+ * questions before any AI call. Second, the AI says what the question asks for, and a question it reads as advice
+ * or a prediction gets the same safe answer, so a phrasing the patterns miss is still caught.
+ * `ask` is the AI call. Tests pass a stand-in.
+ */
+export async function followupReply(
+  facts: Facts,
+  question: string,
+  lang: Lang,
+  useAi: boolean,
+  ask: typeof answerFollowupWithAi = answerFollowupWithAi,
+): Promise<FollowupResponse> {
   const kind = classifyQuestion(question);
-  if (kind === "advice") {
-    // The refusal stays. Then it offers what it can say: the person's own facts, in one tap (version 2).
-    const text = [t(copy.followup.safeAdvice, lang), t(copy.followup.adviser, lang), t(copy.followup.offerAsk, lang)].join(" ");
-    return { text, source: "safe", kind: "advice", link: "amfi", offer: "own-facts" };
-  }
-  if (kind === "prediction") return { text: t(copy.followup.safePredict, lang), source: "safe", kind: "prediction" };
+  if (kind === "advice") return adviceReply(lang);
+  if (kind === "prediction") return predictionReply(lang);
 
   // Fund-type basics (small, mid, large cap, hybrid) are written by code from AMFI definitions: no AI, no pick.
   const named = detectFundTypes(question);
@@ -121,8 +138,10 @@ export async function followupReply(facts: Facts, question: string, lang: Lang, 
   if (!useAi) return checkFailed;
   try {
     const load = exitLoadAbout(facts);
-    const reply = await answerFollowup({ facts, question, lang, exitLoadAbout: formatRupees(load) });
+    const reply = await ask({ facts, question, lang, exitLoadAbout: formatRupees(load) });
     if (!reply) return checkFailed;
+    if (reply.intent === "advice") return adviceReply(lang);
+    if (reply.intent === "prediction") return predictionReply(lang);
     if (reply.offTopic || !reply.text) return { text: t(copy.followup.safeOff, lang), source: "safe", kind: "off-topic" };
     const check = checkReply(reply.text, allowedNumbers(facts, [load, 1, 12]));
     if (!check.ok) {

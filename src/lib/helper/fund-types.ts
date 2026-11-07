@@ -20,8 +20,8 @@ const TYPE_PATTERNS: Record<FundTypeId, RegExp> = {
 /** The question asks what a type is, or how two differ. */
 const ASKS_WHAT_IT_IS: RegExp[] = [
   /\b(what|what's|whats|meaning|mean|means|define|explain|difference|differ|differs|about|vs|versus)\b/i,
-  /\b(kya|matlab|fark|antar|samjha\w*|bata\w*)\b/i,
-  /क्या|मतलब|अंतर|फ़र्क|फर्क|समझा|बता|बारे/,
+  /\b(kya|matlab|fark|antar|kise|kehte|samjha\w*|bata\w*)\b/i,
+  /क्या|मतलब|अंतर|फ़र्क|फर्क|किसे|कहते|समझा|बता|बारे/,
 ];
 
 /** The fund types a question names, in the order it names them. Empty when it is not asking what a type is. */

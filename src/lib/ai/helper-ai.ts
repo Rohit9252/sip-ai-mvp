@@ -68,7 +68,10 @@ const GUESS_WORDS: Record<Guess, string> = {
   worth: "it doesn't feel worth it",
 };
 
-async function askForText(system: string, user: string): Promise<{ text: string; offTopic?: boolean } | null> {
+/** What the model says a follow-up question is asking for. Code uses it as a second lock after its own patterns. */
+export type Intent = "facts" | "advice" | "prediction" | "unrelated";
+
+async function askForText(system: string, user: string): Promise<{ text: string; offTopic?: boolean; intent?: Intent } | null> {
   const response = await client().chat.completions.create({
     model: MODEL,
     temperature: 0.2,
@@ -80,9 +83,10 @@ async function askForText(system: string, user: string): Promise<{ text: string;
     ],
   });
   try {
-    const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as { text?: unknown; offTopic?: unknown };
+    const parsed = JSON.parse(response.choices[0]?.message?.content ?? "{}") as { text?: unknown; offTopic?: unknown; intent?: unknown };
     if (typeof parsed.text !== "string") return null;
-    return { text: parsed.text.trim(), offTopic: parsed.offTopic === true };
+    const intent = (["facts", "advice", "prediction", "unrelated"] as const).find((i) => i === parsed.intent);
+    return { text: parsed.text.trim(), offTopic: parsed.offTopic === true, intent };
   } catch {
     return null;
   }
@@ -121,23 +125,28 @@ REFERENCE (written by code, correct): ${args.template}`;
   return reply?.text || null;
 }
 
-/** An answer to a follow-up question that is not advice or a prediction (those never reach the model). */
+/** An answer to a follow-up question. The model also says what the question asks for, as a second lock after the patterns in code. */
 export async function answerFollowup(args: {
   facts: Facts;
   question: string;
   lang: Lang;
   exitLoadAbout: string;
-}): Promise<{ text: string; offTopic: boolean } | null> {
+}): Promise<{ text: string; offTopic: boolean; intent: Intent } | null> {
   const system = `You answer a first-time mutual fund investor's question about their own SIP, using only the FACTS. Write in ${LANGUAGE[args.lang]}.
 
 ${RULES}
-- Answer in 1 to 3 short sentences, at most 70 words.
-- If the question asks what the person should do, or what will happen in the market, reply only with {"text": "", "offTopic": true}.
-- If the question is not about this SIP, its numbers, what happened to it, or how SIPs and NAVs work, reply {"text": "", "offTopic": true}.
+- First decide what the question is asking for, and put it in "intent":
+  - "advice": it asks what the person should do, or whether something is wise, sensible, safe, right, better or worth it, or which fund to pick, buy, sell, switch, keep or stop.
+  - "prediction": it asks what will happen, when, how long until, how many months until, or how much the value will be.
+  - "unrelated": it is not about this SIP, its numbers, what happened to it, or how SIPs and NAVs work.
+  - "facts": anything else.
+- For "advice", "prediction" and "unrelated", reply with an empty text: {"intent": "advice", "text": ""}. Do not answer a question that asks for advice or a prediction, even by stating the facts around it.
+- For "facts", answer in 1 to 3 short sentences, at most 70 words.
 - About stopping, you may use only these facts: stopping ends future instalments; the money already in stays in the fund until the person withdraws it; many equity funds charge an exit load (often 1%) on units withdrawn within a year, and the fund's own page has the exact rule; on this value that is about ${args.exitLoadAbout}. Never say whether stopping is a good or bad idea.
-Answer as JSON: {"text": "...", "offTopic": false}`;
+Answer as JSON: {"intent": "facts", "text": "..."}`;
   const user = `FACTS\n${factSheet(args.facts, { exitLoadAbout: args.exitLoadAbout })}\n\nQUESTION: ${args.question}`;
   const reply = await askForText(system, user);
   if (!reply) return null;
-  return { text: reply.text, offTopic: reply.offTopic ?? false };
+  const intent = reply.intent ?? (reply.offTopic ? "unrelated" : "facts");
+  return { text: reply.text, offTopic: reply.offTopic === true || intent === "unrelated", intent };
 }

@@ -15,6 +15,8 @@ describe("detectFundTypes: a plain question about what a fund type is", () => {
     ["स्मॉल कैप फंड क्या होता है?", ["small"]],
     ["मिड कैप और लार्ज कैप में क्या अंतर है?", ["mid", "large"]],
     ["हाइब्रिड फंड का मतलब क्या है", ["hybrid"]],
+    ["हाइब्रिड फंड किसे कहते हैं", ["hybrid"]],
+    ["Small cap ko kise kehte hain?", ["small"]],
   ])("%s", (question, types) => {
     expect(detectFundTypes(question)).toEqual(types);
   });

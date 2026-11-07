@@ -3,6 +3,7 @@ import { copy, t } from "@/lib/copy/dictionary";
 import { ownFactsReply } from "@/lib/helper/own-facts";
 import { sampleFacts } from "@/lib/testing/sample-facts";
 import type { Facts } from "@/lib/sip";
+import type { answerFollowup } from "@/lib/ai/helper-ai";
 import { followupReply } from "./helper-routes";
 
 let facts: Facts;
@@ -66,5 +67,47 @@ describe("followupReply: fund-type basics come from code, with no AI and no reco
   test("a question that only mentions a type, with no ask for what it is, is not a basics question", async () => {
     const reply = await followupReply(facts, "Is my fund a large cap fund?", "en", false);
     expect(reply.kind).not.toBe("basics");
+  });
+});
+
+// The second lock (added after eval version 1): the AI also says what a question is asking for. A question the
+// patterns miss but the AI reads as advice or a prediction gets the safe answer, not a written reply.
+describe("followupReply: the AI's reading of the question is a second lock", () => {
+  const asking = (intent: "facts" | "advice" | "prediction" | "unrelated", text = ""): typeof answerFollowup =>
+    (async () => ({ text, offTopic: intent === "unrelated", intent })) as typeof answerFollowup;
+
+  test("an advice question the patterns missed gets the safe answer and the offer, not the AI's reply", async () => {
+    const reply = await followupReply(facts, "A question the patterns do not know", "en", true, asking("advice", "Stopping ends instalments."));
+    expect(reply.source).toBe("safe");
+    expect(reply.kind).toBe("advice");
+    expect(reply.offer).toBe("own-facts");
+    expect(reply.text).not.toContain("Stopping ends instalments.");
+  });
+
+  test("a prediction question the patterns missed gets the safe answer for predictions", async () => {
+    const reply = await followupReply(facts, "A question the patterns do not know", "hn", true, asking("prediction", "It will rise."));
+    expect(reply).toMatchObject({ source: "safe", kind: "prediction" });
+    expect(reply.text).toBe(t(copy.followup.safePredict, "hn"));
+  });
+
+  test("a facts question is answered, after the usual checks", async () => {
+    const reply = await followupReply(facts, "How much did I invest?", "en", true, asking("facts", "You put in ₹40,000 in 8 instalments."));
+    expect(reply).toMatchObject({ source: "ai", kind: "answered", text: "You put in ₹40,000 in 8 instalments." });
+  });
+
+  test("a facts reply with a number that is not in the facts is still thrown away", async () => {
+    const reply = await followupReply(facts, "How much did I invest?", "en", true, asking("facts", "You put in ₹41,000."));
+    expect(reply.kind).toBe("check-failed");
+    expect(reply.source).toBe("safe");
+  });
+
+  test("an unrelated question gets the off-topic safe answer", async () => {
+    const reply = await followupReply(facts, "Who won the match?", "en", true, asking("unrelated"));
+    expect(reply).toMatchObject({ source: "safe", kind: "off-topic" });
+  });
+
+  test("when the AI is not asked (rate limit), a question the patterns missed still gets a safe reply", async () => {
+    const reply = await followupReply(facts, "Anything", "en", false);
+    expect(reply.source).toBe("safe");
   });
 });
