@@ -55,7 +55,7 @@ The full picture, with every part and why it is built that way, is in [docs/ARCH
 | People | 1 finance expert and 2 testers, founder-led, 3 and 4 Nov 2026 | 3 problems found, fixes shipped in version 2 ([user testing](docs/USER-TESTING.md)) |
 | Eval gate | 40 questions and 20 SIP situations, pass lines fixed in advance ([ADR-0006](docs/adr/0006-release-only-through-the-eval-gate.md)) | **Run six times.** Version 1 failed at 16 of 20. Versions 2 to 6 pass at 20 of 20, 0 wrong numbers ([latest report](docs/evals/2026-11-07-eval-v6.md)) |
 
-What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), testers have not retried version 2 yet, and the before-and-after test has not been run. All 60 final eval rows are code or fixed text, so AI follow-ups are held by the reply guard and the number check, not by those rows. The two lines the founder scores by hand are open on version 6.
+What is still open, said plainly: 2 of the 3 people who tried it are in our segment (the third is an expert), the same 3 testers retried version 2 and 2 of 3 read the fall right in the quick check, a small first sign. All 60 final eval rows are code or fixed text, so AI follow-ups are held by the reply guard and the number check, not by those rows. The two lines the founder scores by hand are open on version 6.
 
 ## Run it
 
